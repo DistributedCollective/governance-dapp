@@ -1,0 +1,58 @@
+/* purgecss start ignore */
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-roboto min-h-full;
+    }
+
+    html {
+        @apply min-h-full;
+    }
+
+    .skeleton {
+        animation: skeleton-glow 1s linear infinite alternate;
+        background: rgba(206,217,224,.2);
+        background-clip: padding-box!important;
+        border-color: rgba(206,217,224,.2)!important;
+        border-radius: 2px;
+        box-shadow: none!important;
+        color: transparent!important;
+        cursor: default;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .skeleton *, .skeleton:after, .skeleton:before {
+        visibility: hidden!important;
+    }
+
+    @keyframes skeleton-glow {
+        0% {
+            background: rgba(206,217,224,.5);
+            border-color: rgba(206,217,224,.9);
+        }
+        100% {
+            background: rgba(92,112,128,.5);
+            border-color: rgba(92,112,128,.9);
+        }
+    }
+
+    .aspect-ratio-16\/9 {
+        padding-bottom: 56.25%;
+    }
+
+    h1 {
+        @apply text-2xl;
+    }
+
+    @screen md {
+        h1 {
+            @apply text-5xl;
+        }
+    }
+}
