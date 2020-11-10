@@ -17,7 +17,7 @@ import { NotFoundPage } from './components/NotFoundPage/Loadable';
 
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/governance-dapp/">
       <Helmet
         titleTemplate="%s - Sovryn Governance"
         defaultTitle="Sovryn Governance"
