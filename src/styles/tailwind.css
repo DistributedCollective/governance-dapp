@@ -7,7 +7,8 @@
 
 @layer base {
     body {
-        @apply font-roboto min-h-full;
+        @apply font-roboto min-h-full bg-gray-300;
+        font-size: 16px;
     }
 
     html {
@@ -47,7 +48,60 @@
     }
 
     h1 {
-        @apply text-2xl;
+        @apply text-5xl;
+    }
+
+    h2 {
+        @apply text-4xl font-bold;
+    }
+
+    .bordered-list-item {
+        border-bottom-width: 1px;
+        border-bottom-color: theme('colors.gray.200');
+        border-left-width: 3px;
+        border-left-color: transparent;
+    }
+
+    .bordered-list-item:hover {
+        border-left-color: theme('colors.green.500');
+    }
+
+    .pulsating-dot {
+        position: relative;
+        width: 35px;
+        height: 35px;
+    }
+
+    .pulsating-dot:after {
+        content: '';
+        border: 3px solid theme('colors.indigo.700');
+        -webkit-border-radius: 30px;
+        height: 25px;
+        width: 25px;
+        position: absolute;
+        left: 5px;
+        top: 5px;
+        -webkit-animation: pulsate 2s ease-out;
+        -webkit-animation-iteration-count: infinite;
+        opacity: 0.0
+    }
+
+    .pulsating-dot:before {
+        content: '';
+        width: 15px;
+        height: 15px;
+        background-color: theme('colors.indigo.700');
+        border-radius: 50%;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+
+
+    @keyframes pulsate {
+        0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
+        50% {opacity: 1.0;}
+        100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
     }
 
     @screen md {
