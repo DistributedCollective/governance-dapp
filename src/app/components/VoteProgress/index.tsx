@@ -1,4 +1,5 @@
 import React from 'react';
+import { kFormatter } from 'utils/helpers';
 
 interface Props {
   value: number;
@@ -15,7 +16,7 @@ const colorMap = {
 };
 
 export function VoteProgress(props: Props) {
-  const percentage = Math.round((props.value / props.max) * 100);
+  const percentage = Math.round((props.value / props.max) * 100) || 0;
   return (
     <div className="w-full flex flex-row flex-no-wrap items-center justify-between mt-3">
       <div
@@ -31,10 +32,4 @@ export function VoteProgress(props: Props) {
       )}
     </div>
   );
-}
-
-function kFormatter(num) {
-  return Math.abs(num) > 999
-    ? `${Number(Math.sign(num) * (Math.abs(num) / 1000)).toFixed(1)}k`
-    : Math.sign(num) * Math.abs(num);
 }

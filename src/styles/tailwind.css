@@ -55,6 +55,16 @@
         @apply text-4xl font-bold;
     }
 
+    .bordered-b-gray {
+        border-bottom-width: 1px;
+        border-bottom-color: theme('colors.gray.200');
+    }
+
+    .vote-area {
+        max-height: 145px;
+        overflow: hidden;
+    }
+
     .bordered-list-item {
         border-bottom-width: 1px;
         border-bottom-color: theme('colors.gray.200');

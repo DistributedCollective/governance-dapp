@@ -4,7 +4,9 @@
   "private": true,
   "homepage": "https://distributedcollective.github.io/governance-dapp",
   "dependencies": {
+    "@portis/web3": "2.0.0-beta.59",
     "@reduxjs/toolkit": "1.3.2",
+    "@rsksmart/rsk3": "0.3.4",
     "@testing-library/jest-dom": "5.1.1",
     "@testing-library/react": "10.0.1",
     "@types/fontfaceobserver": "0.0.6",
@@ -19,6 +21,7 @@
     "@types/styled-components": "5.0.1",
     "@types/testing-library__jest-dom": "5.0.2",
     "@types/webpack-env": "1.15.1",
+    "@walletconnect/web3-provider": "1.3.1",
     "chokidar-cli": "2.1.0",
     "cross-env": "7.0.2",
     "eslint-config-prettier": "6.10.1",
@@ -29,6 +32,7 @@
     "i18next-browser-languagedetector": "4.0.2",
     "jest-styled-components": "7.0.2",
     "lint-staged": "10.0.8",
+    "mathjs": "8.0.1",
     "node-plop": "0.25.0",
     "npm-run-all": "4.1.5",
     "plop": "2.6.0",
@@ -53,7 +57,10 @@
     "stylelint-processor-styled-components": "1.10.0",
     "tailwindcss": "1.9.6",
     "ts-node": "8.8.2",
-    "typescript": "3.8.2"
+    "typescript": "3.8.2",
+    "web3": "1.3.0",
+    "web3-utils": "1.3.0",
+    "web3modal": "1.9.1"
   },
   "scripts": {
     "start": "npm-run-all build:tailwind --parallel watch:tailwind start:react",
