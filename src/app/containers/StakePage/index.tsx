@@ -4,7 +4,7 @@
  *
  */
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
 
@@ -15,16 +15,89 @@ import { stakePageSaga } from './saga';
 import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
 import { VoteProgress } from '../../components/VoteProgress';
-import { useContractCallWithValue } from '../../hooks/useContractCallWithValue';
 import { useAccount } from '../../hooks/useAccount';
 import { network } from '../BlockChainProvider/network';
-import { fromWei, genesisAddress, getContract } from '../../../utils/helpers';
+import { fromWei, getContract, numberFromWei } from '../../../utils/helpers';
 import { useWeiAmount } from '../../hooks/useWeiAmount';
 import { LinkToExplorer } from '../../components/LinkToExplorer';
+import { useSoV_balanceOf } from '../../hooks/sov/useSoV_balanceOf';
+import { useStaking_getCurrentVotes } from '../../hooks/staking/useStaking_getCurrentVotes';
+import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
+import { useStaking_currentLock } from '../../hooks/staking/useStaking_currentLock';
+import {
+  staking_allowance,
+  staking_approve,
+  staking_increaseStake,
+  staking_stake,
+  staking_withdraw,
+} from '../BlockChainProvider/requests/staking';
+import { StakeForm } from './components/StakeForm';
+import { PageSkeleton } from '../../components/PageSkeleton';
+import { useIsConnected } from '../../hooks/useIsConnected';
+import { WithdrawForm } from './components/WithdrawForm';
+import { ExtendStakingDurationForm } from './components/ExtendStakingDurationForm';
+import { IncreaseStakeForm } from './components/IncreaseStakeForm';
 
 interface Props {}
 
+const now = new Date();
+
 export function StakePage(props: Props) {
+  const isConnected = useIsConnected();
+  if (isConnected) {
+    return <InnerStakePage />;
+  }
+  return (
+    <>
+      <Helmet>
+        <title>Stake</title>
+      </Helmet>
+      <Header />
+      <main>
+        <div className="bg-black">
+          <div className="container">
+            <h2 className="text-white pt-20 pb-8">Staking</h2>
+
+            <div className="flex flex-col pb-8 md:flex-row md:space-x-4">
+              <div className="flex flex-row flex-no-wrap justify-between bg-gray-900 text-white p-3 w-full md:w-1/2 mb-3 md:mb-0">
+                <div>
+                  <div className={`text-white text-xl`}>-----</div>
+                  <div className="text-gray-600 text-sm">You staked</div>
+                </div>
+                <div className="flex flex-col items-end justify-center w-1/2 border-1 border-red-300">
+                  <div className="mt-5 w-full">
+                    <VoteProgress value={0} max={100} color="green" />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row flex-no-wrap justify-between bg-gray-900 text-white p-3 w-full md:w-1/2 mb-3 md:mb-0">
+                <div>
+                  <div className={`text-white text-xl`}>-----</div>
+                  <div className="text-gray-600 text-sm">Your votes</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex space-x-4">
+              <div className="bg-white rounded-t shadow p-3 w-full">
+                <h4 className="font-bold">Staking</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="container">
+          <div className="flex flex-row space-x-4">
+            <div className="w-full bg-white rounded-b shadow p-3">
+              <i>Please connect with your wallet to use staking.</i>
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+function InnerStakePage(props: Props) {
   useInjectReducer({ key: sliceKey, reducer: reducer });
   useInjectSaga({ key: sliceKey, saga: stakePageSaga });
 
@@ -34,76 +107,106 @@ export function StakePage(props: Props) {
   const dispatch = useDispatch();
 
   const account = useAccount();
-  const balanceOf = useContractCallWithValue(
-    'staking',
-    'balanceOf',
-    '0',
-    account,
-  );
+  const balanceOf = useStaking_balanceOf(account);
+  const voteBalance = useStaking_getCurrentVotes(account);
 
-  const voteBalance = useContractCallWithValue(
-    'staking',
-    'getCurrentVotes',
-    '-',
-    account,
-  );
-
-  const sovBalanceOf = useContractCallWithValue(
-    'sovToken',
-    'balanceOf',
-    '0',
-    account,
-  );
+  const sovBalanceOf = useSoV_balanceOf(account);
+  const totalStakedBalance = useSoV_balanceOf(getContract('staking').address);
+  const s = useStaking_currentLock(account);
 
   const [amount, setAmount] = useState('');
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [days, setDays] = useState('3');
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState<string[]>([]);
+  const [currentLock, setCurrentLock] = useState<Date>(null as any);
 
   const weiAmount = useWeiAmount(amount);
+  const weiWithdrawAmount = useWeiAmount(withdrawAmount);
 
-  const validate = () => {
+  useEffect(() => {
+    setCurrentLock(new Date(Number(s.value) * 1e3));
+  }, [s.value]);
+
+  const validateStakeForm = useCallback(() => {
     if (loading) return false;
     const num = Number(amount);
     if (!num || isNaN(num) || num <= 0) return false;
-    return num * 1e18 <= sovBalanceOf.value;
-  };
+    return num * 1e18 <= Number(sovBalanceOf.value);
+  }, [loading, amount, sovBalanceOf]);
 
-  const handleSubmit = useCallback(
+  const validateWithdrawForm = useCallback(() => {
+    if (loading) return false;
+    const num = Number(withdrawAmount);
+    if (!num || isNaN(num) || num <= 0) return false;
+    if (currentLock && currentLock > now) return false;
+    return num * 1e18 <= Number(balanceOf.value);
+  }, [loading, withdrawAmount, balanceOf, currentLock]);
+
+  const validateExtendTimeForm = useCallback(() => {
+    if (loading) return false;
+    const num = Number(days);
+    return !(!num || isNaN(num) || num <= 0);
+  }, [loading, days]);
+
+  const handleStakeSubmit = useCallback(
     async e => {
       e.preventDefault();
       setLoading(true);
       let nonce = await network.nonce(account);
-      const allowance = await network.call('sovToken', 'allowance', [
-        account,
-        getContract('staking').address,
-      ]);
+      const allowance = await staking_allowance(account);
 
       if (allowance < weiAmount) {
-        const approveTx = await network.send(
-          'sovToken',
-          'approve',
-          getContract('staking').address,
-          weiAmount,
-          {
-            from: account,
-            nonce,
-          },
-        );
+        const approveTx = await staking_approve(weiAmount, account, nonce);
         setTxHash(prevState => [...prevState, approveTx]);
         nonce += 1;
       }
 
-      const stakeTx = await network.send(
-        'staking',
-        'stake',
-        weiAmount,
-        1209600, // two weeks
-        genesisAddress,
-        genesisAddress,
-        { from: account, nonce },
-      );
+      const stakeTx = await staking_stake(weiAmount, 1209600, account, nonce);
       setLoading(false);
       setTxHash(prevState => [...prevState, stakeTx]);
+    },
+    [weiAmount, account],
+  );
+
+  const handleIncreaseStakeSubmit = useCallback(
+    async e => {
+      e.preventDefault();
+      setLoading(true);
+      let nonce = await network.nonce(account);
+      const allowance = await staking_allowance(account);
+
+      if (allowance < weiAmount) {
+        const approveTx = await staking_approve(weiAmount, account, nonce);
+        setTxHash(prevState => [...prevState, approveTx]);
+        nonce += 1;
+      }
+
+      const stakeTx = await staking_increaseStake(weiAmount, account, nonce);
+      setLoading(false);
+      setTxHash(prevState => [...prevState, stakeTx]);
+    },
+    [weiAmount, account],
+  );
+
+  const handleWithdrawSubmit = useCallback(
+    async e => {
+      e.preventDefault();
+      setLoading(true);
+      const withdrawTx = await staking_withdraw(weiWithdrawAmount, account);
+      setLoading(false);
+      setTxHash(prevState => [...prevState, withdrawTx]);
+    },
+    [weiWithdrawAmount, account],
+  );
+
+  const handleExtendTimeSubmit = useCallback(
+    async e => {
+      e.preventDefault();
+      setLoading(true);
+      const withdrawTx = await staking_withdraw(weiAmount, account);
+      setLoading(false);
+      setTxHash(prevState => [...prevState, withdrawTx]);
     },
     [weiAmount, account],
   );
@@ -127,13 +230,17 @@ export function StakePage(props: Props) {
                       balanceOf.loading && 'skeleton'
                     }`}
                   >
-                    {Number(fromWei(balanceOf.value)).toFixed(4)}
+                    {numberFromWei(balanceOf.value).toFixed(4)}
                   </div>
                   <div className="text-gray-600 text-sm">You staked</div>
                 </div>
                 <div className="flex flex-col items-end justify-center w-1/2 border-1 border-red-300">
                   <div className="mt-5 w-full">
-                    <VoteProgress value={600} max={1000} color="green" />
+                    <VoteProgress
+                      value={numberFromWei(balanceOf.value)}
+                      max={numberFromWei(totalStakedBalance.value)}
+                      color="green"
+                    />
                   </div>
                 </div>
               </div>
@@ -144,83 +251,85 @@ export function StakePage(props: Props) {
                       voteBalance.loading && 'skeleton'
                     }`}
                   >
-                    {voteBalance.value}
+                    {Number(fromWei(voteBalance.value)).toFixed(0)}
                   </div>
-                  <div className="text-gray-600 text-sm">Votes</div>
+                  <div className="text-gray-600 text-sm">Your votes</div>
                 </div>
               </div>
             </div>
             <div className="flex space-x-4">
-              <div className="bg-white rounded-t shadow p-3 md:w-2/3">
-                <h4 className="font-bold">Stake</h4>
+              <div className="bg-white rounded-t shadow p-3 w-full">
+                <h4 className="font-bold">Staking</h4>
               </div>
             </div>
           </div>
         </div>
         <div className="container">
           <div className="flex flex-row space-x-4">
-            <div className="md:w-2/3 bg-white rounded-b shadow p-3">
-              <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                  <label
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                    htmlFor="amount"
-                  >
-                    Amount
-                  </label>
-                  <div className="flex space-x-4">
-                    <input
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      id="username"
-                      type="text"
-                      placeholder="Amount"
-                      value={amount}
-                      onChange={e => setAmount(e.currentTarget.value)}
-                    />
-                    <button
-                      type="button"
-                      className=""
-                      onClick={() =>
-                        setAmount((sovBalanceOf.value / 1e18).toFixed(18))
-                      }
-                    >
-                      MAX
-                    </button>
-                  </div>
-                  <div className="text-gray-700 text-xs mt-3">
-                    Balance:{' '}
-                    <span
-                      className={`text-gray-900 ${
-                        sovBalanceOf.loading && 'skeleton'
-                      }`}
-                    >
-                      {(sovBalanceOf.value / 1e18).toFixed(4)}
-                    </span>{' '}
-                    SoV
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  className={`bg-green-500 text-white px-4 py-2 rounded ${
-                    !validate() && 'opacity-50 cursor-not-allowed'
-                  }`}
-                  disabled={!validate()}
-                >
-                  Stake
-                </button>
-
-                <div>
-                  {txHash.map(e => (
-                    <div key={e} className="mt-3">
-                      <LinkToExplorer
-                        txHash={e}
-                        className="text-gray-600 hover:text-gray-900"
+            <div className="w-full bg-white rounded-b shadow p-3">
+              {balanceOf.loading ? (
+                <>
+                  <PageSkeleton />
+                </>
+              ) : (
+                <>
+                  {balanceOf.value === '0' ? (
+                    <>
+                      <StakeForm
+                        handleSubmit={handleStakeSubmit}
+                        amount={amount}
+                        onChangeAmount={e => setAmount(e)}
+                        sovBalanceOf={sovBalanceOf}
+                        isValid={validateStakeForm()}
                       />
-                    </div>
-                  ))}
-                </div>
-              </form>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex flex-col space-y-8 md:flex-row md:space-x-8">
+                        <div className="w-full md:w-1/2">
+                          <div>
+                            <IncreaseStakeForm
+                              handleSubmit={handleIncreaseStakeSubmit}
+                              amount={amount}
+                              onChangeAmount={e => setAmount(e)}
+                              sovBalanceOf={sovBalanceOf}
+                              isValid={validateStakeForm()}
+                            />
+                          </div>
+                          <div className="mt-3 mb-3 border-t pt-3">
+                            <ExtendStakingDurationForm
+                              handleSubmit={handleExtendTimeSubmit}
+                              amount={days}
+                              onChangeAmount={e => setDays(e)}
+                              isValid={validateExtendTimeForm()}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full mt-5 md:w-1/2 md:mt-0">
+                          <WithdrawForm
+                            handleSubmit={handleWithdrawSubmit}
+                            amount={withdrawAmount}
+                            onChangeAmount={e => setWithdrawAmount(e)}
+                            balanceOf={balanceOf}
+                            isValid={validateWithdrawForm()}
+                            currentLock={currentLock}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+              <div>
+                {txHash.map(e => (
+                  <div key={e} className="mt-3">
+                    <LinkToExplorer
+                      txHash={e}
+                      className="text-gray-600 hover:text-gray-900"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

@@ -2,20 +2,20 @@ import { useEffect, useState } from 'react';
 import { ContractName } from 'app/containers/BlockChainProvider/types';
 import { network } from '../containers/BlockChainProvider/network';
 
-interface ContractCallResponse {
-  value: string | null;
+export interface ContractCallResponse<T = string> {
+  value: T | null;
   loading: boolean;
   error: string | null;
 }
 
-export function useContractCall(
+export function useContractCall<T = string>(
   contractName: ContractName,
   methodName: string,
   ...args: any
-): ContractCallResponse {
-  const [state, setState] = useState<any>({
+): ContractCallResponse<T> {
+  const [state, setState] = useState<ContractCallResponse<T>>({
     value: null,
-    loading: false,
+    loading: true,
     error: null,
   });
 
@@ -28,7 +28,7 @@ export function useContractCall(
         .then(value => {
           setState(prevState => ({
             ...prevState,
-            value,
+            value: value as any,
             loading: false,
             error: null,
           }));

@@ -4,6 +4,7 @@ import { LinkToExplorer } from '../../../components/LinkToExplorer';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
 import { useContractCall } from '../../../hooks/useContractCall';
+import { numberFromWei } from '../../../../utils/helpers';
 
 interface Props {
   proposalId: number;
@@ -60,7 +61,8 @@ export function VoteCaster(props: Props) {
       <div className="bg-gray-900 text-white px-3 py-2 w-2/3">
         <div className="text-xs text-gray-500">You voted</div>
         <div className={`truncate text-sm ${loading && 'skeleton'}`}>
-          {d.votes.toLocaleString()} votes - {d.support ? 'For' : 'Against'}
+          {numberFromWei(d.votes).toLocaleString()} votes -{' '}
+          {d.support ? 'For' : 'Against'}
         </div>
       </div>
     );

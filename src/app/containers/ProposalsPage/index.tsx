@@ -5,7 +5,6 @@ import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
 import { Proposal } from '../../../types/Proposal';
-import { RowSkeleton } from '../../components/PageSkeleton';
 import { ProposalRow } from '../ProposalRow/Loadable';
 
 export function ProposalsPage() {

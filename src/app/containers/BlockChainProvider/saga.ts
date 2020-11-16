@@ -22,7 +22,19 @@ function* setupSaga({ payload }: PayloadAction<ChainId>) {
   const web3 = new Web3(web3Provider);
   network.setWeb3(web3, payload === 30 ? 'mainnet' : 'testnet');
   walletConnection.init(payload);
-  yield put(actions.setupCompleted());
+
+  // const threshold = yield call(governance_proposalThreshold);
+  // const quorumVotes = yield call(governance_quorumVotes);
+
+  const threshold = 0;
+  const quorumVotes = 0;
+
+  yield put(
+    actions.setupCompleted({
+      proposalThreshold: threshold,
+      quorumVotes: quorumVotes,
+    }),
+  );
 }
 
 function* connectedSaga({ payload }: PayloadAction<{ address: string }>) {

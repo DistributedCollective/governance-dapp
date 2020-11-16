@@ -10,6 +10,13 @@ export const initialState: ContainerState = {
   connected: false,
   connecting: false,
   address: '',
+  governanceContractConfig: {
+    proposalMaxOperations: 10,
+    votingDelay: 1,
+    votingPeriod: 8640,
+    proposalThreshold: 0,
+    quorumVotes: 0,
+  },
 };
 
 const blockChainProviderSlice = createSlice({
@@ -21,8 +28,16 @@ const blockChainProviderSlice = createSlice({
       state.network = payload === 30 ? 'mainnet' : 'testnet';
       state.setupCompleted = false;
     },
-    setupCompleted(state) {
+    setupCompleted(
+      state,
+      {
+        payload,
+      }: PayloadAction<{ quorumVotes: number; proposalThreshold: number }>,
+    ) {
       state.setupCompleted = true;
+      state.governanceContractConfig.quorumVotes = payload.quorumVotes;
+      state.governanceContractConfig.proposalThreshold =
+        payload.proposalThreshold;
     },
     someAction(state, action: PayloadAction<any>) {},
     connect(state) {

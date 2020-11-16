@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { ContractName } from 'app/containers/BlockChainProvider/types';
 import { useContractCall } from './useContractCall';
 
-export function useContractCallWithValue(
+export function useContractCallWithValue<T = string>(
   contractName: ContractName,
   methodName: string,
-  defaultValue: string | any = '0',
+  defaultValue: T | any = '0',
   ...args: any
-) {
-  const { value, loading, error } = useContractCall(
+): { value: T; loading: boolean; error: string | null } {
+  const { value, loading, error } = useContractCall<T>(
     contractName,
     methodName,
     ...args,

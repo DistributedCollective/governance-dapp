@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
 import { VoteProgress } from '../../components/VoteProgress';
-import { kFormatter, prettyTx } from '../../../utils/helpers';
+import { kFormatter, numberFromWei, prettyTx } from '../../../utils/helpers';
 import { network } from '../BlockChainProvider/network';
 import { getStatus, Proposal, ProposalState } from '../../../types/Proposal';
 import { VoteCaster } from './components/VoteCaster';
@@ -83,7 +83,6 @@ export function ProposalDetailsPage() {
       network
         .call('governorAlpha', 'state', [data.id])
         .then(e => {
-          console.log(e);
           setState(e as any);
         })
         .catch(console.error);
@@ -130,15 +129,15 @@ export function ProposalDetailsPage() {
             <div className="flex flex-row space-x-4">
               <VotingTableHeader
                 title="For"
-                votes={data?.forVotes || 0}
-                maxVotes={(data?.forVotes || 0) + (data?.againstVotes || 0)}
+                votes={numberFromWei(data?.forVotes || 0)}
+                maxVotes={numberFromWei(data?.quorum || 0)}
                 color="green"
                 loading={loading}
               />
               <VotingTableHeader
                 title="Against"
-                votes={data?.againstVotes || 0}
-                maxVotes={(data?.forVotes || 0) + (data?.againstVotes || 0)}
+                votes={numberFromWei(data?.againstVotes || 0)}
+                maxVotes={numberFromWei(data?.quorum || 0)}
                 color="gray"
                 loading={loading}
               />
@@ -223,7 +222,7 @@ function VotingTable(props: TableProps) {
             <VotingRow
               key={item.voter}
               voter={item.voter}
-              votes={item.votes}
+              votes={numberFromWei(item.votes)}
               loading={props.loading}
             />
           ))}

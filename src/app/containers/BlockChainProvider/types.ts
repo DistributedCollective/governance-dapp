@@ -8,6 +8,7 @@ export interface BlockChainProviderState {
   connected: boolean;
   connecting: boolean;
   address: string;
+  governanceContractConfig: GovernanceContractConfig;
 }
 
 export type NetworkName = keyof IContractNetworks;
@@ -30,6 +31,14 @@ export interface INetworkToContract {
 export interface IContract {
   address: string;
   abi: AbiItem[] | AbiItem;
+}
+
+export interface GovernanceContractConfig {
+  proposalMaxOperations: number;
+  votingDelay: number;
+  votingPeriod: number;
+  proposalThreshold: number;
+  quorumVotes: number;
 }
 
 export type ContractName = keyof INetworkToContract;

@@ -5,9 +5,9 @@
  */
 
 import React from 'react';
-import { getStatus, Proposal, ProposalState } from 'types/Proposal';
+import { Proposal, ProposalState } from 'types/Proposal';
 import { Link } from 'react-router-dom';
-import { dateByBlocks } from '../../../utils/helpers';
+import { dateByBlocks, numberFromWei } from '../../../utils/helpers';
 import { VoteProgress } from '../../components/VoteProgress';
 import { useGetProposalCreateEvent } from '../../hooks/useGetProposalCreateEvent';
 import { useGetProposalState } from '../../hooks/useGetProposalState';
@@ -68,14 +68,14 @@ export function ProposalRow({ proposal }: Props) {
             </div>
             <div className="hidden md:block md:w-1/3">
               <VoteProgress
-                max={proposal.forVotes + proposal.againstVotes}
-                value={proposal.forVotes}
+                max={numberFromWei(proposal.quorum)}
+                value={numberFromWei(proposal.forVotes)}
                 color="green"
                 showVotes={true}
               />
               <VoteProgress
-                max={proposal.forVotes + proposal.againstVotes}
-                value={proposal.againstVotes}
+                max={numberFromWei(proposal.quorum)}
+                value={numberFromWei(proposal.againstVotes)}
                 color="gray"
                 showVotes={true}
               />

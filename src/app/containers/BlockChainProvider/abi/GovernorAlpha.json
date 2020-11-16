@@ -497,13 +497,13 @@
     "name": "proposalThreshold",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "uint96",
         "name": "",
-        "type": "uint256"
+        "type": "uint96"
       }
     ],
     "payable": false,
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -523,39 +523,39 @@
         "type": "uint256"
       },
       {
-        "internalType": "address",
-        "name": "proposer",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "eta",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
+        "internalType": "uint32",
         "name": "startBlock",
-        "type": "uint256"
+        "type": "uint32"
       },
       {
-        "internalType": "uint256",
+        "internalType": "uint32",
         "name": "endBlock",
-        "type": "uint256"
+        "type": "uint32"
       },
       {
-        "internalType": "uint256",
-        "name": "startTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
+        "internalType": "uint96",
         "name": "forVotes",
-        "type": "uint256"
+        "type": "uint96"
       },
       {
-        "internalType": "uint256",
+        "internalType": "uint96",
         "name": "againstVotes",
-        "type": "uint256"
+        "type": "uint96"
+      },
+      {
+        "internalType": "uint96",
+        "name": "quorum",
+        "type": "uint96"
+      },
+      {
+        "internalType": "uint64",
+        "name": "eta",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "startTime",
+        "type": "uint64"
       },
       {
         "internalType": "bool",
@@ -566,6 +566,11 @@
         "internalType": "bool",
         "name": "executed",
         "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "proposer",
+        "type": "address"
       }
     ],
     "payable": false,
@@ -634,13 +639,13 @@
     "name": "quorumVotes",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "uint96",
         "name": "",
-        "type": "uint256"
+        "type": "uint96"
       }
     ],
     "payable": false,
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
   },
   {

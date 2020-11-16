@@ -3,10 +3,8 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
-import { VoteProgress } from '../../components/VoteProgress';
-import { ProposalListItem } from '../../components/ProposalListItem/Loadable';
 import { network } from '../BlockChainProvider/network';
-import { Proposal, RowProposal } from '../../../types/Proposal';
+import { Proposal } from '../../../types/Proposal';
 import { ProposalRow } from '../ProposalRow/Loadable';
 
 export function HomePage() {
@@ -101,6 +99,13 @@ export function HomePage() {
                 <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
                   <div className="w-full skeleton h-4" />
                   <div className="w-full skeleton h-4" />
+                </div>
+              </>
+            )}
+            {!loading && !total && (
+              <>
+                <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+                  <i>No proposals yet.</i>
                 </div>
               </>
             )}
