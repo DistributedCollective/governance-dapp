@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { EventData } from 'web3-eth-contract';
 import { RevertInstructionError } from 'web3-core-helpers';
 import {
   ContractName,
@@ -99,7 +100,7 @@ class Network {
     filter: any = undefined,
     fromBlock: number = 0,
     toBlock: number | 'latest' = 'latest',
-  ) {
+  ): Promise<EventData[]> {
     return this.contracts[contractName].getPastEvents(eventName, {
       fromBlock,
       toBlock,

@@ -4,17 +4,13 @@ import { Link } from 'react-router-dom';
 import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
-import {
-  Proposal,
-  ProposalCreatedEvent,
-  RowProposal,
-} from '../../../types/Proposal';
+import { Proposal } from '../../../types/Proposal';
 import { RowSkeleton } from '../../components/PageSkeleton';
-import { ProposalListItem } from '../../components/ProposalListItem/Loadable';
+import { ProposalRow } from '../ProposalRow/Loadable';
 
 export function ProposalsPage() {
   const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState<RowProposal[]>([]);
+  const [items, setItems] = useState<Proposal[]>([]);
   const [, /*total*/ setTotal] = useState<number>(0);
   useEffect(() => {
     setLoading(true);
@@ -29,20 +25,12 @@ export function ProposalsPage() {
       if (proposalCount > 25) {
         to = proposalCount - 25;
       }
-      const items: RowProposal[] = [];
+      const items: Proposal[] = [];
       for (let index = proposalCount; index > to; index--) {
         const item = ((await network.call('governorAlpha', 'proposals', [
           index,
         ])) as unknown) as Proposal;
-        const events = await network.getPastEvents(
-          'governorAlpha',
-          'ProposalCreated',
-          { id: item.id },
-          item.startBlock - 1,
-          item.endBlock,
-        );
-        const event = events[0].returnValues as ProposalCreatedEvent;
-        items.push({ ...item, description: event.description });
+        items.push(item);
       }
       setItems(items);
       setLoading(false);
@@ -72,15 +60,16 @@ export function ProposalsPage() {
         </div>
         <div className="container">
           <div className="bg-white rounded-b shadow">
-            {loading && (
-              <div className="px-5 py-2">
-                <RowSkeleton />
-                <RowSkeleton />
-                <RowSkeleton />
-              </div>
+            {loading && !items.length && (
+              <>
+                <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+                  <div className="w-full skeleton h-4" />
+                  <div className="w-full skeleton h-4" />
+                </div>
+              </>
             )}
             {items.map(item => (
-              <ProposalListItem key={item.id} {...item} />
+              <ProposalRow key={item.id} proposal={item} />
             ))}
           </div>
         </div>
