@@ -13,10 +13,15 @@ import { selectBlockChainProvider } from './selectors';
 import { blockChainProviderSaga } from './saga';
 import { PageSkeleton } from '../../components/PageSkeleton';
 import { TransactionHistory } from '../TransactionHistory/Loadable';
+import { ChainId } from './types';
 
 interface Props {
   children: React.ReactNode;
 }
+
+export const DEFAULT_CHAIN = Number(
+  process.env.REACT_APP_CHAIN_ID || 31,
+) as ChainId;
 
 export function BlockChainProvider(props: Props) {
   useInjectReducer({ key: sliceKey, reducer: reducer });
@@ -28,7 +33,7 @@ export function BlockChainProvider(props: Props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(actions.setup(31));
+    dispatch(actions.setup(DEFAULT_CHAIN));
   }, [dispatch]);
 
   if (!blockChainProvider.setupCompleted) {

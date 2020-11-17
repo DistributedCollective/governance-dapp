@@ -39,7 +39,7 @@ export function ProposalRow({ proposal }: Props) {
     <>
       <Link
         to={`/proposals/${proposal.id}`}
-        className="flex px-5 py-3 transition duration-300 bordered-list-item"
+        className="flex px-5 py-3 transition duration-300 bordered-list-item hover:no-underline"
       >
         {state === ProposalState.Active ? (
           <div className="flex justify-between items-center w-full">

@@ -9,8 +9,8 @@ export const genesisAddress = '0x0000000000000000000000000000000000000000';
 
 export function kFormatter(num) {
   return Math.abs(num) > 999
-    ? `${Number(Math.sign(num) * (Math.abs(num) / 1000)).toFixed(1)}k`
-    : Math.sign(num) * Math.abs(num);
+    ? `${Number(Math.sign(num) * (Math.abs(num) / 1000)).toLocaleString()}k`
+    : `${Number(Math.sign(num) * Math.abs(num)).toLocaleString()}`;
 }
 
 export function getSecondsBetweenBlocks(
@@ -21,7 +21,7 @@ export function getSecondsBetweenBlocks(
 }
 
 export function printDate(timestamp: number) {
-  return new Date(timestamp).toLocaleDateString();
+  return new Date(timestamp).toLocaleString();
 }
 
 export function dateByBlocks(

@@ -1,5 +1,5 @@
 import React, { FormEvent } from 'react';
-import { fromWei } from 'utils/helpers';
+import { fromWei, numberFromWei } from 'utils/helpers';
 import { ContractCallResponse } from 'app/hooks/useContractCall';
 
 interface Props {
@@ -46,7 +46,7 @@ export function StakeForm(props: Props) {
               props.sovBalanceOf.loading && 'skeleton'
             }`}
           >
-            {Number(fromWei(props.sovBalanceOf.value)).toFixed(4)}
+            {numberFromWei(props.sovBalanceOf.value).toLocaleString()}
           </span>{' '}
           SoV
         </div>

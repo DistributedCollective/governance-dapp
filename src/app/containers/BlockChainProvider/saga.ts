@@ -13,14 +13,15 @@ import Web3 from 'web3';
 import { network } from './network';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { ChainId } from './types';
-import { rpcNodes } from './classifiers';
+import { wssNodes } from './classifiers';
 import { walletConnection } from './web3-modal';
 import { selectBlockChainProvider } from './selectors';
 import { TransactionReceipt } from 'web3-core';
 
 function* setupSaga({ payload }: PayloadAction<ChainId>) {
-  const nodeUrl = rpcNodes[payload];
+  const nodeUrl = wssNodes[payload];
   let web3Provider;
+  let isWebsocket = false;
   if (nodeUrl.startsWith('http')) {
     web3Provider = new Web3.providers.HttpProvider(nodeUrl, {
       keepAlive: true,
@@ -29,9 +30,10 @@ function* setupSaga({ payload }: PayloadAction<ChainId>) {
     web3Provider = new Web3.providers.WebsocketProvider(nodeUrl, {
       reconnectDelay: 10,
     });
+    isWebsocket = true;
   }
   const web3 = new Web3(web3Provider);
-  network.setWeb3(web3, payload === 30 ? 'mainnet' : 'testnet');
+  network.setWeb3(web3, payload === 30 ? 'mainnet' : 'testnet', isWebsocket);
   walletConnection.init(payload);
 
   // const threshold = yield call(governance_proposalThreshold);
@@ -86,6 +88,7 @@ function createBlockPollChannel({ interval, web3 }) {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function* callCreateBlockPollChannel() {
   const web3 = network.web3;
   const blockChannel = yield call(createBlockPollChannel, {
@@ -166,12 +169,78 @@ function* processBlock({ payload }: PayloadAction<any>) {
   }
 }
 
+function createBlockChannels({ web3 }) {
+  return eventChannel(emit => {
+    const blockEvents = web3.eth
+      .subscribe('newBlockHeaders', (error, result) => {
+        if (error) {
+          emit(actions.blockFailed(error.message));
+
+          console.error('Error in block header subscription:');
+          console.error(error);
+
+          emit(END);
+        }
+      })
+      .on('data', blockHeader => {
+        emit(actions.blockReceived(blockHeader));
+        // emit({
+        //   type: 'BLOCK_RECEIVED',
+        //   blockHeader,
+        //   web3,
+        //   syncAlways,
+        // });
+      })
+      .on('error', error => {
+        emit(actions.blockFailed(error.message));
+        // emit({ type: 'BLOCKS_FAILED', error });
+        emit(END);
+      });
+
+    return () => {
+      blockEvents.off();
+    };
+  });
+}
+
+function* callCreateBlockChannels() {
+  const web3 = network.web3;
+  const blockChannel = yield call(createBlockChannels, { web3 });
+
+  try {
+    while (true) {
+      const event = yield take(blockChannel);
+      yield put(event);
+    }
+  } finally {
+    blockChannel.close();
+  }
+}
+
+function* processBlockHeader(event) {
+  const blockNumber = event.payload.number;
+  const web3 = network.web3;
+
+  try {
+    const block = yield call(web3.eth.getBlock, blockNumber, true);
+    yield call(processBlock, {
+      type: actions.processBlock.type,
+      payload: block,
+    });
+  } catch (error) {
+    console.error('Error in block processing:');
+    console.error(error);
+  }
+}
+
 // end block watcher
 
 export function* blockChainProviderSaga() {
   yield takeLatest(actions.setup.type, setupSaga);
   yield takeLatest(actions.connected.type, connectedSaga);
   yield takeLatest(actions.disconnect.type, disconnectSaga);
-  yield takeLatest(actions.setupCompleted.type, callCreateBlockPollChannel);
-  yield takeEvery(actions.processBlock.type, processBlock);
+  yield takeLatest(actions.setupCompleted.type, callCreateBlockChannels);
+  yield takeEvery(actions.blockReceived.type, processBlockHeader);
+  // yield takeLatest(actions.setupCompleted.type, callCreateBlockPollChannel);
+  // yield takeEvery(actions.processBlock.type, processBlock); // when using poll channel
 }

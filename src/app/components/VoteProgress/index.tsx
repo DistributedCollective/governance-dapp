@@ -16,7 +16,10 @@ const colorMap = {
 };
 
 export function VoteProgress(props: Props) {
-  const percentage = Math.round((props.value / props.max) * 100) || 0;
+  const percentage = Math.min(
+    Math.round((props.value / props.max) * 100) || 0,
+    100,
+  );
   return (
     <div className="w-full flex flex-row flex-no-wrap items-center justify-between mt-3">
       <div

@@ -49,7 +49,6 @@ const blockChainProviderSlice = createSlice({
       state.governanceContractConfig.proposalThreshold =
         payload.proposalThreshold;
     },
-    someAction(state, action: PayloadAction<any>) {},
     connect(state) {
       state.connecting = true;
     },

@@ -197,9 +197,16 @@ interface TableProps {
 }
 
 function VotingTable(props: TableProps) {
-  const items = (props.items || []).filter(
-    item => item.support === props.showSupporters,
-  );
+  const [items, setItems] = useState<
+    { support: boolean; voter: string; votes: number }[]
+  >([]);
+
+  useEffect(() => {
+    setItems(
+      (props.items || []).filter(item => item.support === props.showSupporters),
+    );
+  }, [props.items, props.showSupporters]);
+
   return (
     <div className="bg-white rounded-b shadow w-1/2">
       <div className="flex flex-row justify-between text-gray-500 text-xs font-medium bordered-b-gray px-5 py-2">
@@ -208,7 +215,7 @@ function VotingTable(props: TableProps) {
       </div>
       {items.length > 0 && (
         <div className="vote-area overflow-y-auto">
-          {props.items.map(item => (
+          {items.map(item => (
             <VotingRow
               key={item.voter}
               voter={item.voter}
@@ -275,7 +282,7 @@ function VotingRow({
       href={`${url}/address/${voter}`}
       target="_blank"
       rel="noreferrer"
-      className="flex flex-row justify-between text-black transition duration-300 bordered-list-item px-5 py-3"
+      className="flex flex-row justify-between text-black transition duration-300 bordered-list-item px-5 py-3 hover:no-underline"
     >
       <div>{prettyTx(voter as string)}</div>
       <div>{votes?.toLocaleString()}</div>

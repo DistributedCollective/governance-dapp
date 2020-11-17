@@ -60,3 +60,9 @@ export function staking_increaseStake(
     nonce,
   });
 }
+
+export function staking_extendStakingDuration(until: string, account: string) {
+  return network.send('staking', 'extendStakingDuration', until, {
+    from: account,
+  });
+}

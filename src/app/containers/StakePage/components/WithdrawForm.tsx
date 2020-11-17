@@ -1,5 +1,5 @@
 import React, { FormEvent } from 'react';
-import { fromWei } from 'utils/helpers';
+import { fromWei, numberFromWei } from 'utils/helpers';
 import { ContractCallResponse } from 'app/hooks/useContractCall';
 
 interface Props {
@@ -43,7 +43,7 @@ export function WithdrawForm(props: Props) {
           <span
             className={`text-gray-900 ${props.balanceOf.loading && 'skeleton'}`}
           >
-            {Number(fromWei(props.balanceOf.value)).toFixed(4)}
+            {numberFromWei(props.balanceOf.value).toLocaleString()}
           </span>{' '}
           SoV
         </div>

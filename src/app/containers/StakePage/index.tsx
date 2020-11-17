@@ -26,6 +26,7 @@ import { useStaking_currentLock } from '../../hooks/staking/useStaking_currentLo
 import {
   staking_allowance,
   staking_approve,
+  staking_extendStakingDuration,
   staking_increaseStake,
   staking_stake,
   staking_withdraw,
@@ -197,10 +198,13 @@ function InnerStakePage(props: Props) {
     async e => {
       e.preventDefault();
       setLoading(true);
-      await staking_withdraw(weiAmount, account);
+      await staking_extendStakingDuration(
+        String(currentLock.getTime() / 1e3 + Number(days) * 86400),
+        account,
+      );
       setLoading(false);
     },
-    [weiAmount, account],
+    [days, account, currentLock],
   );
 
   return (
@@ -222,7 +226,7 @@ function InnerStakePage(props: Props) {
                       balanceOf.loading && 'skeleton'
                     }`}
                   >
-                    {numberFromWei(balanceOf.value).toFixed(4)}
+                    {numberFromWei(balanceOf.value).toLocaleString()}
                   </div>
                   <div className="text-gray-600 text-sm">You staked</div>
                 </div>
@@ -243,7 +247,7 @@ function InnerStakePage(props: Props) {
                       voteBalance.loading && 'skeleton'
                     }`}
                   >
-                    {Number(fromWei(voteBalance.value)).toFixed(0)}
+                    {numberFromWei(voteBalance.value).toLocaleString()}
                   </div>
                   <div className="text-gray-600 text-sm">Your votes</div>
                 </div>

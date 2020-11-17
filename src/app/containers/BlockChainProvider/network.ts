@@ -11,6 +11,7 @@ import { contracts } from './contracts';
 import { store } from '../../../store/store';
 import { actions } from './slice';
 import { getContract } from '../../../utils/helpers';
+import { DEFAULT_CHAIN } from './index';
 
 class Network {
   public web3: Web3 = null as any;
@@ -21,7 +22,11 @@ class Network {
   private _network: NetworkName = null as any;
   private _writeNetwork: NetworkName = null as any;
 
-  public setWeb3(web3: Web3, network: NetworkName) {
+  public setWeb3(
+    web3: Web3,
+    network: NetworkName,
+    isWebsocket: boolean = false,
+  ) {
     this.web3 = web3;
     if (this._network !== network) {
       this._network = network;
@@ -34,6 +39,17 @@ class Network {
           abi,
         });
       }
+    }
+
+    if (isWebsocket) {
+      const provider = this.web3.currentProvider as any;
+
+      provider.on('end', () => {
+        provider.removeAllListeners('end');
+        this.contracts = {};
+        this.web3 = undefined as any;
+        store.dispatch(actions.setup(DEFAULT_CHAIN));
+      });
     }
   }
 
