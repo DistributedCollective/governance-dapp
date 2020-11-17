@@ -9,12 +9,12 @@ interface StateResult {
 
 export function useGetProposalState(proposal: Proposal) {
   const [state, setState] = useState<StateResult>({
-    state: ProposalState.Active,
+    state: ProposalState.Pending,
     loading: true,
   });
 
   useEffect(() => {
-    if (proposal.id) {
+    if (proposal?.id) {
       setState(prevState => ({ ...prevState, loading: true }));
       network
         .call('governorAlpha', 'state', [proposal.id])

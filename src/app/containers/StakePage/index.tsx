@@ -19,7 +19,6 @@ import { useAccount } from '../../hooks/useAccount';
 import { network } from '../BlockChainProvider/network';
 import { fromWei, getContract, numberFromWei } from '../../../utils/helpers';
 import { useWeiAmount } from '../../hooks/useWeiAmount';
-import { LinkToExplorer } from '../../components/LinkToExplorer';
 import { useSoV_balanceOf } from '../../hooks/sov/useSoV_balanceOf';
 import { useStaking_getCurrentVotes } from '../../hooks/staking/useStaking_getCurrentVotes';
 import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
@@ -118,7 +117,6 @@ function InnerStakePage(props: Props) {
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [days, setDays] = useState('3');
   const [loading, setLoading] = useState(false);
-  const [txHash, setTxHash] = useState<string[]>([]);
   const [currentLock, setCurrentLock] = useState<Date>(null as any);
 
   const weiAmount = useWeiAmount(amount);
@@ -157,14 +155,12 @@ function InnerStakePage(props: Props) {
       const allowance = await staking_allowance(account);
 
       if (allowance < weiAmount) {
-        const approveTx = await staking_approve(weiAmount, account, nonce);
-        setTxHash(prevState => [...prevState, approveTx]);
+        await staking_approve(weiAmount, account, nonce);
         nonce += 1;
       }
 
-      const stakeTx = await staking_stake(weiAmount, 1209600, account, nonce);
+      await staking_stake(weiAmount, 1209600, account, nonce);
       setLoading(false);
-      setTxHash(prevState => [...prevState, stakeTx]);
     },
     [weiAmount, account],
   );
@@ -177,14 +173,12 @@ function InnerStakePage(props: Props) {
       const allowance = await staking_allowance(account);
 
       if (allowance < weiAmount) {
-        const approveTx = await staking_approve(weiAmount, account, nonce);
-        setTxHash(prevState => [...prevState, approveTx]);
+        await staking_approve(weiAmount, account, nonce);
         nonce += 1;
       }
 
-      const stakeTx = await staking_increaseStake(weiAmount, account, nonce);
+      await staking_increaseStake(weiAmount, account, nonce);
       setLoading(false);
-      setTxHash(prevState => [...prevState, stakeTx]);
     },
     [weiAmount, account],
   );
@@ -193,9 +187,8 @@ function InnerStakePage(props: Props) {
     async e => {
       e.preventDefault();
       setLoading(true);
-      const withdrawTx = await staking_withdraw(weiWithdrawAmount, account);
+      await staking_withdraw(weiWithdrawAmount, account);
       setLoading(false);
-      setTxHash(prevState => [...prevState, withdrawTx]);
     },
     [weiWithdrawAmount, account],
   );
@@ -204,9 +197,8 @@ function InnerStakePage(props: Props) {
     async e => {
       e.preventDefault();
       setLoading(true);
-      const withdrawTx = await staking_withdraw(weiAmount, account);
+      await staking_withdraw(weiAmount, account);
       setLoading(false);
-      setTxHash(prevState => [...prevState, withdrawTx]);
     },
     [weiAmount, account],
   );
@@ -320,16 +312,6 @@ function InnerStakePage(props: Props) {
                   )}
                 </>
               )}
-              <div>
-                {txHash.map(e => (
-                  <div key={e} className="mt-3">
-                    <LinkToExplorer
-                      txHash={e}
-                      className="text-gray-600 hover:text-gray-900"
-                    />
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>

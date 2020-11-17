@@ -12,6 +12,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import * as serviceWorker from 'serviceWorker';
+import '@blueprintjs/core/lib/css/blueprint.css';
 import 'styles/tailwind.output.css';
 
 // Import root app
@@ -32,9 +33,7 @@ interface Props {
 const ConnectedApp = ({ Component }: Props) => (
   <Provider store={store}>
     <HelmetProvider>
-      <React.StrictMode>
-        <Component />
-      </React.StrictMode>
+      <Component />
     </HelmetProvider>
   </Provider>
 );

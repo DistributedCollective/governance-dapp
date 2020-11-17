@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { ContractName } from 'app/containers/BlockChainProvider/types';
-import { network } from '../containers/BlockChainProvider/network';
+import { network } from 'app/containers/BlockChainProvider/network';
+import { selectBlockChainProvider } from 'app/containers/BlockChainProvider/selectors';
 
 export interface ContractCallResponse<T = string> {
   value: T | null;
@@ -13,6 +15,7 @@ export function useContractCall<T = string>(
   methodName: string,
   ...args: any
 ): ContractCallResponse<T> {
+  const { syncBlockNumber } = useSelector(selectBlockChainProvider);
   const [state, setState] = useState<ContractCallResponse<T>>({
     value: null,
     loading: true,
@@ -21,7 +24,6 @@ export function useContractCall<T = string>(
 
   useEffect(() => {
     setState(prevState => ({ ...prevState, loading: true, error: null }));
-
     try {
       network
         .call(contractName, methodName, args)
@@ -59,7 +61,7 @@ export function useContractCall<T = string>(
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contractName, methodName, JSON.stringify(args)]);
+  }, [contractName, methodName, JSON.stringify(args), syncBlockNumber]);
 
   return state;
 }

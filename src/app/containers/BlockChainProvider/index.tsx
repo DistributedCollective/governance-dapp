@@ -12,6 +12,7 @@ import { reducer, sliceKey, actions } from './slice';
 import { selectBlockChainProvider } from './selectors';
 import { blockChainProviderSaga } from './saga';
 import { PageSkeleton } from '../../components/PageSkeleton';
+import { TransactionHistory } from '../TransactionHistory/Loadable';
 
 interface Props {
   children: React.ReactNode;
@@ -34,5 +35,10 @@ export function BlockChainProvider(props: Props) {
     return <PageSkeleton />;
   }
 
-  return <>{props.children}</>;
+  return (
+    <>
+      <TransactionHistory />
+      {props.children}
+    </>
+  );
 }

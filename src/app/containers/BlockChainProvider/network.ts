@@ -8,6 +8,9 @@ import {
   NetworkName,
 } from './types';
 import { contracts } from './contracts';
+import { store } from '../../../store/store';
+import { actions } from './slice';
+import { getContract } from '../../../utils/helpers';
 
 class Network {
   public web3: Web3 = null as any;
@@ -84,7 +87,12 @@ class Network {
       return this.writeContracts[contractName].methods[methodName](...params)
         .send(options)
         .once('transactionHash', tx => {
-          // this.store().dispatch(actions.addTransaction(tx));
+          store.dispatch(
+            actions.addTransaction({
+              transactionHash: tx,
+              to: getContract(contractName).address,
+            }),
+          );
           resolve(tx);
         })
         .catch(e => {

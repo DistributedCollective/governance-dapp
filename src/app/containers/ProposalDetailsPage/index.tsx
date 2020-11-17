@@ -6,7 +6,7 @@ import { Footer } from '../../components/Footer/Loadable';
 import { VoteProgress } from '../../components/VoteProgress';
 import { kFormatter, numberFromWei, prettyTx } from '../../../utils/helpers';
 import { network } from '../BlockChainProvider/network';
-import { getStatus, Proposal, ProposalState } from '../../../types/Proposal';
+import { Proposal, ProposalState } from '../../../types/Proposal';
 import { VoteCaster } from './components/VoteCaster';
 import { useIsConnected } from '../../hooks/useIsConnected';
 import { useSelector } from 'react-redux';
@@ -14,13 +14,15 @@ import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
 import { blockExplorers } from '../BlockChainProvider/classifiers';
 import { ProposalActions } from './components/ProposalActions';
 import { ProposalHistory } from './components/ProposalHistory';
+import { ProposalStatusBadge } from '../../components/ProposalStatusBadge';
+import { useGetProposalState } from '../../hooks/useGetProposalState';
 
 export function ProposalDetailsPage() {
   const { id } = useParams();
 
   const isConnected = useIsConnected();
+  const { syncBlockNumber } = useSelector(selectBlockChainProvider);
 
-  const [state, setState] = useState<ProposalState>();
   const [data, setData] = useState<Proposal>(null as any);
   const [createdEvent, setCreatedEvent] = useState<any>(null as any);
   const [loading, setLoading] = useState(false);
@@ -48,7 +50,7 @@ export function ProposalDetailsPage() {
       setLoading(false);
     };
     get().then().catch();
-  }, [id]);
+  }, [id, syncBlockNumber]);
 
   useEffect(() => {
     if (data?.id) {
@@ -76,19 +78,9 @@ export function ProposalDetailsPage() {
         .catch(console.error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(data)]);
+  }, [JSON.stringify(data), syncBlockNumber]);
 
-  useEffect(() => {
-    if (data?.id) {
-      network
-        .call('governorAlpha', 'state', [data.id])
-        .then(e => {
-          setState(e as any);
-        })
-        .catch(console.error);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(data)]);
+  const { state, loading: stateLoading } = useGetProposalState(data);
 
   return (
     <>
@@ -107,10 +99,8 @@ export function ProposalDetailsPage() {
                 <h2 className={`text-white ${loading && 'skeleton'}`}>
                   {createdEvent?.returnValues?.description || 'No description'}
                 </h2>
-                {state !== undefined && (
-                  <div className="inline px-1 rounded border text-white text-xs">
-                    {getStatus(state as ProposalState)}
-                  </div>
+                {state && !stateLoading && (
+                  <ProposalStatusBadge state={state} />
                 )}
               </div>
               <div className="flex flex-row justify-end space-x-4 w-6/12">

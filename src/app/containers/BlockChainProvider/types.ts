@@ -9,6 +9,11 @@ export interface BlockChainProviderState {
   connecting: boolean;
   address: string;
   governanceContractConfig: GovernanceContractConfig;
+  blockNumber: number;
+  syncBlockNumber: number;
+  transactionStack: string[];
+  transactions: Transactions;
+  showTransactions: boolean;
 }
 
 export type NetworkName = keyof IContractNetworks;
@@ -39,6 +44,20 @@ export interface GovernanceContractConfig {
   votingPeriod: number;
   proposalThreshold: number;
   quorumVotes: number;
+}
+
+export interface Transactions {
+  [transactionHash: string]: Transaction;
+}
+
+export type TransactionStatus = 'pending' | 'confirmed' | 'failed';
+export type TransactionType = 'approve' | 'other';
+
+export interface Transaction {
+  transactionHash: string;
+  to: string;
+  status: TransactionStatus;
+  type?: TransactionType;
 }
 
 export type ContractName = keyof INetworkToContract;
