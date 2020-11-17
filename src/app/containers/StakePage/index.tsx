@@ -17,7 +17,7 @@ import { Footer } from '../../components/Footer/Loadable';
 import { VoteProgress } from '../../components/VoteProgress';
 import { useAccount } from '../../hooks/useAccount';
 import { network } from '../BlockChainProvider/network';
-import { fromWei, getContract, numberFromWei } from '../../../utils/helpers';
+import { getContract, numberFromWei } from '../../../utils/helpers';
 import { useWeiAmount } from '../../hooks/useWeiAmount';
 import { useSoV_balanceOf } from '../../hooks/sov/useSoV_balanceOf';
 import { useStaking_getCurrentVotes } from '../../hooks/staking/useStaking_getCurrentVotes';
