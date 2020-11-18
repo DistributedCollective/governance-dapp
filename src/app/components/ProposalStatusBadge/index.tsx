@@ -4,6 +4,7 @@ import { ProposalState } from 'types/Proposal';
 const getTitle = (state: ProposalState) => {
   switch (state) {
     case ProposalState.Pending:
+      return 'Pending';
     case ProposalState.Active:
       return 'Active';
     case ProposalState.Succeeded:

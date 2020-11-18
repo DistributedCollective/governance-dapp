@@ -10,9 +10,10 @@ const getStateClass = (state: ProposalState) => {
     case ProposalState.Canceled:
     case ProposalState.Defeated:
     case ProposalState.Expired:
-    case ProposalState.Pending:
     case ProposalState.Active:
       return 'proposal-state__failed';
+    case ProposalState.Pending:
+      return '';
   }
 };
 
