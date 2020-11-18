@@ -38,7 +38,10 @@ import { useIsConnected } from '../../hooks/useIsConnected';
 import { WithdrawForm } from './components/WithdrawForm';
 import { IncreaseStakeForm } from './components/IncreaseStakeForm';
 import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
-import { governance_propose } from '../BlockChainProvider/requests/governance';
+import {
+  governance_proposalCount,
+  governance_propose,
+} from '../BlockChainProvider/requests/governance';
 import { StakingDateSelector } from '../../components/StakingDateSelector';
 
 interface Props {}
@@ -223,12 +226,13 @@ function InnerStakePage(props: Props) {
   );
 
   const createProposal = useCallback(async () => {
+    const nextId = (await governance_proposalCount()) + 1;
     await governance_propose(
       ['0x04fa98E97A376a086e3BcAB99c076CB249e5740D'],
       ['0'],
       ['getBalanceOf(address)'],
       ['0x0000000000000000000000007be508451cd748ba55dcbe75c8067f9420909b49'],
-      'Testing new proposal 2',
+      `Testing new proposal ${nextId}`,
       account,
     );
   }, [account]);

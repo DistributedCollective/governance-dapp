@@ -31,3 +31,9 @@ export function governance_proposalThreshold() {
 export function governance_quorumVotes() {
   return network.call('governorAlpha', 'quorumVotes', []);
 }
+
+export function governance_proposalCount() {
+  return network
+    .call('governorAlpha', 'proposalCount', [])
+    .then(result => Number(result));
+}

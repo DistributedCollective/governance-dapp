@@ -6,6 +6,7 @@ import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
 import { Proposal } from '../../../types/Proposal';
 import { ProposalRow } from '../ProposalRow/Loadable';
+import { governance_proposalCount } from '../BlockChainProvider/requests/governance';
 
 export function HomePage() {
   const [loading, setLoading] = useState(false);
@@ -15,11 +16,7 @@ export function HomePage() {
     setLoading(true);
 
     const get = async () => {
-      const proposalCount = ((await network.call(
-        'governorAlpha',
-        'proposalCount',
-        [],
-      )) as unknown) as number;
+      const proposalCount = await governance_proposalCount();
       let to = 0;
       if (proposalCount > 3) {
         to = proposalCount - 3;
@@ -33,7 +30,7 @@ export function HomePage() {
       }
       setItems(items);
       setLoading(false);
-      setTotal(Number(proposalCount));
+      setTotal(proposalCount);
     };
 
     get().then().catch();
