@@ -8,6 +8,11 @@ export const wssNodes = {
   31: 'wss://testnet.sovryn.app/ws',
 };
 
+export const rpcBackupNodes = {
+  30: 'https://public-node.rsk.co',
+  31: 'https://public-node.testnet.rsk.co',
+};
+
 export const blockExplorers = {
   30: 'https://explorer.rsk.co',
   31: 'https://explorer.testnet.rsk.co',

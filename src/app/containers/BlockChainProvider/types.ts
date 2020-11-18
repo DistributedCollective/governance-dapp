@@ -60,6 +60,7 @@ export type TransactionType =
   | 'execute'
   | 'cancel'
   | 'queue'
+  | 'vote'
   | undefined;
 
 export interface Transaction {

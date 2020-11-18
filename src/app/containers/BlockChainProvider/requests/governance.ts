@@ -8,21 +8,10 @@ export function governance_propose(
   description: string,
   account,
 ) {
-  // 0x04fa98E97A376a086e3BcAB99c076CB249e5740D
-  // 0
-  // getBalanceOf(address)
-  // 0x0000000000000000000000007be508451cd748ba55dcbe75c8067f9420909b49
   return network.send(
     'governorAlpha',
     'propose',
-    [
-      ['0x04fa98E97A376a086e3BcAB99c076CB249e5740D'],
-      ['0'],
-      ['getBalanceOf(address)'],
-      ['0x0000000000000000000000007be508451cd748ba55dcbe75c8067f9420909b49'],
-      'Testing new proposal',
-      { from: account },
-    ],
+    [targets, values, signatures, calldatas, description, { from: account }],
     {
       type: 'propose',
     },

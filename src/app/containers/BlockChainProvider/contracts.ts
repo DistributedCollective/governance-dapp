@@ -19,7 +19,7 @@ export const contracts: IContractNetworks = {
       abi: TimelockABI as any,
     },
     governorAlpha: {
-      address: '0xC28C019C448735C47D246B9Fe25D2E87eE011c4d',
+      address: '0x4ed7fe81ea4A7A79d7c4728380ec742507DFf850',
       abi: GovernorAlphaABI as any,
     },
   },
@@ -37,7 +37,7 @@ export const contracts: IContractNetworks = {
       abi: TimelockABI as any,
     },
     governorAlpha: {
-      address: '0xa313f5097B32B66a481E637B6bCD0f145FEf7b94',
+      address: '0x4ed7fe81ea4A7A79d7c4728380ec742507DFf850',
       abi: GovernorAlphaABI as any,
     },
   },

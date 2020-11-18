@@ -33,7 +33,7 @@ export function HomePage() {
       }
       setItems(items);
       setLoading(false);
-      setTotal(proposalCount);
+      setTotal(Number(proposalCount));
     };
 
     get().then().catch();
@@ -102,7 +102,7 @@ export function HomePage() {
                 </div>
               </>
             )}
-            {!loading && !total && (
+            {!loading && total === 0 && (
               <>
                 <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
                   <i>No proposals yet.</i>

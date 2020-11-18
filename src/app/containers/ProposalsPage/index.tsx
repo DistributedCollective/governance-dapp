@@ -10,7 +10,7 @@ import { ProposalRow } from '../ProposalRow/Loadable';
 export function ProposalsPage() {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<Proposal[]>([]);
-  const [, /*total*/ setTotal] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
   useEffect(() => {
     setLoading(true);
 
@@ -33,7 +33,7 @@ export function ProposalsPage() {
       }
       setItems(items);
       setLoading(false);
-      setTotal(proposalCount);
+      setTotal(Number(proposalCount));
     };
 
     get().then().catch();
@@ -47,9 +47,14 @@ export function ProposalsPage() {
       <main>
         <div className="bg-black">
           <div className="container">
-            <Link to="/" className="block text-white pt-8 pb-6">
-              &lt; Overview
-            </Link>
+            <div className="block text-white pt-8 pb-6">
+              <Link
+                to="/"
+                className="text-white hover:no-underline hover:text-gray-500"
+              >
+                &lt; Proposals
+              </Link>
+            </div>
             <h2 className="text-white pb-8">Governance Proposals</h2>
 
             <div className="bg-white rounded-t shadow p-3">
@@ -64,6 +69,13 @@ export function ProposalsPage() {
                 <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
                   <div className="w-full skeleton h-4" />
                   <div className="w-full skeleton h-4" />
+                </div>
+              </>
+            )}
+            {!loading && total === 0 && (
+              <>
+                <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+                  <i>No proposals yet.</i>
                 </div>
               </>
             )}

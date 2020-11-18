@@ -1,13 +1,17 @@
 import React, { FormEvent } from 'react';
-import { fromWei, numberFromWei } from 'utils/helpers';
+import { fromWei, handleNumberInput, numberFromWei } from 'utils/helpers';
 import { ContractCallResponse } from 'app/hooks/useContractCall';
+import { StakingDateSelector } from '../../../components/StakingDateSelector';
 
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;
+  timestamp?: number;
   onChangeAmount: (value: string) => void;
+  onChangeTimestamp: (value: number) => void;
   sovBalanceOf: ContractCallResponse;
   isValid: boolean;
+  kickoff: ContractCallResponse;
 }
 
 export function StakeForm(props: Props) {
@@ -27,7 +31,7 @@ export function StakeForm(props: Props) {
             type="text"
             placeholder="Amount"
             value={props.amount}
-            onChange={e => props.onChangeAmount(e.currentTarget.value)}
+            onChange={e => props.onChangeAmount(handleNumberInput(e))}
           />
           <button
             type="button"
@@ -50,6 +54,15 @@ export function StakeForm(props: Props) {
           </span>{' '}
           SoV
         </div>
+      </div>
+
+      <div className="mb-4">
+        <StakingDateSelector
+          value={props.timestamp}
+          onChange={value => props.onChangeTimestamp(value)}
+          kickoffTs={Number(props.kickoff.value)}
+          title="Stake until date"
+        />
       </div>
 
       <button

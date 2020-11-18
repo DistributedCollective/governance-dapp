@@ -1,11 +1,10 @@
+import moment from 'moment';
 import { genesisAddress, getContract } from 'utils/helpers';
 import { network } from '../network';
 
-// 1209600 two weeks
-
 export function staking_stake(
   weiAmount: string,
-  timeInSeconds: number,
+  untilTs: number,
   account: string,
   nonce: number,
 ) {
@@ -14,7 +13,7 @@ export function staking_stake(
     'stake',
     [
       weiAmount,
-      timeInSeconds,
+      moment(untilTs).diff(moment(), 'seconds'),
       genesisAddress,
       genesisAddress,
       { from: account, nonce, gasLimit: 250000 },
@@ -94,12 +93,12 @@ export function staking_increaseStake(
   );
 }
 
-export function staking_extendStakingDuration(until: string, account: string) {
+export function staking_extendStakingDuration(until: number, account: string) {
   return network.send(
     'staking',
     'extendStakingDuration',
     [
-      until,
+      until + 86400, // adding 24 hours to date to make sure contract will not choose previous period.
       {
         from: account,
       },

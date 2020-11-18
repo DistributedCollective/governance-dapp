@@ -9,7 +9,9 @@ export const genesisAddress = '0x0000000000000000000000000000000000000000';
 
 export function kFormatter(num) {
   return Math.abs(num) > 999
-    ? `${Number(Math.sign(num) * (Math.abs(num) / 1000)).toLocaleString()}k`
+    ? `${Number(
+        Math.sign(num) * Math.floor(Math.abs(num) / 1000),
+      ).toLocaleString()}k`
     : `${Number(Math.sign(num) * Math.abs(num)).toLocaleString()}`;
 }
 
@@ -96,4 +98,38 @@ export const toWei = (amount: any, unit: Unit = 'ether') => {
 
 export const numberFromWei = (amount: any, unit: Unit = 'ether') => {
   return Number(fromWei(amount, unit));
+};
+
+export const handleNumberInput = (value, onlyPositive = true) => {
+  return handleNumber(value.currentTarget.value, onlyPositive);
+};
+
+export const handleNumber = (value, onlyPositive = true) => {
+  if (value === undefined || value === null) {
+    value = '';
+  }
+
+  if (value === '') {
+    return value;
+  }
+
+  let number = value.replace(',', '.').replace(/[^\d.-]/g, '');
+
+  if (onlyPositive) {
+    number = number.replace('-', '');
+  }
+
+  if (onlyPositive && Number(number) < 0) {
+    return Math.abs(number).toString();
+  }
+
+  if (number.length === 1 && number === '.') {
+    return '0.';
+  }
+
+  if (isNaN(number) && number !== '-') {
+    return '';
+  }
+
+  return number.toString();
 };

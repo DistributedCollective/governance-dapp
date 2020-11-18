@@ -27,11 +27,12 @@ export function VoteCaster(props: Props) {
   const handleVote = useCallback(
     async (support: boolean) => {
       setLoading(true);
-      const tx = await network.send('governorAlpha', 'castVote', [
-        props.proposalId,
-        support,
-        { from: account },
-      ]);
+      const tx = await network.send(
+        'governorAlpha',
+        'castVote',
+        [props.proposalId, support, { from: account }],
+        { type: 'vote' },
+      );
       setTxHash(tx);
       setLoading(false);
     },

@@ -13,13 +13,15 @@ import Web3 from 'web3';
 import { network } from './network';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { ChainId } from './types';
-import { wssNodes } from './classifiers';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { rpcBackupNodes, wssNodes } from './classifiers';
 import { walletConnection } from './web3-modal';
 import { selectBlockChainProvider } from './selectors';
 import { TransactionReceipt } from 'web3-core';
 
 function* setupSaga({ payload }: PayloadAction<ChainId>) {
   const nodeUrl = wssNodes[payload];
+  // const nodeUrl = rpcBackupNodes[payload];
   let web3Provider;
   let isWebsocket = false;
   if (nodeUrl.startsWith('http')) {
@@ -138,7 +140,6 @@ function* processBlock({ payload }: PayloadAction<any>) {
               status: receipt.status ? 'confirmed' : 'failed',
             }),
           );
-          break;
         }
 
         const hasContract = Object.values(network.contracts).find(contract => {
@@ -148,7 +149,6 @@ function* processBlock({ payload }: PayloadAction<any>) {
 
         if (hasContract) {
           hasChanges = true;
-          break;
         }
 
         if (
@@ -156,7 +156,6 @@ function* processBlock({ payload }: PayloadAction<any>) {
           (address.toLowerCase() === from || address.toLowerCase() === from)
         ) {
           hasChanges = true;
-          break;
         }
       }
     }

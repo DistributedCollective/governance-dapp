@@ -1,5 +1,5 @@
 import React, { FormEvent } from 'react';
-import { fromWei, numberFromWei } from 'utils/helpers';
+import { fromWei, handleNumberInput, numberFromWei } from 'utils/helpers';
 import { ContractCallResponse } from 'app/hooks/useContractCall';
 
 interface Props {
@@ -28,7 +28,7 @@ export function WithdrawForm(props: Props) {
             type="text"
             placeholder="Amount"
             value={props.amount}
-            onChange={e => props.onChangeAmount(e.currentTarget.value)}
+            onChange={e => props.onChangeAmount(handleNumberInput(e))}
           />
           <button
             type="button"

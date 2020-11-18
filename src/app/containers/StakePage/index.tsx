@@ -36,8 +36,10 @@ import { StakeForm } from './components/StakeForm';
 import { PageSkeleton } from '../../components/PageSkeleton';
 import { useIsConnected } from '../../hooks/useIsConnected';
 import { WithdrawForm } from './components/WithdrawForm';
-import { ExtendStakingDurationForm } from './components/ExtendStakingDurationForm';
 import { IncreaseStakeForm } from './components/IncreaseStakeForm';
+import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
+import { governance_propose } from '../BlockChainProvider/requests/governance';
+import { StakingDateSelector } from '../../components/StakingDateSelector';
 
 interface Props {}
 
@@ -110,6 +112,7 @@ function InnerStakePage(props: Props) {
   const account = useAccount();
   const balanceOf = useStaking_balanceOf(account);
   const voteBalance = useStaking_getCurrentVotes(account);
+  const kickoffTs = useStaking_kickoffTs();
 
   const sovBalanceOf = useSoV_balanceOf(account);
   const totalStakedBalance = useSoV_balanceOf(getContract('staking').address);
@@ -117,7 +120,7 @@ function InnerStakePage(props: Props) {
 
   const [amount, setAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
-  const [days, setDays] = useState('3');
+  const [timestamp, setTimestamp] = useState<number>(undefined as any);
   const [loading, setLoading] = useState(false);
   const [currentLock, setCurrentLock] = useState<Date>(null as any);
 
@@ -132,8 +135,9 @@ function InnerStakePage(props: Props) {
     if (loading) return false;
     const num = Number(amount);
     if (!num || isNaN(num) || num <= 0) return false;
+    if (!timestamp || timestamp < now.getTime()) return false;
     return num * 1e18 <= Number(sovBalanceOf.value);
-  }, [loading, amount, sovBalanceOf]);
+  }, [loading, amount, sovBalanceOf, timestamp]);
 
   const validateWithdrawForm = useCallback(() => {
     if (loading) return false;
@@ -145,9 +149,8 @@ function InnerStakePage(props: Props) {
 
   const validateExtendTimeForm = useCallback(() => {
     if (loading) return false;
-    const num = Number(days);
-    return !(!num || isNaN(num) || num <= 0);
-  }, [loading, days]);
+    return timestamp >= now.getTime();
+  }, [loading, timestamp]);
 
   const handleStakeSubmit = useCallback(
     async e => {
@@ -162,14 +165,14 @@ function InnerStakePage(props: Props) {
           nonce += 1;
         }
 
-        await staking_stake(weiAmount, 1209600, account, nonce);
+        await staking_stake(weiAmount, timestamp, account, nonce);
         setLoading(false);
       } catch (e) {
         setLoading(false);
         console.error(e);
       }
     },
-    [weiAmount, account],
+    [weiAmount, account, timestamp],
   );
 
   const handleIncreaseStakeSubmit = useCallback(
@@ -209,14 +212,26 @@ function InnerStakePage(props: Props) {
     async e => {
       e.preventDefault();
       setLoading(true);
-      await staking_extendStakingDuration(
-        String(currentLock.getTime() / 1e3 + Number(days) * 86400),
-        account,
-      );
-      setLoading(false);
+      try {
+        await staking_extendStakingDuration(timestamp / 1e3, account);
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+      }
     },
-    [days, account, currentLock],
+    [timestamp, account],
   );
+
+  const createProposal = useCallback(async () => {
+    await governance_propose(
+      ['0x04fa98E97A376a086e3BcAB99c076CB249e5740D'],
+      ['0'],
+      ['getBalanceOf(address)'],
+      ['0x0000000000000000000000007be508451cd748ba55dcbe75c8067f9420909b49'],
+      'Testing new proposal 2',
+      account,
+    );
+  }, [account]);
 
   return (
     <>
@@ -228,6 +243,10 @@ function InnerStakePage(props: Props) {
         <div className="bg-black">
           <div className="container">
             <h2 className="text-white pt-20 pb-8">Staking</h2>
+
+            <button type="button" onClick={() => createProposal()}>
+              Add proposal
+            </button>
 
             <div className="flex flex-col pb-8 md:flex-row md:space-x-4">
               <div className="flex flex-row flex-no-wrap justify-between bg-gray-900 text-white p-3 w-full md:w-1/2 mb-3 md:mb-0">
@@ -285,9 +304,12 @@ function InnerStakePage(props: Props) {
                       <StakeForm
                         handleSubmit={handleStakeSubmit}
                         amount={amount}
+                        timestamp={timestamp}
                         onChangeAmount={e => setAmount(e)}
+                        onChangeTimestamp={e => setTimestamp(e)}
                         sovBalanceOf={sovBalanceOf}
                         isValid={validateStakeForm()}
+                        kickoff={kickoffTs}
                       />
                     </>
                   ) : (
@@ -303,14 +325,31 @@ function InnerStakePage(props: Props) {
                               isValid={validateStakeForm()}
                             />
                           </div>
-                          <div className="mt-3 mb-3 border-t pt-3">
-                            <ExtendStakingDurationForm
-                              handleSubmit={handleExtendTimeSubmit}
-                              amount={days}
-                              onChangeAmount={e => setDays(e)}
-                              isValid={validateExtendTimeForm()}
-                            />
-                          </div>
+                          {currentLock && kickoffTs.value !== '0' && (
+                            <div className="mt-3 mb-3 border-t pt-3">
+                              <form onSubmit={handleExtendTimeSubmit}>
+                                <div className="flex flex-row justify-between items-center space-x-4">
+                                  <StakingDateSelector
+                                    title="Extend"
+                                    kickoffTs={Number(kickoffTs.value)}
+                                    startTs={currentLock.getTime()}
+                                    value={timestamp}
+                                    onChange={e => setTimestamp(e)}
+                                  />
+                                  <button
+                                    type="submit"
+                                    className={`bg-green-500 text-white px-4 py-2 rounded ${
+                                      !validateExtendTimeForm() &&
+                                      'opacity-50 cursor-not-allowed'
+                                    }`}
+                                    disabled={!validateExtendTimeForm()}
+                                  >
+                                    Submit
+                                  </button>
+                                </div>
+                              </form>
+                            </div>
+                          )}
                         </div>
                         <div className="w-full mt-5 md:w-1/2 md:mt-0">
                           <WithdrawForm

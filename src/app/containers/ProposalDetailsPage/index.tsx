@@ -91,9 +91,14 @@ export function ProposalDetailsPage() {
       <main>
         <div className="bg-black">
           <div className="container">
-            <Link to="/" className="block text-white pt-8 pb-6">
-              &lt; Proposals
-            </Link>
+            <div className="block text-white pt-8 pb-6">
+              <Link
+                to="/"
+                className="text-white hover:no-underline hover:text-gray-500"
+              >
+                &lt; Proposals
+              </Link>
+            </div>
             <div className="pb-8 flex flex-row justify-between">
               <div>
                 <h2 className={`text-white ${loading && 'skeleton'}`}>
@@ -285,7 +290,7 @@ function VotingRow({
       className="flex flex-row justify-between text-black transition duration-300 bordered-list-item px-5 py-3 hover:no-underline"
     >
       <div>{prettyTx(voter as string)}</div>
-      <div>{votes?.toLocaleString()}</div>
+      <div>{kFormatter(votes)}</div>
     </a>
   );
 }
