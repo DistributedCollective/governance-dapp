@@ -51,7 +51,16 @@ export interface Transactions {
 }
 
 export type TransactionStatus = 'pending' | 'confirmed' | 'failed';
-export type TransactionType = 'approve' | 'other';
+export type TransactionType =
+  | 'approve'
+  | 'stake'
+  | 'withdraw'
+  | 'extend'
+  | 'propose'
+  | 'execute'
+  | 'cancel'
+  | 'queue'
+  | undefined;
 
 export interface Transaction {
   transactionHash: string;

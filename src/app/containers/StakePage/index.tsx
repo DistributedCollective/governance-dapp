@@ -7,6 +7,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
+import { bignumber } from 'mathjs';
 
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import { reducer, sliceKey } from './slice';
@@ -152,16 +153,21 @@ function InnerStakePage(props: Props) {
     async e => {
       e.preventDefault();
       setLoading(true);
-      let nonce = await network.nonce(account);
-      const allowance = await staking_allowance(account);
+      try {
+        let nonce = await network.nonce(account);
+        const allowance = (await staking_allowance(account)) as string;
 
-      if (allowance < weiAmount) {
-        await staking_approve(weiAmount, account, nonce);
-        nonce += 1;
+        if (bignumber(allowance).lessThan(weiAmount)) {
+          await staking_approve(weiAmount, account, nonce);
+          nonce += 1;
+        }
+
+        await staking_stake(weiAmount, 1209600, account, nonce);
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        console.error(e);
       }
-
-      await staking_stake(weiAmount, 1209600, account, nonce);
-      setLoading(false);
     },
     [weiAmount, account],
   );
@@ -170,16 +176,21 @@ function InnerStakePage(props: Props) {
     async e => {
       e.preventDefault();
       setLoading(true);
-      let nonce = await network.nonce(account);
-      const allowance = await staking_allowance(account);
+      try {
+        let nonce = await network.nonce(account);
+        const allowance = (await staking_allowance(account)) as string;
 
-      if (allowance < weiAmount) {
-        await staking_approve(weiAmount, account, nonce);
-        nonce += 1;
+        if (bignumber(allowance).lessThan(weiAmount)) {
+          await staking_approve(weiAmount, account, nonce);
+          nonce += 1;
+        }
+
+        await staking_increaseStake(weiAmount, account, nonce);
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        console.error(e);
       }
-
-      await staking_increaseStake(weiAmount, account, nonce);
-      setLoading(false);
     },
     [weiAmount, account],
   );

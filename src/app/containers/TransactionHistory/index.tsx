@@ -99,6 +99,7 @@ function TransactionRow({ item }: Props) {
         txHash={item.transactionHash}
         className="text-gray-600 hover:text-gray-900"
       />
+      {item.type && <div>{item.type}</div>}
     </div>
   );
 }

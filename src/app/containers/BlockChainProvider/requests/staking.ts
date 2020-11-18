@@ -12,11 +12,16 @@ export function staking_stake(
   return network.send(
     'staking',
     'stake',
-    weiAmount,
-    timeInSeconds,
-    genesisAddress,
-    genesisAddress,
-    { from: account, nonce },
+    [
+      weiAmount,
+      timeInSeconds,
+      genesisAddress,
+      genesisAddress,
+      { from: account, nonce, gasLimit: 250000 },
+    ],
+    {
+      type: 'stake',
+    },
   );
 }
 
@@ -28,19 +33,35 @@ export function staking_approve(
   return network.send(
     'sovToken',
     'approve',
-    getContract('staking').address,
-    weiAmount,
+    [
+      getContract('staking').address,
+      weiAmount,
+      {
+        from: account,
+        nonce,
+      },
+    ],
     {
-      from: account,
-      nonce,
+      type: 'approve',
     },
   );
 }
 
 export function staking_withdraw(weiAmount: string, account: string) {
-  return network.send('staking', 'withdraw', weiAmount, account, {
-    from: account,
-  });
+  return network.send(
+    'staking',
+    'withdraw',
+    [
+      weiAmount,
+      account,
+      {
+        from: account,
+      },
+    ],
+    {
+      type: 'withdraw',
+    },
+  );
 }
 
 export function staking_allowance(account: string) {
@@ -55,14 +76,36 @@ export function staking_increaseStake(
   account: string,
   nonce: number,
 ) {
-  return network.send('staking', 'increaseStake', weiAmount, genesisAddress, {
-    from: account,
-    nonce,
-  });
+  return network.send(
+    'staking',
+    'increaseStake',
+    [
+      weiAmount,
+      genesisAddress,
+      {
+        from: account,
+        nonce,
+        gasLimit: 250000,
+      },
+    ],
+    {
+      type: 'stake',
+    },
+  );
 }
 
 export function staking_extendStakingDuration(until: string, account: string) {
-  return network.send('staking', 'extendStakingDuration', until, {
-    from: account,
-  });
+  return network.send(
+    'staking',
+    'extendStakingDuration',
+    [
+      until,
+      {
+        from: account,
+      },
+    ],
+    {
+      type: 'extend',
+    },
+  );
 }

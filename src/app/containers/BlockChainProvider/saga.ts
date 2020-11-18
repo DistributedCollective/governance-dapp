@@ -28,11 +28,13 @@ function* setupSaga({ payload }: PayloadAction<ChainId>) {
     });
   } else {
     web3Provider = new Web3.providers.WebsocketProvider(nodeUrl, {
+      timeout: 5,
       reconnectDelay: 10,
     });
     isWebsocket = true;
   }
   const web3 = new Web3(web3Provider);
+
   network.setWeb3(web3, payload === 30 ? 'mainnet' : 'testnet', isWebsocket);
   walletConnection.init(payload);
 

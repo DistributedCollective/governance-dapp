@@ -6,12 +6,17 @@ import {
   IContract,
   INetworkToContract,
   NetworkName,
+  TransactionType,
 } from './types';
 import { contracts } from './contracts';
 import { store } from '../../../store/store';
 import { actions } from './slice';
 import { getContract } from '../../../utils/helpers';
 import { DEFAULT_CHAIN } from './index';
+
+interface SendTxOptions {
+  type?: TransactionType;
+}
 
 class Network {
   public web3: Web3 = null as any;
@@ -92,7 +97,12 @@ class Network {
     return this.contracts[contractName].methods[methodName](...args).call();
   }
 
-  public async send(contractName: ContractName, methodName, ...args) {
+  public async send(
+    contractName: ContractName,
+    methodName,
+    args: any[],
+    sendTxOptions?: SendTxOptions,
+  ) {
     let params = args;
     let options = {};
     if (args && args.length && typeof args[args.length - 1] === 'object') {
@@ -107,6 +117,7 @@ class Network {
             actions.addTransaction({
               transactionHash: tx,
               to: getContract(contractName).address,
+              type: sendTxOptions?.type,
             }),
           );
           resolve(tx);
