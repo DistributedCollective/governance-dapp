@@ -22,7 +22,7 @@ import { StakePage } from './containers/StakePage/Loadable';
 
 export function App() {
   return (
-    <BrowserRouter basename="/governance-dapp/">
+    <BrowserRouter>
       <Helmet
         titleTemplate="%s | Sovryn Governance"
         defaultTitle="Sovryn Governance"
