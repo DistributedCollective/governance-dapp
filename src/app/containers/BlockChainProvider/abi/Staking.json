@@ -9,6 +9,12 @@
         "type": "address"
       },
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "lockedUntil",
+        "type": "uint256"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "fromDelegate",
@@ -169,6 +175,25 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "vesting",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "receiver",
+        "type": "address"
+      }
+    ],
+    "name": "VestingTokensWithdrawn",
+    "type": "event"
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "DELEGATION_TYPEHASH",
@@ -260,6 +285,21 @@
   },
   {
     "constant": true,
+    "inputs": [],
+    "name": "allUnlocked",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
     "inputs": [
       {
         "internalType": "address",
@@ -270,9 +310,9 @@
     "name": "balanceOf",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType": "uint96",
+        "name": "balance",
+        "type": "uint96"
       }
     ],
     "payable": false,
@@ -306,33 +346,17 @@
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "currentLock",
-    "outputs": [
-      {
-        "internalType": "uint96",
-        "name": "",
-        "type": "uint96"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "constant": false,
     "inputs": [
       {
         "internalType": "address",
         "name": "delegatee",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lockDate",
+        "type": "uint256"
       }
     ],
     "name": "delegate",
@@ -348,6 +372,11 @@
         "internalType": "address",
         "name": "delegatee",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lockDate",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -424,6 +453,11 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "name": "delegates",
@@ -443,6 +477,11 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "previousLock",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "until",
         "type": "uint256"
       }
@@ -451,6 +490,21 @@
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "feeSharing",
+    "outputs": [
+      {
+        "internalType": "contract IFeeSharingProxy",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -588,17 +642,17 @@
       },
       {
         "internalType": "uint256",
+        "name": "date",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "blockNumber",
         "type": "uint256"
       }
     ],
-    "name": "getPriorUserStakeAndDate",
+    "name": "getPriorUserStakeByDate",
     "outputs": [
-      {
-        "internalType": "uint96",
-        "name": "",
-        "type": "uint96"
-      },
       {
         "internalType": "uint96",
         "name": "",
@@ -663,8 +717,34 @@
     "outputs": [
       {
         "internalType": "uint96",
-        "name": "",
+        "name": "votes",
         "type": "uint96"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "getStakes",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "dates",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint96[]",
+        "name": "stakes",
+        "type": "uint96[]"
       }
     ],
     "payable": false,
@@ -680,12 +760,37 @@
         "type": "uint96"
       },
       {
+        "internalType": "uint256",
+        "name": "until",
+        "type": "uint256"
+      },
+      {
         "internalType": "address",
-        "name": "stakeFor",
+        "name": "receiver",
         "type": "address"
       }
     ],
-    "name": "increaseStake",
+    "name": "governanceWithdraw",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "vesting",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "receiver",
+        "type": "address"
+      }
+    ],
+    "name": "governanceWithdrawVesting",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -715,6 +820,30 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "migrateToNewStakingContract",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "newStakingContract",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "payable": false,
@@ -796,9 +925,14 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "name": "numUserCheckpoints",
+    "name": "numUserStakingCheckpoints",
     "outputs": [
       {
         "internalType": "uint32",
@@ -829,13 +963,58 @@
     "constant": false,
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_feeSharing",
+        "type": "address"
+      }
+    ],
+    "name": "setFeeSharing",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newStakingContract",
+        "type": "address"
+      }
+    ],
+    "name": "setNewStakingContract",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint96",
+        "name": "_weightScaling",
+        "type": "uint96"
+      }
+    ],
+    "name": "setWeightScaling",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
         "internalType": "uint96",
         "name": "amount",
         "type": "uint96"
       },
       {
         "internalType": "uint256",
-        "name": "duration",
+        "name": "until",
         "type": "uint256"
       },
       {
@@ -856,6 +1035,46 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cliff",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "duration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "intervalLength",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "stakeFor",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "delegatee",
+        "type": "address"
+      }
+    ],
+    "name": "stakesBySchedule",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [
       {
@@ -870,6 +1089,27 @@
         "internalType": "uint256",
         "name": "lockDate",
         "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "currentLock",
+    "outputs": [
+      {
+        "internalType": "uint96",
+        "name": "",
+        "type": "uint96"
       }
     ],
     "payable": false,
@@ -940,12 +1180,17 @@
         "type": "address"
       },
       {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
         "internalType": "uint32",
         "name": "",
         "type": "uint32"
       }
     ],
-    "name": "userCheckpoints",
+    "name": "userStakingCheckpoints",
     "outputs": [
       {
         "internalType": "uint32",
@@ -956,10 +1201,77 @@
         "internalType": "uint96",
         "name": "stake",
         "type": "uint96"
-      },
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "vestingWhitelist",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "weightScaling",
+    "outputs": [
       {
         "internalType": "uint96",
-        "name": "lockedUntil",
+        "name": "",
+        "type": "uint96"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "date",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "startDate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "blockNumber",
+        "type": "uint256"
+      }
+    ],
+    "name": "weightedStakeByDate",
+    "outputs": [
+      {
+        "internalType": "uint96",
+        "name": "power",
         "type": "uint96"
       }
     ],
@@ -974,6 +1286,11 @@
         "internalType": "uint96",
         "name": "amount",
         "type": "uint96"
+      },
+      {
+        "internalType": "uint256",
+        "name": "until",
+        "type": "uint256"
       },
       {
         "internalType": "address",
