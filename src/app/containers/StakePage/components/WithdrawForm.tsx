@@ -1,14 +1,15 @@
 import React, { FormEvent } from 'react';
 import { fromWei, handleNumberInput, numberFromWei } from 'utils/helpers';
 import { ContractCallResponse } from 'app/hooks/useContractCall';
+import moment from 'moment';
 
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;
+  until: number;
   onChangeAmount: (value: string) => void;
   balanceOf: ContractCallResponse;
   isValid: boolean;
-  currentLock: Date;
 }
 
 export function WithdrawForm(props: Props) {
@@ -60,12 +61,12 @@ export function WithdrawForm(props: Props) {
           Withdraw
         </button>
         <div>
-          {props.currentLock && (
+          {props.until && (
             <div className="text-gray-5 mb-4 text-xs">
               Your tokens are locked until:
               <br />
               <span className="font-bold">
-                {props.currentLock.toLocaleString()}
+                {moment(new Date(props.until * 1000)).format('DD.MM.YYYY')}
               </span>
             </div>
           )}
