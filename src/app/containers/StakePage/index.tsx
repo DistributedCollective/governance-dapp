@@ -449,6 +449,7 @@ function InnerStakePage(props: Props) {
                                   startTs={currentLock.getTime()}
                                   value={timestamp}
                                   onChange={e => setTimestamp(e)}
+                                  stakes={getStakes.value['dates']}
                                 />
                               </div>
                               <div className="flex flex-row justify-between items-center space-x-4">
@@ -509,6 +510,7 @@ function InnerStakePage(props: Props) {
                         sovBalanceOf={sovBalanceOf}
                         isValid={validateStakeForm()}
                         kickoff={kickoffTs}
+                        stakes={getStakes.value['dates']}
                       />
                     </>
                   )}
