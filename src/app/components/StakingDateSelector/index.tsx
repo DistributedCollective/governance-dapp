@@ -28,6 +28,7 @@ interface Props {
   onChange: (value: number) => void;
   value?: number;
   startTs?: number;
+  stakes?: undefined;
 }
 
 export function StakingDateSelector(props: Props) {
@@ -35,6 +36,7 @@ export function StakingDateSelector(props: Props) {
 
   const [dates, setDates] = useState<Date[]>([]);
   const [filteredDates, setFilteredDates] = useState<DateItem[]>([]);
+  const [itemDisabled, setItemDisabled] = useState<any>([]);
 
   useEffect(() => {
     if (props.kickoffTs) {
@@ -66,17 +68,35 @@ export function StakingDateSelector(props: Props) {
         date: item,
       })),
     );
-  }, [dates, props.startTs]);
+
+    if (props.stakes) {
+      setItemDisabled(
+        (props.stakes as any).map(item => ({
+          key: item * 1e3,
+          label: moment(new Date(item * 1e3)).format('DD.MM.YYYY'),
+          date: new Date(item * 1e3),
+        })),
+      );
+    }
+  }, [dates, props.startTs, props.stakes]);
+
+  const dateWithoutStake = filteredDates.reduce((unique: any, o: any) => {
+    let isFound = itemDisabled.some(b => {
+      return b.key === o.key;
+    });
+    if (!isFound) unique.push(o);
+    return unique;
+  }, []);
 
   const getSelected = useCallback(() => {
-    return filteredDates.find(item => item.key === props.value);
-  }, [filteredDates, props.value]);
+    return dateWithoutStake.find(item => item.key === props.value);
+  }, [dateWithoutStake, props.value]);
 
   const [selected, setSelected] = useState<DateItem | undefined>(getSelected());
 
   useEffect(() => {
     setSelected(getSelected());
-  }, [getSelected, props.value, filteredDates]);
+  }, [getSelected, props.value, dateWithoutStake]);
 
   return (
     <>
@@ -84,7 +104,7 @@ export function StakingDateSelector(props: Props) {
         {props.title}
       </label>
       <DateSelect
-        items={filteredDates}
+        items={dateWithoutStake}
         itemRenderer={renderItem}
         filterable={true}
         itemPredicate={filterItem}

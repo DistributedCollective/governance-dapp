@@ -12,6 +12,7 @@ interface Props {
   sovBalanceOf: ContractCallResponse;
   isValid: boolean;
   kickoff: ContractCallResponse;
+  stakes: undefined;
 }
 
 export function StakeForm(props: Props) {
@@ -62,6 +63,7 @@ export function StakeForm(props: Props) {
           onChange={value => props.onChangeTimestamp(value)}
           kickoffTs={Number(props.kickoff.value)}
           title="Stake until date"
+          stakes={props.stakes}
         />
       </div>
 
