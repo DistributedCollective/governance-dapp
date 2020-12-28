@@ -44,11 +44,13 @@ export function StakingDateSelector(props: Props) {
       let lastDate = moment(props.kickoffTs * 1e3).clone();
       for (let i = 1; i <= maxPeriods; i++) {
         const date = lastDate.add(2, 'weeks');
-        dates.push(date.clone().toDate());
+        if ((props.value as any) <= date.unix()) {
+          dates.push(date.clone().toDate());
+        }
       }
       setDates(dates);
     }
-  }, [props.kickoffTs]);
+  }, [props.kickoffTs, props.value]);
 
   useEffect(() => {
     let filtered: Date[] = [];
