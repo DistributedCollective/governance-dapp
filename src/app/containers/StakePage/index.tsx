@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
 import { bignumber } from 'mathjs';
+import moment from 'moment';
 
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import { reducer, sliceKey } from './slice';
@@ -17,6 +18,7 @@ import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
 import { VoteProgress } from '../../components/VoteProgress';
 import { useAccount } from '../../hooks/useAccount';
+import { useStaking_getStakes } from '../../hooks/staking/useStaking_getStakes';
 import { network } from '../BlockChainProvider/network';
 import { getContract, numberFromWei } from '../../../utils/helpers';
 import { useWeiAmount } from '../../hooks/useWeiAmount';
@@ -28,7 +30,6 @@ import {
   staking_allowance,
   staking_approve,
   staking_extendStakingDuration,
-  staking_increaseStake,
   staking_stake,
   staking_withdraw,
 } from '../BlockChainProvider/requests/staking';
@@ -116,6 +117,7 @@ function InnerStakePage(props: Props) {
   const balanceOf = useStaking_balanceOf(account);
   const voteBalance = useStaking_getCurrentVotes(account);
   const kickoffTs = useStaking_kickoffTs();
+  const getStakes = useStaking_getStakes(account);
 
   const sovBalanceOf = useSoV_balanceOf(account);
   const totalStakedBalance = useSoV_balanceOf(getContract('staking').address);
@@ -130,6 +132,96 @@ function InnerStakePage(props: Props) {
   const weiAmount = useWeiAmount(amount);
   const weiWithdrawAmount = useWeiAmount(withdrawAmount);
 
+  const [until, setUntil] = useState<number>(0 as any);
+  const [prevTimestamp, setPrevTimestamp] = useState<number>(undefined as any);
+  const [stakeForm, setStakeForm] = useState(true);
+  const [extendForm, setExtendForm] = useState(false);
+  const [withdrawForm, setWithdrawForm] = useState(false);
+  const [increaseForm, setIncreaseForm] = useState(false);
+  interface Stakes {
+    stakes: any[] | any;
+    dates: any[] | any;
+  }
+  const StakesOverview: React.FC<Stakes> = ({ stakes, dates }) => {
+    return stakes && dates ? (
+      <div className="flex items-center">
+        <div className="mr-4">
+          {stakes.map((item, i: string) => {
+            return (
+              <div className="mb-10 mt-6" key={i}>
+                Stake amount: <b>{numberFromWei(item).toLocaleString()}</b>
+              </div>
+            );
+          })}
+        </div>
+        <div className="mr-4">
+          {dates.map((item, i: string) => {
+            return (
+              <div className="flex items-center" key={i}>
+                <div className="mb-4 mr-4">
+                  End date:{' '}
+                  <b>
+                    {moment(new Date(parseInt(item) * 1000)).format(
+                      'DD.MM.YYYY',
+                    )}
+                  </b>
+                </div>
+                <div className="flex items-center mr-4 mb-4">
+                  <button
+                    type="button"
+                    className="mr-4 bg-green-500 text-white px-4 py-2 rounded mb-2"
+                    onClick={() => {
+                      setPrevTimestamp(item);
+                      setTimestamp(item);
+                      setStakeForm(false);
+                      setExtendForm(true);
+                      setIncreaseForm(false);
+                      setWithdrawForm(false);
+                    }}
+                  >
+                    Extend
+                  </button>
+                  <button
+                    type="button"
+                    className="mr-4 bg-green-500 text-white px-4 py-2 rounded mb-2"
+                    onClick={() => {
+                      setTimestamp(item);
+                      setUntil(item);
+                      setAmount('');
+                      setStakeForm(false);
+                      setExtendForm(false);
+                      setIncreaseForm(false);
+                      setWithdrawForm(true);
+                    }}
+                  >
+                    Withdraw
+                  </button>
+                  <button
+                    type="button"
+                    className="mr-4 bg-green-500 text-white px-4 py-2 rounded mb-2"
+                    onClick={() => {
+                      setTimestamp(item);
+                      setAmount('');
+                      setUntil(item);
+                      setStakeForm(false);
+                      setExtendForm(false);
+                      setIncreaseForm(true);
+                      setWithdrawForm(false);
+                    }}
+                  >
+                    Increase
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    ) : (
+      <div>Loading</div>
+    );
+  };
+
   useEffect(() => {
     setCurrentLock(new Date(Number(s.value) * 1e3));
   }, [s.value]);
@@ -141,6 +233,13 @@ function InnerStakePage(props: Props) {
     if (!timestamp || timestamp < now.getTime()) return false;
     return num * 1e18 <= Number(sovBalanceOf.value);
   }, [loading, amount, sovBalanceOf, timestamp]);
+
+  const validateIncreaseForm = useCallback(() => {
+    if (loading) return false;
+    const num = Number(amount);
+    if (!num || isNaN(num) || num <= 0) return false;
+    return num * 1e18 <= Number(sovBalanceOf.value);
+  }, [loading, amount, sovBalanceOf]);
 
   const validateWithdrawForm = useCallback(() => {
     if (loading) return false;
@@ -167,8 +266,7 @@ function InnerStakePage(props: Props) {
           await staking_approve(weiAmount, account, nonce);
           nonce += 1;
         }
-
-        await staking_stake(weiAmount, timestamp, account, nonce);
+        await staking_stake(weiAmount, timestamp / 1e3, account, nonce);
         setLoading(false);
       } catch (e) {
         setLoading(false);
@@ -185,44 +283,47 @@ function InnerStakePage(props: Props) {
       try {
         let nonce = await network.nonce(account);
         const allowance = (await staking_allowance(account)) as string;
-
         if (bignumber(allowance).lessThan(weiAmount)) {
           await staking_approve(weiAmount, account, nonce);
           nonce += 1;
         }
-
-        await staking_increaseStake(weiAmount, account, nonce);
+        await staking_stake(weiAmount, timestamp, account, nonce);
         setLoading(false);
       } catch (e) {
         setLoading(false);
         console.error(e);
       }
     },
-    [weiAmount, account],
+    [weiAmount, account, timestamp],
   );
 
   const handleWithdrawSubmit = useCallback(
     async e => {
       e.preventDefault();
       setLoading(true);
-      await staking_withdraw(weiWithdrawAmount, account);
+      await staking_withdraw(weiWithdrawAmount, until, account);
       setLoading(false);
     },
-    [weiWithdrawAmount, account],
+    [weiWithdrawAmount, until, account],
   );
 
+  //extend STAKES
   const handleExtendTimeSubmit = useCallback(
     async e => {
       e.preventDefault();
       setLoading(true);
       try {
-        await staking_extendStakingDuration(timestamp / 1e3, account);
+        await staking_extendStakingDuration(
+          prevTimestamp,
+          timestamp / 1e3,
+          account,
+        );
         setLoading(false);
       } catch (e) {
         setLoading(false);
       }
     },
-    [timestamp, account],
+    [prevTimestamp, timestamp, account],
   );
 
   const createProposal = useCallback(async () => {
@@ -247,8 +348,11 @@ function InnerStakePage(props: Props) {
         <div className="bg-black">
           <div className="container">
             <h2 className="text-white pt-20 pb-8">Staking</h2>
-
-            <button type="button" onClick={() => createProposal()}>
+            <button
+              className={`bg-green-500 text-white px-4 py-2 rounded mb-2`}
+              type="button"
+              onClick={() => createProposal()}
+            >
               Add proposal
             </button>
 
@@ -303,8 +407,100 @@ function InnerStakePage(props: Props) {
                 </>
               ) : (
                 <>
-                  {balanceOf.value === '0' ? (
+                  {balanceOf.value !== '0' && (
                     <>
+                      <button
+                        type="button"
+                        className={`bg-gray-500 text-white px-4 py-2 mb-4 rounded mr-2
+                        ${stakeForm && 'bg-green-500'}`}
+                        onClick={() => {
+                          setTimestamp(0);
+                          setAmount('');
+                          setStakeForm(!stakeForm);
+                          setExtendForm(false);
+                          setIncreaseForm(false);
+                          setWithdrawForm(false);
+                        }}
+                      >
+                        New Stake
+                      </button>
+                      {increaseForm === true && (
+                        <>
+                          <h2>Increase</h2>
+                          <IncreaseStakeForm
+                            handleSubmit={handleIncreaseStakeSubmit}
+                            amount={amount}
+                            timestamp={timestamp}
+                            onChangeAmount={e => setAmount(e)}
+                            sovBalanceOf={sovBalanceOf}
+                            isValid={validateIncreaseForm()}
+                          />
+                        </>
+                      )}
+                      {extendForm === true && (
+                        <>
+                          <h2>Extend</h2>
+                          {currentLock && kickoffTs.value !== '0' && (
+                            <form onSubmit={handleExtendTimeSubmit}>
+                              <div className="mb-4">
+                                <StakingDateSelector
+                                  title="Select new date"
+                                  kickoffTs={Number(kickoffTs.value)}
+                                  startTs={currentLock.getTime()}
+                                  value={timestamp}
+                                  onChange={e => setTimestamp(e)}
+                                  stakes={getStakes.value['dates']}
+                                />
+                              </div>
+                              <div className="flex flex-row justify-between items-center space-x-4">
+                                <button
+                                  type="submit"
+                                  className={`bg-green-500 text-white px-4 py-2 rounded ${
+                                    !validateExtendTimeForm() &&
+                                    'opacity-50 cursor-not-allowed'
+                                  }`}
+                                  disabled={!validateExtendTimeForm()}
+                                >
+                                  Extend
+                                </button>
+                                <div>
+                                  {prevTimestamp && (
+                                    <div className="text-gray-5 mb-4 text-xs">
+                                      Previous until:
+                                      <br />
+                                      <span className="font-bold">
+                                        {moment(
+                                          new Date(prevTimestamp * 1e3),
+                                        ).format('DD.MM.YYYY')}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </form>
+                          )}
+                        </>
+                      )}
+
+                      {withdrawForm === true && (
+                        <>
+                          <h2>Withdraw</h2>
+                          <WithdrawForm
+                            handleSubmit={handleWithdrawSubmit}
+                            amount={withdrawAmount}
+                            until={timestamp}
+                            onChangeAmount={e => setWithdrawAmount(e)}
+                            balanceOf={balanceOf}
+                            isValid={validateWithdrawForm()}
+                          />
+                        </>
+                      )}
+                    </>
+                  )}
+
+                  {(balanceOf.value === '0' || stakeForm === true) && (
+                    <>
+                      <h2>New Stake</h2>
                       <StakeForm
                         handleSubmit={handleStakeSubmit}
                         amount={amount}
@@ -314,63 +510,26 @@ function InnerStakePage(props: Props) {
                         sovBalanceOf={sovBalanceOf}
                         isValid={validateStakeForm()}
                         kickoff={kickoffTs}
+                        stakes={getStakes.value['dates']}
                       />
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex flex-col space-y-8 md:flex-row md:space-x-8">
-                        <div className="w-full md:w-1/2">
-                          <div>
-                            <IncreaseStakeForm
-                              handleSubmit={handleIncreaseStakeSubmit}
-                              amount={amount}
-                              onChangeAmount={e => setAmount(e)}
-                              sovBalanceOf={sovBalanceOf}
-                              isValid={validateStakeForm()}
-                            />
-                          </div>
-                          {currentLock && kickoffTs.value !== '0' && (
-                            <div className="mt-3 mb-3 border-t pt-3">
-                              <form onSubmit={handleExtendTimeSubmit}>
-                                <div className="flex flex-row justify-between items-center space-x-4">
-                                  <StakingDateSelector
-                                    title="Extend"
-                                    kickoffTs={Number(kickoffTs.value)}
-                                    startTs={currentLock.getTime()}
-                                    value={timestamp}
-                                    onChange={e => setTimestamp(e)}
-                                  />
-                                  <button
-                                    type="submit"
-                                    className={`bg-green-500 text-white px-4 py-2 rounded ${
-                                      !validateExtendTimeForm() &&
-                                      'opacity-50 cursor-not-allowed'
-                                    }`}
-                                    disabled={!validateExtendTimeForm()}
-                                  >
-                                    Submit
-                                  </button>
-                                </div>
-                              </form>
-                            </div>
-                          )}
-                        </div>
-                        <div className="w-full mt-5 md:w-1/2 md:mt-0">
-                          <WithdrawForm
-                            handleSubmit={handleWithdrawSubmit}
-                            amount={withdrawAmount}
-                            onChangeAmount={e => setWithdrawAmount(e)}
-                            balanceOf={balanceOf}
-                            isValid={validateWithdrawForm()}
-                            currentLock={currentLock}
-                          />
-                        </div>
-                      </div>
                     </>
                   )}
                 </>
               )}
             </div>
+          </div>
+        </div>
+
+        <br />
+        <div className="container">
+          <div className="w-full bg-white rounded mb-5 shadow p-3">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              List of staking
+            </label>
+            <StakesOverview
+              dates={getStakes.value['dates']}
+              stakes={getStakes.value['stakes']}
+            />
           </div>
         </div>
       </main>

@@ -1,10 +1,12 @@
 import React, { FormEvent } from 'react';
 import { fromWei, handleNumberInput, numberFromWei } from 'utils/helpers';
 import { ContractCallResponse } from 'app/hooks/useContractCall';
+import moment from 'moment';
 
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;
+  timestamp?: number;
   onChangeAmount: (value: string) => void;
   sovBalanceOf: ContractCallResponse;
   isValid: boolean;
@@ -60,8 +62,19 @@ export function IncreaseStakeForm(props: Props) {
           }`}
           disabled={!props.isValid}
         >
-          Stake
+          Increase
         </button>
+        <div>
+          {props.timestamp && (
+            <div className="text-gray-5 mb-4 text-xs">
+              Your tokens are locked until:
+              <br />
+              <span className="font-bold">
+                {moment(new Date(props.timestamp * 1000)).format('DD.MM.YYYY')}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     </form>
   );

@@ -15,6 +15,16 @@
         "internalType": "address",
         "name": "guardian_",
         "type": "address"
+      },
+      {
+        "internalType": "uint96",
+        "name": "_quorumPercentageVotes",
+        "type": "uint96"
+      },
+      {
+        "internalType": "uint96",
+        "name": "_minPercentageVotes",
+        "type": "uint96"
       }
     ],
     "payable": false,
@@ -464,6 +474,21 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "minPercentageVotes",
+    "outputs": [
+      {
+        "internalType": "uint96",
+        "name": "",
+        "type": "uint96"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "proposalCount",
     "outputs": [
       {
@@ -545,6 +570,11 @@
       {
         "internalType": "uint96",
         "name": "quorum",
+        "type": "uint96"
+      },
+      {
+        "internalType": "uint96",
+        "name": "minPercentage",
         "type": "uint96"
       },
       {
@@ -636,6 +666,21 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "quorumPercentageVotes",
+    "outputs": [
+      {
+        "internalType": "uint96",
+        "name": "",
+        "type": "uint96"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "quorumVotes",
     "outputs": [
       {
@@ -654,7 +699,7 @@
     "name": "staking",
     "outputs": [
       {
-        "internalType": "contract StakingInterface",
+        "internalType": "contract IStaking",
         "name": "",
         "type": "address"
       }
@@ -690,7 +735,7 @@
     "name": "timelock",
     "outputs": [
       {
-        "internalType": "contract TimelockInterface",
+        "internalType": "contract ITimelock",
         "name": "",
         "type": "address"
       }
