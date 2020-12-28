@@ -104,8 +104,8 @@ export function StakingDateSelector(props: Props) {
         {props.title}
       </label>
       <DateSelect
-        items={dateWithoutStake}
         itemRenderer={renderItem}
+        items={dateWithoutStake}
         filterable={true}
         itemPredicate={filterItem}
         onItemSelect={onItemSelect}
