@@ -43,7 +43,13 @@ export function StakingDateSelector(props: Props) {
       let lastDate = moment(props.kickoffTs * 1e3).clone();
       for (let i = 1; i <= maxPeriods; i++) {
         const date = lastDate.add(2, 'weeks');
-        if ((props.value as any) <= date.unix()) {
+        if (
+          (props.value as any) !== undefined &&
+          (props.value as any) <= date.unix()
+        ) {
+          dates.push(date.clone().toDate());
+        }
+        if ((props.value as any) === undefined) {
           dates.push(date.clone().toDate());
         }
       }
