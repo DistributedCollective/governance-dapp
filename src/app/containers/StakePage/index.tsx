@@ -48,7 +48,6 @@ import { StakingDateSelector } from '../../components/StakingDateSelector';
 interface Props {}
 
 const now = new Date();
-
 export function StakePage(props: Props) {
   const isConnected = useIsConnected();
   if (isConnected) {
