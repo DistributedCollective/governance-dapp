@@ -329,11 +329,11 @@ function InnerStakePage(props: Props) {
   const createProposal = useCallback(async () => {
     const nextId = (await governance_proposalCount()) + 1;
     await governance_propose(
-      ['0x04fa98E97A376a086e3BcAB99c076CB249e5740D'],
+      ['0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083'],
       ['0'],
-      ['getBalanceOf(address)'],
-      ['0x0000000000000000000000007be508451cd748ba55dcbe75c8067f9420909b49'],
-      `Testing new proposal ${nextId}`,
+      ['setWeightScaling(uint96)'],
+      ['0x0000000000000000000000000000000000000000000000000000000000000004'],
+      `set weight scaling to 4 ${nextId}`,
       account,
     );
   }, [account]);

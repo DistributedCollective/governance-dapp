@@ -11,15 +11,15 @@ export const contracts: IContractNetworks = {
       abi: ERC20TokenABI as any,
     },
     staking: {
-      address: '0x28698404bf6B243E016768782E96d5D506dB2A74',
+      address: '0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083',
       abi: StakingABI as any,
     },
     timelock: {
-      address: '0x50104F18E59DE0a4736B15F5892Da965f24CB450',
+      address: '0x462Ac951756EE704e5116F247071D2663A41fF9d',
       abi: TimelockABI as any,
     },
     governorAlpha: {
-      address: '0xe23F154Bc37DfEE38A1A580d21A9107456a1BC16',
+      address: '0xD4f5b2F1Ce0b743018F0fa71F37208f4550B48E8',
       abi: GovernorAlphaABI as any,
     },
   },
@@ -29,15 +29,15 @@ export const contracts: IContractNetworks = {
       abi: ERC20TokenABI as any,
     },
     staking: {
-      address: '0x28698404bf6B243E016768782E96d5D506dB2A74',
+      address: '0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083',
       abi: StakingABI as any,
     },
     timelock: {
-      address: '0x50104F18E59DE0a4736B15F5892Da965f24CB450',
+      address: '0x462Ac951756EE704e5116F247071D2663A41fF9d',
       abi: TimelockABI as any,
     },
     governorAlpha: {
-      address: '0xe23F154Bc37DfEE38A1A580d21A9107456a1BC16',
+      address: '0xD4f5b2F1Ce0b743018F0fa71F37208f4550B48E8',
       abi: GovernorAlphaABI as any,
     },
   },
