@@ -39,15 +39,16 @@ import { useIsConnected } from '../../hooks/useIsConnected';
 import { WithdrawForm } from './components/WithdrawForm';
 import { IncreaseStakeForm } from './components/IncreaseStakeForm';
 import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
-import {
-  governance_proposalCount,
-  governance_propose,
-} from '../BlockChainProvider/requests/governance';
+// import {
+//   governance_proposalCount,
+//   governance_propose,
+// } from '../BlockChainProvider/requests/governance';
 import { StakingDateSelector } from '../../components/StakingDateSelector';
 
 interface Props {}
 
 const now = new Date();
+
 export function StakePage(props: Props) {
   const isConnected = useIsConnected();
   if (isConnected) {
@@ -141,6 +142,7 @@ function InnerStakePage(props: Props) {
     stakes: any[] | any;
     dates: any[] | any;
   }
+
   const StakesOverview: React.FC<Stakes> = ({ stakes, dates }) => {
     return stakes && dates ? (
       <div className="flex items-center">
@@ -160,7 +162,7 @@ function InnerStakePage(props: Props) {
                 <div className="mb-4 mr-4">
                   End date:{' '}
                   <b>
-                    {moment(new Date(parseInt(item) * 1000)).format(
+                    {moment(new Date(parseInt(item) * 1e3)).format(
                       'DD.MM.YYYY',
                     )}
                   </b>
@@ -260,9 +262,8 @@ function InnerStakePage(props: Props) {
       try {
         let nonce = await network.nonce(account);
         const allowance = (await staking_allowance(account)) as string;
-
         if (bignumber(allowance).lessThan(weiAmount)) {
-          await staking_approve(weiAmount, account, nonce);
+          await staking_approve(sovBalanceOf.value, account, nonce);
           nonce += 1;
         }
         await staking_stake(weiAmount, timestamp / 1e3, account, nonce);
@@ -272,7 +273,7 @@ function InnerStakePage(props: Props) {
         console.error(e);
       }
     },
-    [weiAmount, account, timestamp],
+    [weiAmount, sovBalanceOf.value, account, timestamp],
   );
 
   const handleIncreaseStakeSubmit = useCallback(
@@ -325,7 +326,7 @@ function InnerStakePage(props: Props) {
     [prevTimestamp, timestamp, account],
   );
 
-  const createProposal = useCallback(async () => {
+  /*const createProposal = useCallback(async () => {
     const nextId = (await governance_proposalCount()) + 1;
     await governance_propose(
       ['0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083'],
@@ -335,7 +336,7 @@ function InnerStakePage(props: Props) {
       `set weight scaling to 4 ${nextId}`,
       account,
     );
-  }, [account]);
+  }, [account]);*/
 
   return (
     <>
@@ -347,13 +348,13 @@ function InnerStakePage(props: Props) {
         <div className="bg-black">
           <div className="container">
             <h2 className="text-white pt-20 pb-8">Staking</h2>
-            <button
+            {/* <button
               className={`bg-green-500 text-white px-4 py-2 rounded mb-2`}
               type="button"
               onClick={() => createProposal()}
             >
               Add proposal
-            </button>
+            </button> */}
 
             <div className="flex flex-col pb-8 md:flex-row md:space-x-4">
               <div className="flex flex-row flex-no-wrap justify-between bg-gray-900 text-white p-3 w-full md:w-1/2 mb-3 md:mb-0">
@@ -449,6 +450,7 @@ function InnerStakePage(props: Props) {
                                   value={timestamp}
                                   onChange={e => setTimestamp(e)}
                                   stakes={getStakes.value['dates']}
+                                  prevExtend={prevTimestamp}
                                 />
                               </div>
                               <div className="flex flex-row justify-between items-center space-x-4">
