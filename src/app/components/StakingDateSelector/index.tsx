@@ -29,6 +29,7 @@ interface Props {
   value?: number;
   startTs?: number;
   stakes?: undefined;
+  prevExtend?: number;
 }
 
 export function StakingDateSelector(props: Props) {
@@ -40,22 +41,22 @@ export function StakingDateSelector(props: Props) {
   useEffect(() => {
     if (props.kickoffTs) {
       const dates: Date[] = [];
+      const datesFutured: Date[] = [];
       let lastDate = moment(props.kickoffTs * 1e3).clone();
       for (let i = 1; i <= maxPeriods; i++) {
         const date = lastDate.add(2, 'weeks');
-        if (
-          (props.value as any) !== undefined &&
-          (props.value as any) <= date.unix()
-        ) {
-          dates.push(date.clone().toDate());
-        }
-        if ((props.value as any) === undefined) {
-          dates.push(date.clone().toDate());
+        dates.push(date.clone().toDate());
+        if ((props.prevExtend as any) <= date.unix()) {
+          datesFutured.push(date.clone().toDate());
         }
       }
-      setDates(dates);
+      if (datesFutured.length) {
+        setDates(datesFutured);
+      } else {
+        setDates(dates);
+      }
     }
-  }, [props.kickoffTs, props.value]);
+  }, [props.kickoffTs, props.value, props.prevExtend]);
 
   useEffect(() => {
     let filtered: Date[] = [];
@@ -65,6 +66,7 @@ export function StakingDateSelector(props: Props) {
       );
     } else {
       const now = Date.now();
+
       filtered = dates.filter(item => item.getTime() > now);
     }
 
