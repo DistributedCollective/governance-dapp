@@ -24,7 +24,9 @@ import { getContract, numberFromWei } from '../../../utils/helpers';
 import { useWeiAmount } from '../../hooks/useWeiAmount';
 import { useSoV_balanceOf } from '../../hooks/sov/useSoV_balanceOf';
 import { useStaking_getCurrentVotes } from '../../hooks/staking/useStaking_getCurrentVotes';
+import { useStaking_computeWeightByDate } from '../../hooks/staking/useStaking_computeWeightByDate';
 import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
+import { useStaking_WEIGHT_FACTOR } from '../../hooks/staking/useStaking_WEIGHT_FACTOR';
 import { useStaking_currentLock } from '../../hooks/staking/useStaking_currentLock';
 import {
   staking_allowance,
@@ -115,6 +117,7 @@ function InnerStakePage(props: Props) {
 
   const account = useAccount();
   const balanceOf = useStaking_balanceOf(account);
+  const WEIGHT_FACTOR = useStaking_WEIGHT_FACTOR();
   const voteBalance = useStaking_getCurrentVotes(account);
   const kickoffTs = useStaking_kickoffTs();
   const getStakes = useStaking_getStakes(account);
@@ -125,7 +128,7 @@ function InnerStakePage(props: Props) {
 
   const [amount, setAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
-  const [timestamp, setTimestamp] = useState<number>(undefined as any);
+  const [timestamp, setTimestamp] = useState<number>(0 as any);
   const [loading, setLoading] = useState(false);
   const [currentLock, setCurrentLock] = useState<Date>(null as any);
 
@@ -138,6 +141,15 @@ function InnerStakePage(props: Props) {
   const [extendForm, setExtendForm] = useState(false);
   const [withdrawForm, setWithdrawForm] = useState(false);
   const [increaseForm, setIncreaseForm] = useState(false);
+
+  const [weight, setWeight] = useState('');
+  const [lockDate, setLockDate] = useState<number>(0 as any);
+  const [votingPower, setVotingPower] = useState<number>(0 as any);
+  const getWeight = useStaking_computeWeightByDate(
+    lockDate,
+    Math.round(now.getTime() / 1e3),
+  );
+
   interface Stakes {
     stakes: any[] | any;
     dates: any[] | any;
@@ -225,7 +237,26 @@ function InnerStakePage(props: Props) {
 
   useEffect(() => {
     setCurrentLock(new Date(Number(s.value) * 1e3));
-  }, [s.value]);
+    if (timestamp && weiAmount && stakeForm) {
+      setLockDate(timestamp / 1e3);
+      setWeight(getWeight.value);
+      setVotingPower(
+        (Number(weiAmount) * Number(weight)) / Number(WEIGHT_FACTOR.value),
+      );
+    } else {
+      setLockDate(timestamp);
+      setWeight('');
+      setVotingPower(0);
+    }
+  }, [
+    s.value,
+    getWeight.value,
+    weight,
+    stakeForm,
+    WEIGHT_FACTOR.value,
+    weiAmount,
+    timestamp,
+  ]);
 
   const validateStakeForm = useCallback(() => {
     if (loading) return false;
@@ -512,6 +543,7 @@ function InnerStakePage(props: Props) {
                         isValid={validateStakeForm()}
                         kickoff={kickoffTs}
                         stakes={getStakes.value['dates']}
+                        votePower={votingPower}
                       />
                     </>
                   )}

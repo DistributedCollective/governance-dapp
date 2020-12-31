@@ -13,6 +13,7 @@ interface Props {
   isValid: boolean;
   kickoff: ContractCallResponse;
   stakes: undefined;
+  votePower?: number;
 }
 
 export function StakeForm(props: Props) {
@@ -54,6 +55,13 @@ export function StakeForm(props: Props) {
             {numberFromWei(props.sovBalanceOf.value).toLocaleString()}
           </span>{' '}
           SoV
+          {Number(props.votePower) > 0 && (
+            <>
+              <br />
+              Will be added to your vote: +{' '}
+              {numberFromWei(props.votePower).toLocaleString()}
+            </>
+          )}
         </div>
       </div>
 
