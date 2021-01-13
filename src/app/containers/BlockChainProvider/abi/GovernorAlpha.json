@@ -8,23 +8,13 @@
       },
       {
         "internalType": "address",
-        "name": "staking_",
+        "name": "comp_",
         "type": "address"
       },
       {
         "internalType": "address",
         "name": "guardian_",
         "type": "address"
-      },
-      {
-        "internalType": "uint96",
-        "name": "_quorumPercentageVotes",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint96",
-        "name": "_minPercentageVotes",
-        "type": "uint96"
       }
     ],
     "payable": false,
@@ -199,21 +189,6 @@
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "NAME",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "constant": false,
     "inputs": [],
     "name": "__abdicate",
@@ -342,6 +317,21 @@
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [],
+    "name": "comp",
+    "outputs": [
+      {
+        "internalType": "contract CompInterface",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -426,7 +416,7 @@
             "type": "uint96"
           }
         ],
-        "internalType": "struct GovernorAlpha.Receipt",
+        "internalType": "struct GovernorAlphaComp.Receipt",
         "name": "",
         "type": "tuple"
       }
@@ -474,12 +464,12 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "minPercentageVotes",
+    "name": "name",
     "outputs": [
       {
-        "internalType": "uint96",
+        "internalType": "string",
         "name": "",
-        "type": "uint96"
+        "type": "string"
       }
     ],
     "payable": false,
@@ -522,13 +512,13 @@
     "name": "proposalThreshold",
     "outputs": [
       {
-        "internalType": "uint96",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint96"
+        "type": "uint256"
       }
     ],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -548,44 +538,34 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint32",
-        "name": "startBlock",
-        "type": "uint32"
+        "internalType": "address",
+        "name": "proposer",
+        "type": "address"
       },
       {
-        "internalType": "uint32",
-        "name": "endBlock",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint96",
-        "name": "forVotes",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint96",
-        "name": "againstVotes",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint96",
-        "name": "quorum",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint96",
-        "name": "minPercentage",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint64",
+        "internalType": "uint256",
         "name": "eta",
-        "type": "uint64"
+        "type": "uint256"
       },
       {
-        "internalType": "uint64",
-        "name": "startTime",
-        "type": "uint64"
+        "internalType": "uint256",
+        "name": "startBlock",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endBlock",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "forVotes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "againstVotes",
+        "type": "uint256"
       },
       {
         "internalType": "bool",
@@ -596,11 +576,6 @@
         "internalType": "bool",
         "name": "executed",
         "type": "bool"
-      },
-      {
-        "internalType": "address",
-        "name": "proposer",
-        "type": "address"
       }
     ],
     "payable": false,
@@ -666,46 +641,16 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "quorumPercentageVotes",
-    "outputs": [
-      {
-        "internalType": "uint96",
-        "name": "",
-        "type": "uint96"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
     "name": "quorumVotes",
     "outputs": [
       {
-        "internalType": "uint96",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint96"
+        "type": "uint256"
       }
     ],
     "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "staking",
-    "outputs": [
-      {
-        "internalType": "contract IStaking",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -720,7 +665,7 @@
     "name": "state",
     "outputs": [
       {
-        "internalType": "enum GovernorAlpha.ProposalState",
+        "internalType": "enum GovernorAlphaComp.ProposalState",
         "name": "",
         "type": "uint8"
       }
@@ -735,7 +680,7 @@
     "name": "timelock",
     "outputs": [
       {
-        "internalType": "contract ITimelock",
+        "internalType": "contract TimelockCompInterface",
         "name": "",
         "type": "address"
       }
