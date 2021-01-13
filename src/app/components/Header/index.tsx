@@ -18,14 +18,14 @@ export function Header() {
           >
             Governance
           </NavLink>
-          <NavLink
+          {/*<NavLink
             to="/stake"
             exact
             activeClassName="text-white"
             className="px-3 py-2 text-sm font-bold transition duration-300 easy-in-out hover:text-gray-500"
           >
             Staking
-          </NavLink>
+          </NavLink>*/}
 
           <WalletConnectorButton />
 
