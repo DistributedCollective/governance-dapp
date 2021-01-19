@@ -1,8 +1,13 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { WalletConnectorButton } from '../../containers/BlockChainProvider/components/WalletConnectorButton';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectBlockChainProvider } from '../../containers/BlockChainProvider/selectors';
+import { actions } from 'app/containers/BlockChainProvider/slice';
 
 export function Header() {
+  const { connected, address } = useSelector(selectBlockChainProvider);
+  const dispatch = useDispatch();
   return (
     <header className="bg-black text-white py-5">
       <div className="container flex flex-row justify-between items-center">
@@ -26,6 +31,15 @@ export function Header() {
           >
             Staking
           </NavLink>*/}
+
+          {connected && address && (
+            <button
+              className="px-3 py-2 text-sm font-bold transition duration-300 easy-in-out hover:text-gray-500 hover:underline"
+              onClick={() => dispatch(actions.toggleDelagationDialog(true))}
+            >
+              Delegate Votes
+            </button>
+          )}
 
           <WalletConnectorButton />
 

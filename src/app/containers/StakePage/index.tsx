@@ -455,7 +455,7 @@ function InnerStakePage(props: Props) {
                       >
                         New Stake
                       </button>
-                      {increaseForm === true && (
+                      {increaseForm && (
                         <>
                           <h2>Increase</h2>
                           <IncreaseStakeForm
