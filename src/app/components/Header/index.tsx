@@ -4,6 +4,7 @@ import { WalletConnectorButton } from '../../containers/BlockChainProvider/compo
 import { useDispatch, useSelector } from 'react-redux';
 import { selectBlockChainProvider } from '../../containers/BlockChainProvider/selectors';
 import { actions } from 'app/containers/BlockChainProvider/slice';
+import { DEFAULT_CHAIN } from '../../containers/BlockChainProvider';
 
 export function Header() {
   const { connected, address } = useSelector(selectBlockChainProvider);
@@ -12,7 +13,12 @@ export function Header() {
     <header className="bg-black text-white py-5">
       <div className="container flex flex-row justify-between items-center">
         <div>
-          <Link to="/">Sovryn</Link>
+          <Link to="/">
+            Sovryn{' '}
+            <small className="text-gray-700">
+              {DEFAULT_CHAIN === 30 ? 'MAINNET' : 'TESTNET'}
+            </small>
+          </Link>
         </div>
         <div className="text-gray-400">
           <NavLink
@@ -23,14 +29,6 @@ export function Header() {
           >
             Governance
           </NavLink>
-          {/*<NavLink
-            to="/stake"
-            exact
-            activeClassName="text-white"
-            className="px-3 py-2 text-sm font-bold transition duration-300 easy-in-out hover:text-gray-500"
-          >
-            Staking
-          </NavLink>*/}
 
           {connected && address && (
             <button
@@ -42,15 +40,6 @@ export function Header() {
           )}
 
           <WalletConnectorButton />
-
-          {/*<a*/}
-          {/*  href="https://live.sovryn.app"*/}
-          {/*  className="px-3 py-2 border-2 border-green-600 rounded text-sm text-green-600 font-bold transition duration-300 easy-in-out hover:text-white hover:bg-green-600"*/}
-          {/*  target="_blank"*/}
-          {/*  rel="noreferrer"*/}
-          {/*>*/}
-          {/*  App*/}
-          {/*</a>*/}
         </div>
       </div>
     </header>

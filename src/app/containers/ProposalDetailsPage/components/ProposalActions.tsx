@@ -62,10 +62,18 @@ export function ProposalActions(props: Props) {
           className="bordered-list-item px-5 py-3 flex flex-row space-x-4"
           key={item.signature}
         >
-          <div className="truncate w-1/4">{item.target}</div>
-          <div className="truncate w-1/4">{item.signature}</div>
-          <div className="truncate w-1/4">{item.calldata}</div>
-          <div className="truncate w-1/4">{item.value}</div>
+          <div className="truncate w-1/4" title={item.target}>
+            {item.target}
+          </div>
+          <div className="truncate w-1/4" title={item.signature}>
+            {item.signature}
+          </div>
+          <div className="truncate w-1/4" title={item.calldata}>
+            {item.calldata}
+          </div>
+          <div className="truncate w-1/4" title={item.value}>
+            {item.value}
+          </div>
         </div>
       ))}
     </div>
