@@ -14,6 +14,7 @@ export interface BlockChainProviderState {
   transactionStack: string[];
   transactions: Transactions;
   showTransactions: boolean;
+  showDelegationDialog: boolean;
 }
 
 export type NetworkName = keyof IContractNetworks;
@@ -28,6 +29,7 @@ export interface IContractNetworks {
 
 export interface INetworkToContract {
   sovToken: IContract;
+  ntSovToken: IContract;
   staking: IContract;
   timelock: IContract;
   governorAlpha: IContract;
@@ -61,6 +63,7 @@ export type TransactionType =
   | 'cancel'
   | 'queue'
   | 'vote'
+  | 'delegate'
   | undefined;
 
 export interface Transaction {
