@@ -69,6 +69,7 @@
   },
   "scripts": {
     "start": "npm-run-all build:tailwind --parallel watch:tailwind start:react",
+    "start:mainnet": "env-cmd -f .env.production npm-run-all build:tailwind --parallel watch:tailwind start:react",
     "start:react": "react-scripts start",
     "build": "react-scripts build",
     "build:testnet": "env-cmd -f .env.testnet yarn build",
