@@ -1,3 +1,3 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components/macro';
 
 export const GlobalStyle = createGlobalStyle``;

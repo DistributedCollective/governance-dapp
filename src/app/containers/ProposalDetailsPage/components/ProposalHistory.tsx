@@ -1,7 +1,6 @@
 import React from 'react';
 import { EventData } from 'web3-eth-contract';
 import { Proposal } from 'types/Proposal';
-import { dateByBlocks } from 'utils/helpers';
 
 interface Props {
   proposal: Proposal;
@@ -18,6 +17,7 @@ export function ProposalHistory(props: Props) {
   //   };
   //   getEvents().then().catch();
   // }, [props.proposal?.id]);
+
   return (
     <div className="w-3/12 bg-white rounded shadow">
       <div className="px-5 py-3 border-b">
@@ -36,11 +36,7 @@ export function ProposalHistory(props: Props) {
             <div className="px-5 py-2">
               <div>Active</div>
               <div className="text-xs text-gray-400">
-                {dateByBlocks(
-                  props.proposal.startTime,
-                  props.proposal.startBlock,
-                  props.proposal.startBlock,
-                )}
+                #{props.proposal.startBlock}
               </div>
             </div>
           )}
@@ -49,11 +45,7 @@ export function ProposalHistory(props: Props) {
             <div className="px-5 py-2">
               <div>Created</div>
               <div className="text-xs text-gray-400">
-                {dateByBlocks(
-                  props.proposal.startTime,
-                  props.createdEvent.blockNumber,
-                  props.createdEvent.blockNumber,
-                )}
+                #{props.createdEvent.blockNumber}
               </div>
             </div>
           )}

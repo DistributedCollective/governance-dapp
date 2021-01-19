@@ -56,12 +56,8 @@ export function ProposalRow({ proposal }: Props) {
                 <div className="flex flex-row justify-start items-center">
                   <ProposalStatusBadge state={state} />
                   <div className="text-indigo-700 text-xs ml-3">
-                    {String(proposal.id).padStart(3, '0')} • Ends at{' '}
-                    {dateByBlocks(
-                      proposal.startTime,
-                      proposal.startBlock,
-                      proposal.endBlock,
-                    )}
+                    {String(proposal.id).padStart(3, '0')} • Ends at block #
+                    {proposal.endBlock}
                   </div>
                 </div>
               </div>
@@ -94,12 +90,8 @@ export function ProposalRow({ proposal }: Props) {
                       : 'text-gray-500'
                   } text-xs ml-3`}
                 >
-                  {String(proposal.id).padStart(3, '0')} • Finished at{' '}
-                  {dateByBlocks(
-                    proposal.startTime,
-                    proposal.startBlock,
-                    proposal.endBlock,
-                  )}
+                  {String(proposal.id).padStart(3, '0')} •{' '}
+                  <DateBlockByState proposal={proposal} state={state} />
                 </div>
               </div>
             </div>
@@ -111,4 +103,27 @@ export function ProposalRow({ proposal }: Props) {
       </Link>
     </>
   );
+}
+
+function DateBlockByState({
+  proposal,
+  state,
+}: {
+  proposal: Proposal;
+  state: ProposalState;
+}) {
+  switch (state) {
+    default:
+      return <>Finished at block #{proposal.endBlock}</>;
+    case ProposalState.Active:
+    case ProposalState.Pending:
+      return <>Ends at block #{proposal.endBlock}</>;
+    case ProposalState.Queued:
+      return (
+        <>
+          Queued for{' '}
+          {dateByBlocks(proposal.eta, proposal.startBlock, proposal.endBlock)}
+        </>
+      );
+  }
 }
