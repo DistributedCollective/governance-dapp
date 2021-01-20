@@ -17,7 +17,7 @@ export function ProposalsPage() {
 
     const get = async () => {
       const proposalCount = await governance_proposalCount();
-      let to = 0;
+      let to = 1;
       if (proposalCount > 25) {
         to = proposalCount - 25;
       }
@@ -69,7 +69,7 @@ export function ProposalsPage() {
                 </div>
               </>
             )}
-            {!loading && total === 0 && (
+            {!loading && total === 1 && (
               <>
                 <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
                   <i>No proposals yet.</i>
