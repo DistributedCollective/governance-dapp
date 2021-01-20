@@ -77,6 +77,8 @@ export function ProposalDetailsPage() {
           setVotesLoading(false);
         })
         .catch(console.error);
+    } else {
+      setVotes([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(data), syncBlockNumber]);
@@ -225,9 +227,9 @@ function VotingTable(props: TableProps) {
       </div>
       {items.length > 0 && (
         <div className="vote-area overflow-y-auto">
-          {items.map(item => (
+          {items.map((item, index) => (
             <VotingRow
-              key={item.voter}
+              key={item.voter + index}
               voter={item.voter}
               votes={numberFromWei(item.votes)}
               loading={props.loading}
