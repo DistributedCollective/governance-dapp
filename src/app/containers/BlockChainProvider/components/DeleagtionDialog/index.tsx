@@ -18,8 +18,7 @@ export function DelegationDialog() {
   const delegates = useNtSoV_delegates();
   const balance = useNtSoV_balanceOf(account);
   const [loading, setLoading] = useState(false);
-
-  const [address, setAddress] = useState(account);
+  const [address, setAddress] = useState('');
 
   const handleSubmit = async e => {
     e && e.preventDefault && e.preventDefault();
