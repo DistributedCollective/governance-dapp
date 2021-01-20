@@ -16,6 +16,7 @@ import { ProposalActions } from './components/ProposalActions';
 import { ProposalHistory } from './components/ProposalHistory';
 import { ProposalStatusBadge } from '../../components/ProposalStatusBadge';
 import { useGetProposalState } from '../../hooks/useGetProposalState';
+import { Text } from '@blueprintjs/core';
 
 export function ProposalDetailsPage() {
   const { id } = useParams();
@@ -99,11 +100,15 @@ export function ProposalDetailsPage() {
                 &lt; Proposals
               </Link>
             </div>
-            <div className="pb-8 flex flex-row justify-between">
-              <div>
-                <h2 className={`text-white ${loading && 'skeleton'}`}>
+            <div className="pb-8 flex flex-row justify-between space-x-8">
+              <div className="flex-grow-0 w-6/12">
+                <Text
+                  ellipsize
+                  tagName="h2"
+                  className={`text-white ${loading && 'skeleton'}`}
+                >
                   {createdEvent?.returnValues?.description || 'No description'}
-                </h2>
+                </Text>
                 {state && !stateLoading && (
                   <ProposalStatusBadge state={state} />
                 )}

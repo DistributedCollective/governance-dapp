@@ -51,7 +51,9 @@ export function ProposalRow({ proposal }: Props) {
                     !created.description && 'skeleton'
                   }`}
                 >
-                  {created.description || 'Title.'}
+                  {created.description
+                    ? created.description.substr(0, 50) + '...'
+                    : 'Title.'}
                 </div>
                 <div className="flex flex-row justify-start items-center">
                   <ProposalStatusBadge state={state} />
