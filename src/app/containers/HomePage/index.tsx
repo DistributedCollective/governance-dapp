@@ -17,7 +17,7 @@ export function HomePage() {
 
     const get = async () => {
       const proposalCount = await governance_proposalCount();
-      let to = 0;
+      let to = 1;
       if (proposalCount > 3) {
         to = proposalCount - 3;
       }
@@ -99,7 +99,7 @@ export function HomePage() {
                 </div>
               </>
             )}
-            {!loading && total === 0 && (
+            {!loading && total === 1 && (
               <>
                 <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
                   <i>No proposals yet.</i>
@@ -109,7 +109,7 @@ export function HomePage() {
             {items.map(item => (
               <ProposalRow key={item.id} proposal={item} />
             ))}
-            {total > items.length && (
+            {total > items.length - 1 && (
               <Link
                 to="/proposals"
                 className="block uppercase text-center px-3 py-2 font-bold text-sm hover:text-green-500 transition easy-in-out duration-300 border-t-1"

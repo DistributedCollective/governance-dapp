@@ -34,7 +34,7 @@ export const contracts: IContractNetworks = {
       abi: ERC20TokenABI as any,
     },
     ntSovToken: {
-      address: '0xbb6a00a7103b8110313DD9BE069B0Fa0D3bd62A4',
+      address: '0xc8cBdb42Ce55bDEe96D6425396e4047eE46F2E37',
       abi: NtSOVABi as any,
     },
     staking: {
@@ -42,11 +42,11 @@ export const contracts: IContractNetworks = {
       abi: StakingABI as any,
     },
     timelock: {
-      address: '0x341E466029931697B26ac1B7d53be67aD0a7d062',
+      address: '0x04cb2eF013F866E9915016E44FE36218361C1F5a',
       abi: TimelockABI as any,
     },
     governorAlpha: {
-      address: '0xC5b9612959F4228f9a2161815533804380C6D322',
+      address: '0xCe3a21a69c05CfE638B722f53593A047bdd6E9De',
       abi: GovernorAlphaABI as any,
     },
   },
