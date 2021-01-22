@@ -117,7 +117,12 @@ class Network {
     methodName: string,
     args: Array<any>,
   ): Promise<string | RevertInstructionError> {
-    return this.contracts[contractName].methods[methodName](...args).call();
+    try {
+      return this.contracts[contractName].methods[methodName](...args).call();
+    } catch (e) {
+      console.error('call:', { contractName, methodName, args }, e);
+      return Promise.reject();
+    }
   }
 
   public async send(
@@ -126,30 +131,35 @@ class Network {
     args: any[],
     sendTxOptions?: SendTxOptions,
   ) {
-    let params = args;
-    let options = {};
-    if (args && args.length && typeof args[args.length - 1] === 'object') {
-      params = args.slice(0, -1);
-      options = args[args.length - 1];
+    try {
+      let params = args;
+      let options = {};
+      if (args && args.length && typeof args[args.length - 1] === 'object') {
+        params = args.slice(0, -1);
+        options = args[args.length - 1];
+      }
+      return new Promise<string>((resolve, reject) => {
+        return this.writeContracts[contractName].methods[methodName](...params)
+          .send(options)
+          .once('transactionHash', tx => {
+            store.dispatch(
+              actions.addTransaction({
+                transactionHash: tx,
+                to: getContract(contractName).address,
+                type: sendTxOptions?.type,
+              }),
+            );
+            resolve(tx);
+          })
+          .catch(e => {
+            console.log('rejecting');
+            reject(e);
+          });
+      });
+    } catch (e) {
+      console.error('send:', { contractName, methodName, args }, e);
+      return Promise.reject();
     }
-    return new Promise<string>((resolve, reject) => {
-      return this.writeContracts[contractName].methods[methodName](...params)
-        .send(options)
-        .once('transactionHash', tx => {
-          store.dispatch(
-            actions.addTransaction({
-              transactionHash: tx,
-              to: getContract(contractName).address,
-              type: sendTxOptions?.type,
-            }),
-          );
-          resolve(tx);
-        })
-        .catch(e => {
-          console.log('rejecting');
-          reject(e);
-        });
-    });
   }
 
   public async getPastEvents(
@@ -159,27 +169,37 @@ class Network {
     fromBlock: number = 0,
     toBlock: number | 'latest' = 'latest',
   ): Promise<EventData[]> {
-    return this.databaseContracts[contractName]
-      .getPastEvents(eventName, {
-        fromBlock,
-        toBlock,
-        filter,
-      })
-      .catch(e => {
-        console.error(
-          { contractName, eventName, filter, fromBlock, toBlock },
-          e,
-        );
-        toaster.show(
-          {
-            intent: 'danger',
-            message:
-              'Service has some issues right now (event database unreachable). Please try again later.',
-          },
-          'get-past-events',
-        );
-        return [];
-      });
+    try {
+      return this.databaseContracts[contractName]
+        .getPastEvents(eventName, {
+          fromBlock,
+          toBlock,
+          filter,
+        })
+        .catch(e => {
+          console.error(
+            'event #1',
+            { contractName, eventName, filter, fromBlock, toBlock },
+            e,
+          );
+          toaster.show(
+            {
+              intent: 'danger',
+              message:
+                'Service has some issues right now (event database unreachable). Please try again later.',
+            },
+            'get-past-events',
+          );
+          return [];
+        });
+    } catch (e) {
+      console.error(
+        'event #2:',
+        { contractName, eventName, filter, fromBlock, toBlock },
+        e,
+      );
+      return Promise.reject();
+    }
   }
 
   protected makeContract(web3: Web3, contractConfig: IContract) {
