@@ -47,7 +47,7 @@ export function ProposalDetailsPage() {
         proposal.startBlock - 1,
         proposal.endBlock,
       );
-      setCreatedEvent(events[0]);
+      setCreatedEvent(events ? events[0] : null);
       setLoading(false);
     };
     get().then().catch();

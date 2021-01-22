@@ -11,8 +11,13 @@ import {
 import { contracts } from './contracts';
 import { store } from '../../../store/store';
 import { actions } from './slice';
-import { getContract } from '../../../utils/helpers';
+import {
+  getChainIdByNetwork,
+  getContract,
+  toaster,
+} from '../../../utils/helpers';
 import { DEFAULT_CHAIN } from './index';
+import { databaseRpcNodes } from './classifiers';
 
 interface SendTxOptions {
   type?: TransactionType;
@@ -21,8 +26,10 @@ interface SendTxOptions {
 class Network {
   public web3: Web3 = null as any;
   public writeWeb3: Web3 = null as any;
+  public databaseWeb3: Web3 = null as any;
   public contracts: {} = {};
   public writeContracts: {} = {};
+  public databaseContracts: {} = {};
 
   private _network: NetworkName = null as any;
   private _writeNetwork: NetworkName = null as any;
@@ -33,6 +40,15 @@ class Network {
     isWebsocket: boolean = false,
   ) {
     this.web3 = web3;
+
+    const databaseWeb3 = new Web3.providers.HttpProvider(
+      databaseRpcNodes[getChainIdByNetwork(network)],
+      {
+        keepAlive: true,
+      },
+    );
+    this.databaseWeb3 = new Web3(databaseWeb3);
+
     if (this._network !== network) {
       this._network = network;
       for (const contractName of Object.keys(
@@ -43,6 +59,13 @@ class Network {
           address,
           abi,
         });
+        this.databaseContracts[contractName] = this.makeContract(
+          this.databaseWeb3,
+          {
+            address,
+            abi,
+          },
+        );
       }
     }
 
@@ -136,11 +159,27 @@ class Network {
     fromBlock: number = 0,
     toBlock: number | 'latest' = 'latest',
   ): Promise<EventData[]> {
-    return this.contracts[contractName].getPastEvents(eventName, {
-      fromBlock,
-      toBlock,
-      filter,
-    });
+    return this.databaseContracts[contractName]
+      .getPastEvents(eventName, {
+        fromBlock,
+        toBlock,
+        filter,
+      })
+      .catch(e => {
+        console.error(
+          { contractName, eventName, filter, fromBlock, toBlock },
+          e,
+        );
+        toaster.show(
+          {
+            intent: 'danger',
+            message:
+              'Service has some issues right now (event database unreachable). Please try again later.',
+          },
+          'get-past-events',
+        );
+        return [];
+      });
   }
 
   protected makeContract(web3: Web3, contractConfig: IContract) {

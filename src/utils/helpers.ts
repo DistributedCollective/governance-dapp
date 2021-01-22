@@ -1,9 +1,17 @@
 import { bignumber } from 'mathjs';
-import { blockTime } from '../app/containers/BlockChainProvider/classifiers';
-import { ContractName } from '../app/containers/BlockChainProvider/types';
+import {
+  blockTime,
+  networks,
+} from '../app/containers/BlockChainProvider/classifiers';
+import {
+  ChainId,
+  ContractName,
+  NetworkName,
+} from '../app/containers/BlockChainProvider/types';
 import { contracts } from '../app/containers/BlockChainProvider/contracts';
 import { store } from '../store/store';
 import { Unit } from 'web3-utils';
+import { Toaster } from '@blueprintjs/core';
 
 export const genesisAddress = '0x0000000000000000000000000000000000000000';
 
@@ -133,3 +141,9 @@ export const handleNumber = (value, onlyPositive = true) => {
 
   return number.toString();
 };
+
+export function getChainIdByNetwork(network: NetworkName): ChainId {
+  return networks[network] as ChainId;
+}
+
+export const toaster = Toaster.create();
