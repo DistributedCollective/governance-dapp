@@ -69,7 +69,7 @@ export function ProposalDetailsPage() {
         .then(events => {
           setVotes(
             events.map(({ returnValues }) => ({
-              support: returnValues.support,
+              support: !!returnValues.support,
               voter: returnValues.voter,
               votes: returnValues.votes,
             })),

@@ -176,6 +176,9 @@ class Network {
           toBlock,
           filter,
         })
+        .then(items =>
+          items.map(item => ({ ...item, returnValues: item.returnVal })),
+        )
         .catch(e => {
           console.error(
             'event #1',
