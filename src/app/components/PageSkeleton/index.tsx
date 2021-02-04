@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components/macro';
 
 export function PageSkeleton() {
   return (
@@ -24,3 +25,57 @@ export function RowSkeleton() {
     </div>
   );
 }
+
+interface Props {
+  lines: number;
+}
+export function ComponentSkeleton({ lines }: Props) {
+  return (
+    <div className="container">
+      {Array(lines).map((_, index) => (
+        <div className="row my-3" key={index}>
+          {index % 2 !== 0 && (
+            <>
+              <div className="col-4">
+                <Skeleton />
+              </div>
+              <div className="col-8">
+                <Skeleton />
+              </div>
+            </>
+          )}
+          {index % 2 === 0 && (
+            <>
+              <div className="col-3">
+                <Skeleton />
+              </div>
+              <div className="col-6">
+                <Skeleton />
+              </div>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+ComponentSkeleton.defaultProps = {
+  lines: 1,
+};
+
+interface SkeletonProps {
+  width?: string;
+  height?: string;
+  inline?: boolean;
+}
+
+export const Skeleton = styled.div.attrs(props => ({
+  className: 'bp3-skeleton',
+}))`
+  width: ${(props: SkeletonProps) => (props.width ? props.width : '100%')};
+  height: ${(props: SkeletonProps) => (props.height ? props.height : '16px')};
+  display: ${(props: SkeletonProps) =>
+    props.inline ? 'inline-block' : 'block'};
+  margin: 5px;
+`;

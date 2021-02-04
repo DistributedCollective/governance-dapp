@@ -179,7 +179,7 @@ interface VotingHeaderProps {
 
 function VotingTableHeader(props: VotingHeaderProps) {
   return (
-    <div className="bg-white rounded-t shadow p-3 w-1/2 pb-4">
+    <div className="bg-gray-light rounded-t shadow p-3 w-1/2 pb-4">
       <div className="flex flex-row justify-between">
         <h4 className="font-bold">{props.title}</h4>
         <h4 className={`font-bold ${props.loading && 'skeleton'}`}>

@@ -7,6 +7,7 @@
 import React from 'react';
 import { Proposal, ProposalState } from 'types/Proposal';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components/macro';
 import { dateByBlocks, numberFromWei } from '../../../utils/helpers';
 import { VoteProgress } from '../../components/VoteProgress';
 import { useGetProposalCreateEvent } from '../../hooks/useGetProposalCreateEvent';
@@ -18,6 +19,35 @@ interface Props {
   proposal: Proposal;
 }
 
+const StyledBar = styled.div`
+  width: 100%;
+  max-width: 100px;
+  display: flex;
+  height: 10px;
+  flex-wrap: nowrap;
+  margin: 5px 0 5px auto;
+  border-radius: 8px;
+  overflow: hidden;
+  .progress__blue {
+    width: 50%;
+    background: rgb(78, 205, 196);
+    background: linear-gradient(
+      90deg,
+      rgba(78, 205, 196, 1) 0%,
+      rgba(0, 0, 0, 1) 100%
+    );
+  }
+  .progress__red {
+    width: 50%;
+    background: rgb(0, 0, 0);
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(205, 78, 78, 1) 100%
+    );
+  }
+`;
+
 export function ProposalRow({ proposal }: Props) {
   const { loading: loadingCreated, value: created } = useGetProposalCreateEvent(
     proposal,
@@ -27,46 +57,53 @@ export function ProposalRow({ proposal }: Props) {
   if (loadingState || loadingCreated || !created || !state) {
     return (
       <>
-        <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
-          <div className="w-full skeleton h-4" />
-          <div className="w-full skeleton h-4" />
-        </div>
+        <tr>
+          <td>
+            <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+              <div className="w-full skeleton h-4" />
+              <div className="w-full skeleton h-4" />
+            </div>
+          </td>
+          <td>
+            <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+              <div className="w-full skeleton h-4" />
+              <div className="w-full skeleton h-4" />
+            </div>
+          </td>
+          <td>
+            <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+              <div className="w-full skeleton h-4" />
+              <div className="w-full skeleton h-4" />
+            </div>
+          </td>
+          <td>
+            <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+              <div className="w-full skeleton h-4" />
+              <div className="w-full skeleton h-4" />
+            </div>
+          </td>
+          <td>
+            <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+              <div className="w-full skeleton h-4" />
+              <div className="w-full skeleton h-4" />
+            </div>
+          </td>
+        </tr>
       </>
     );
   }
 
   return (
     <>
-      <Link
-        to={`/proposals/${proposal.id}`}
-        className="flex px-5 py-3 transition duration-300 bordered-list-item hover:no-underline"
-      >
+      <tr key={proposal.id}>
         {state === ProposalState.Active ? (
-          <div className="flex justify-between items-center w-full">
-            <div className="flex justify-between items-center">
-              <div className="pulsating-dot ml-5 mr-8" />
-              <div>
-                <div
-                  className={`font-medium mb-2 ${
-                    !created.description && 'skeleton'
-                  }`}
-                >
-                  {created.description || 'Title.'}
-                </div>
-                <div className="flex flex-row justify-start items-center">
-                  <ProposalStatusBadge state={state} />
-                  <div className="text-indigo-700 text-xs ml-3">
-                    {String(proposal.id).padStart(3, '0')} • Ends at{' '}
-                    {dateByBlocks(
-                      proposal.startTime,
-                      proposal.startBlock,
-                      proposal.endBlock,
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="hidden md:block md:w-1/3">
+          <>
+            <td className="font-montserrat">
+              SIP {String(proposal.id).padStart(3, '0')}. {created.description}
+            </td>
+            <td className="text-right hidden md:table-cell">#{proposal.id}</td>
+            <td className="text-right hidden md:table-cell">
+              <ProposalStatusBadge state={state} />
               <VoteProgress
                 max={numberFromWei(proposal.quorum)}
                 value={numberFromWei(proposal.forVotes)}
@@ -79,36 +116,60 @@ export function ProposalRow({ proposal }: Props) {
                 color="gray"
                 showVotes={true}
               />
-            </div>
-          </div>
+            </td>
+            <td className="text-right hidden md:table-cell">
+              {dateByBlocks(
+                proposal.startTime,
+                proposal.startBlock,
+                proposal.endBlock,
+              )}
+              - #{proposal.id}
+            </td>
+            <td className="text-right">
+              <Link
+                to={{
+                  pathname: `/proposals/${proposal.id}`,
+                  state: { modal: true },
+                }}
+                className="text-gold hover:text-gold hover:underline"
+              >
+                View Proposal
+              </Link>
+            </td>
+          </>
         ) : (
-          <div className="flex justify-between items-center w-full">
-            <div className="w-full md:w-10/12">
-              <div className="font-medium mb-2">{created.description}</div>
-              <div className="flex flex-row justify-start items-center">
-                <ProposalStatusBadge state={state} />
-                <div
-                  className={`${
-                    proposal.executed && proposal.canceled
-                      ? 'text-green-500'
-                      : 'text-gray-500'
-                  } text-xs ml-3`}
-                >
-                  {String(proposal.id).padStart(3, '0')} • Finished at{' '}
-                  {dateByBlocks(
-                    proposal.startTime,
-                    proposal.startBlock,
-                    proposal.endBlock,
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="hidden md:block w-2/12">
+          <>
+            <td className="font-montserrat">
+              SIP {String(proposal.id).padStart(3, '0')}.
+              {created.description || 'Title.'}
+            </td>
+            <td className="text-right hidden md:table-cell">#{proposal.id}</td>
+            <td className="text-right hidden md:table-cell">
               <ProposalRowStateBadge state={state} />
-            </div>
-          </div>
+              <StyledBar>
+                <div className="progress__blue"></div>
+                <div className="progress__red"></div>
+              </StyledBar>
+            </td>
+            <td className="text-right hidden md:table-cell">
+              {dateByBlocks(
+                proposal.startTime,
+                proposal.startBlock,
+                proposal.endBlock,
+              )}
+              - #{proposal.id}
+            </td>
+            <td className="text-right">
+              <Link
+                to={`/proposals/${proposal.id}`}
+                className="text-gold hover:underline hover:text-gold"
+              >
+                View Proposal
+              </Link>
+            </td>
+          </>
         )}
-      </Link>
+      </tr>
     </>
   );
 }
