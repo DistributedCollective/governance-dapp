@@ -3,12 +3,17 @@ import GovernorAlphaABI from './abi/GovernorAlpha.json';
 import StakingABI from './abi/Staking.json';
 import TimelockABI from './abi/Timelock.json';
 import ERC20TokenABI from './abi/ERC20Token.json';
+import NtSOVABi from './abi/NTSOV.json';
 
 export const contracts: IContractNetworks = {
   testnet: {
     sovToken: {
       address: '0x4c2bE6C604A3181Ef531914671902c2De068EA63',
       abi: ERC20TokenABI as any,
+    },
+    ntSovToken: {
+      address: '0x4c2bE6C604A3181Ef531914671902c2De068EA63',
+      abi: NtSOVABi as any,
     },
     staking: {
       address: '0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083',
@@ -27,6 +32,10 @@ export const contracts: IContractNetworks = {
     sovToken: {
       address: '0x04fa98E97A376a086e3BcAB99c076CB249e5740D',
       abi: ERC20TokenABI as any,
+    },
+    ntSovToken: {
+      address: '0xc8cBdb42Ce55bDEe96D6425396e4047eE46F2E37',
+      abi: NtSOVABi as any,
     },
     staking: {
       address: '0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083',

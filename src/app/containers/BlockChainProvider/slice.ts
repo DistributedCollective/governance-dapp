@@ -27,6 +27,7 @@ export const initialState: ContainerState = {
   transactionStack: [],
   transactions: {},
   showTransactions: false,
+  showDelegationDialog: false,
 };
 
 const blockChainProviderSlice = createSlice({
@@ -122,6 +123,9 @@ const blockChainProviderSlice = createSlice({
     },
     toggleTransactionDrawer(state, { payload }: PayloadAction<boolean>) {
       state.showTransactions = payload;
+    },
+    toggleDelagationDialog(state, { payload }: PayloadAction<boolean>) {
+      state.showDelegationDialog = payload;
     },
   },
 });
