@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { Proposal, ProposalState } from 'types/Proposal';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { dateByBlocks, numberFromWei } from '../../../utils/helpers';
 import { VoteProgress } from '../../components/VoteProgress';
@@ -53,6 +53,7 @@ export function ProposalRow({ proposal }: Props) {
     proposal,
   );
   const { loading: loadingState, state } = useGetProposalState(proposal);
+  const location = useLocation();
 
   if (loadingState || loadingCreated || !created || !state) {
     return (
@@ -129,7 +130,7 @@ export function ProposalRow({ proposal }: Props) {
               <Link
                 to={{
                   pathname: `/proposals/${proposal.id}`,
-                  state: { modal: true },
+                  state: { background: location },
                 }}
                 className="text-gold hover:text-gold hover:underline"
               >
@@ -161,8 +162,11 @@ export function ProposalRow({ proposal }: Props) {
             </td>
             <td className="text-right">
               <Link
-                to={`/proposals/${proposal.id}`}
-                className="text-gold hover:underline hover:text-gold"
+                to={{
+                  pathname: `/proposals/${proposal.id}`,
+                  state: { background: location },
+                }}
+                className="text-gold hover:text-gold hover:underline"
               >
                 View Proposal
               </Link>

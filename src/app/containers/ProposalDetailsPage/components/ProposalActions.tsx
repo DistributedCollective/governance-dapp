@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useContractCall } from '../../../hooks/useContractCall';
 import { RowSkeleton } from '../../../components/PageSkeleton';
+import { functionsText } from '../../HomePage/functionsText';
 
 interface Props {
   proposalId: number;
@@ -58,14 +59,20 @@ export function ProposalActions(props: Props) {
   return (
     <div className="py-3">
       {items.map(item => (
-        <div
-          className="bordered-list-item px-5 py-3 flex flex-row space-x-4"
-          key={item.signature}
-        >
-          <div className="truncate w-1/4">{item.target}</div>
-          <div className="truncate w-1/4">{item.signature}</div>
-          <div className="truncate w-1/4">{item.calldata}</div>
-          <div className="truncate w-1/4">{item.value}</div>
+        <div key={item.signature}>
+          <p className="font-semibold text-lg mt-16">
+            Function to invoke: {item.signature}
+          </p>
+          <p className="break-words" title={item.calldata}>
+            {item.calldata}
+          </p>
+          <p>
+            Contract Address: <span className="text-gold">{item.target}</span>
+          </p>
+          <p className="font-thin">Amount to transfer: {item.value} (r)BTC</p>
+          <div className="border rounded-xl bg-gray-200 p-4 mt-3 mb-10 whitespace-pre h-64 overflow-y-auto">
+            <p className="text-xs font-gray-600">{functionsText}</p>
+          </div>
         </div>
       ))}
     </div>

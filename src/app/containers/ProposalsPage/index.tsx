@@ -33,7 +33,6 @@ export function ProposalsPage() {
       setLoading(false);
       setTotal(proposalCount);
     };
-
     get().then().catch();
   }, []);
   return (
@@ -62,14 +61,6 @@ export function ProposalsPage() {
         </div>
         <div className="container">
           <div className="bg-gray-light rounded-b shadow">
-            {loading && !items.length && (
-              <>
-                <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
-                  <div className="w-full skeleton h-4" />
-                  <div className="w-full skeleton h-4" />
-                </div>
-              </>
-            )}
             {!loading && total === 0 && (
               <>
                 <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
@@ -96,6 +87,27 @@ export function ProposalsPage() {
                     </tr>
                   </thead>
                   <tbody className="mt-5">
+                    {loading && !items.length && (
+                      <>
+                        <tr>
+                          <td>
+                            <div className="w-full skeleton h-4" />
+                          </td>
+                          <td>
+                            <div className="w-full skeleton h-4" />
+                          </td>
+                          <td>
+                            <div className="w-full skeleton h-4" />
+                          </td>
+                          <td>
+                            <div className="w-full skeleton h-4" />
+                          </td>
+                          <td>
+                            <div className="w-full skeleton h-4" />
+                          </td>
+                        </tr>
+                      </>
+                    )}
                     {items.map(item => (
                       <ProposalRow key={item.id} proposal={item} />
                     ))}

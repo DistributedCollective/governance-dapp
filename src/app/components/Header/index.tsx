@@ -164,8 +164,8 @@ export function Header() {
 
   return (
     <>
-      <header className="bg-black mb-2 min-h-header">
-        <div className="container flex justify-between items-center mb-3 pt-2 pb-2">
+      <header className="bg-black mb-2">
+        <div className="container min-h-header flex justify-between items-center mb-3 pt-2 pb-2">
           <div className="xl:hidden">
             <div ref={node}>
               <Burger open={open} setOpen={setOpen} />
