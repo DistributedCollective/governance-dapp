@@ -153,12 +153,7 @@ export function ProposalRow({ proposal }: Props) {
               </StyledBar>
             </td>
             <td className="text-right hidden md:table-cell">
-              {dateByBlocks(
-                proposal.startTime,
-                proposal.startBlock,
-                proposal.endBlock,
-              )}
-              - #{proposal.id}
+              {proposal.endBlock} - #{proposal.id}
             </td>
             <td className="text-right">
               <Link

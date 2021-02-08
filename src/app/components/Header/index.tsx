@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink, useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/macro';
 import logoSvg from 'assets/images/sovryn-logo-white.svg';
-import { LanguageToggle } from '../LanguageToggle';
 import { translations } from 'locales/i18n';
 import { media } from '../../../styles/media';
 import { MenuItem } from '@blueprintjs/core';
@@ -11,7 +10,6 @@ import { WalletConnectorButton } from '../../containers/BlockChainProvider/compo
 
 export function Header() {
   const { t } = useTranslation();
-  const siteLink = 'https://test.sovryn.app/';
   const [open, setOpen] = useState(false);
   const history = useHistory();
   const node = useRef(null as any);
@@ -111,11 +109,6 @@ export function Header() {
   };
 
   const pages = [
-    { to: '/', title: t(translations.mainMenu.trade), exact: true },
-    { to: '/lend', title: t(translations.mainMenu.lend) },
-    { to: '/liquidity', title: t(translations.mainMenu.liquidity) },
-    { to: '/wallet', title: t(translations.mainMenu.wallet) },
-    { to: '/stats', title: t(translations.mainMenu.stats) },
     {
       to: 'https://sovryn-1.gitbook.io/sovryn/',
       title: t(translations.mainMenu.faqs),
@@ -178,51 +171,8 @@ export function Header() {
                 <StyledLogo src={logoSvg} />
               </Link>
             </div>
-            <div className="hidden xl:block">
-              <NavLink
-                className="nav-item mr-4 text-white hover:text-gold uppercase hover:no-underline font-thin"
-                to={siteLink}
-              >
-                {t(translations.mainMenu.trade)}
-              </NavLink>
-              <NavLink
-                className="nav-item mr-4 text-white hover:text-gold uppercase hover:no-underline font-thin"
-                to="/lend"
-              >
-                {t(translations.mainMenu.lend)}
-              </NavLink>
-              <NavLink
-                className="nav-item mr-4 text-white hover:text-gold uppercase hover:no-underline font-thin"
-                to="/liquidity"
-              >
-                {t(translations.mainMenu.liquidity)}
-              </NavLink>
-              <NavLink
-                className="nav-item mr-4 text-white hover:text-gold uppercase hover:no-underline font-thin"
-                to="/wallet"
-              >
-                {t(translations.mainMenu.wallet)}
-              </NavLink>
-              <NavLink
-                className="nav-item mr-4 text-white hover:text-gold uppercase hover:no-underline font-thin"
-                to="/stats"
-              >
-                {t(translations.mainMenu.stats)}
-              </NavLink>
-              <a
-                href="https://sovryn-1.gitbook.io/sovryn/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="nav-item mr-4 text-white hover:text-gold uppercase hover:no-underline font-thin"
-              >
-                {t(translations.mainMenu.help)}
-              </a>
-            </div>
           </div>
           <div className="flex justify-start items-center">
-            <div className="mr-3">
-              <LanguageToggle />
-            </div>
             <WalletConnectorButton />
           </div>
         </div>

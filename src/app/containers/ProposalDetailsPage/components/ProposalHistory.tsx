@@ -1,7 +1,7 @@
 import React from 'react';
 import { EventData } from 'web3-eth-contract';
 import { Proposal } from 'types/Proposal';
-import { dateByBlocks, prettyTx } from 'utils/helpers';
+import { prettyTx } from 'utils/helpers';
 
 interface Props {
   proposal: Proposal;
@@ -38,13 +38,7 @@ export function ProposalHistory(props: Props) {
             <div className="flex mb-6">
               <p className="text-lg max-w-140 leading-4 w-1/2">Proposed on:</p>
               <div className="w-auto">
-                <p className="text-sm">
-                  {dateByBlocks(
-                    props.proposal.startTime,
-                    props.createdEvent.blockNumber,
-                    props.createdEvent.blockNumber,
-                  )}
-                </p>
+                <p className="text-sm">{props.createdEvent.blockNumber}</p>
                 <p className="text-gold text-sm">
                   {props.proposal?.id && <>#{props.proposal.id}</>}
                 </p>
@@ -56,13 +50,7 @@ export function ProposalHistory(props: Props) {
               <div className="flex mb-6">
                 <p className="text-lg max-w-140 leading-4 w-1/2">Deadline:</p>
                 <div className="w-auto">
-                  <p className="text-sm">
-                    {dateByBlocks(
-                      props.proposal.startTime,
-                      props.proposal.startBlock,
-                      props.proposal.endBlock,
-                    )}
-                  </p>
+                  <p className="text-sm">{props.proposal.endBlock}</p>
                   <p className="text-gold text-sm">
                     {props.proposal?.id && <>#{props.proposal.id}</>}
                   </p>

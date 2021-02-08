@@ -2,12 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
-import {
-  kFormatter,
-  numberFromWei,
-  prettyTx,
-  dateByBlocks,
-} from 'utils/helpers';
+import { kFormatter, numberFromWei, prettyTx } from 'utils/helpers';
 import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
 import { network } from '../BlockChainProvider/network';
 import { VoteCaster } from './components/VoteCaster';
@@ -146,15 +141,10 @@ export function ProposalDetailsPage() {
             }`}
           >
             {createdEvent?.returnValues?.description || 'No description'}
-            {/*
-            {state && !stateLoading && (
-              <ProposalStatusBadge state={state} />
-            )} */}
           </h3>
           <div className="text-right font-semibold">
             <p className={` ${loading && 'skeleton'}`}>
-              Voting ends:{' '}
-              {dateByBlocks(data?.startTime, data?.startBlock, data?.endBlock)}
+              Voting ends: {data?.endBlock}
               <br />
               {data?.id && <>#{data.id}</>}
             </p>
@@ -414,7 +404,6 @@ function VotingTable(props: TableProps) {
     <StyledTable className="w-full text-left table-small font-montserrat">
       <thead>
         <tr>
-          <th>Username</th>
           <th>Addresses</th>
           <th>Tx Hash</th>
           <th>Votes</th>
@@ -474,7 +463,6 @@ function VotingRow({
         <td className="skeleton">--------------</td>
         <td className="skeleton">--------------</td>
         <td className="skeleton">--------------</td>
-        <td className="skeleton">--------------</td>
       </tr>
     );
   }
@@ -482,7 +470,6 @@ function VotingRow({
   if (!voter && !votes) {
     return (
       <tr>
-        <td>-</td>
         <td>-</td>
         <td>-</td>
         <td>-</td>
@@ -499,10 +486,9 @@ function VotingRow({
           rel="noreferrer"
           className="text-white transition no-underline p-0 m-0 duration-300 bordered-list-item hover:text-gold hover:no-underline"
         >
-          Loreum
+          {prettyTx(voter as string)}
         </a>
       </td>
-      <td>{prettyTx(voter as string)}</td>
       <td>{prettyTx(voter as string)}</td>
       <td>{kFormatter(votes)}</td>
     </tr>

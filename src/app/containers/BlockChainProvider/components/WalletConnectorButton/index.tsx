@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { prettyTx } from 'utils/helpers';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/macro';
-import { Icon, Menu, MenuItem, Popover, Spinner } from '@blueprintjs/core';
+import { Icon, Spinner } from '@blueprintjs/core';
 import { selectBlockChainProvider } from '../../selectors';
 import { walletConnection } from '../../web3-modal';
 import { translations } from 'locales/i18n';
@@ -45,38 +45,19 @@ export function WalletConnectorButton() {
           </StyledButton>
         ) : (
           <div>
-            <Popover
-              content={
-                <Menu>
-                  <MenuItem
-                    icon="briefcase"
-                    text={t(translations.wallet.my_wallet)}
-                    // onClick={() => history.push('/wallet')}
-                  />
-                  <MenuItem
-                    icon="people"
-                    text={t(translations.wallet.referrals)}
-                    // onClick={() => history.push('/referral')}
-                  />
-                </Menu>
-              }
-            >
-              <>
-                <StyledButtonAuth className="engage-wallet w-auto justify-center items-center hidden xl:flex cursor-pointer">
-                  <span className="flex flex-nowrap flex-row items-center w-100 justify-between">
-                    <span>{prettyTx(address, 4, 4)}</span>
-                    <Icon
-                      icon="log-out"
-                      className="logout"
-                      onClick={handleDisconnect}
-                    />
-                  </span>
-                </StyledButtonAuth>
-                <StyledButton className="xl:hidden">
-                  <Icon icon="user" />
-                </StyledButton>
-              </>
-            </Popover>
+            <StyledButtonAuth className="engage-wallet w-auto justify-center items-center hidden xl:flex cursor-pointer">
+              <span className="flex flex-nowrap flex-row items-center w-100 justify-between">
+                <span>{prettyTx(address, 4, 4)}</span>
+                <Icon
+                  icon="log-out"
+                  className="logout"
+                  onClick={handleDisconnect}
+                />
+              </span>
+            </StyledButtonAuth>
+            <StyledButton className="xl:hidden">
+              <Icon icon="user" />
+            </StyledButton>
           </div>
         )}
       </div>
