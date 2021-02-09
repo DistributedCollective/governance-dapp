@@ -21,7 +21,9 @@ export function ProposalHistory(props: Props) {
         <>
           {props.proposal && (
             <div className="flex items-start mb-6">
-              <p className="text-lg max-w-140 leading-4 w-1/2">Proposed by:</p>
+              <p className="text-lg xl:max-w-140 leading-4 w-1/2">
+                Proposed by:
+              </p>
               <div className="w-auto">
                 <p className="text-gold text-sm">
                   {props.proposal?.proposer && (
@@ -36,7 +38,9 @@ export function ProposalHistory(props: Props) {
           )}
           {props.proposal && props.createdEvent && (
             <div className="flex mb-6">
-              <p className="text-lg max-w-140 leading-4 w-1/2">Proposed on:</p>
+              <p className="text-lg xl:max-w-140 leading-4 w-1/2">
+                Proposed on:
+              </p>
               <div className="w-auto">
                 <p className="text-sm">{props.createdEvent.blockNumber}</p>
                 <p className="text-gold text-sm">
@@ -48,7 +52,9 @@ export function ProposalHistory(props: Props) {
           {props.proposal && (
             <>
               <div className="flex mb-6">
-                <p className="text-lg max-w-140 leading-4 w-1/2">Deadline:</p>
+                <p className="text-lg xl:max-w-140 leading-4 w-1/2">
+                  Deadline:
+                </p>
                 <div className="w-auto">
                   <p className="text-sm">{props.proposal.endBlock}</p>
                   <p className="text-gold text-sm">

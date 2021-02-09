@@ -50,14 +50,18 @@
     }
 
     h1 {
-        @apply text-3xl;
+        @apply text-2xl;
     }
 
     h2 {
-        @apply text-2xl;
+        @apply text-xl;
     }
     h3 {
-        @apply text-2xl;
+        @apply text-xl;
+    }
+    h3 > a,
+    h3 > a:hover {
+        @apply text-gold;
     }
     @screen xl {
         h1 {

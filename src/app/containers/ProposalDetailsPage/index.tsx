@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Scrollbars } from 'react-custom-scrollbars';
+import Linkify from 'react-linkify';
 import styled from 'styled-components/macro';
 import { kFormatter, numberFromWei, prettyTx } from 'utils/helpers';
 import { media } from '../../../styles/media';
@@ -20,7 +22,6 @@ export function ProposalDetailsPage() {
 
   const isConnected = useIsConnected();
   const { syncBlockNumber } = useSelector(selectBlockChainProvider);
-
   const [data, setData] = useState<Proposal>(null as any);
   const [createdEvent, setCreatedEvent] = useState<any>(null as any);
   const [loading, setLoading] = useState(false);
@@ -46,7 +47,6 @@ export function ProposalDetailsPage() {
     position: relative;
     ${media.xl`
       max-width: 750px;
-      margin: 0;
     `}
     .progress {
       &__circle {
@@ -142,11 +142,13 @@ export function ProposalDetailsPage() {
       <div className="proposap-detail">
         <div className="xl:flex justify-between items-start">
           <h3
-            className={`proposal__title leading-10 font-semibold ${
+            className={`proposal__title leading-10 font-semibold break-all w-5/6 ${
               loading && 'skeleton'
             }`}
           >
-            {createdEvent?.returnValues?.description || 'No description'}
+            <Linkify properties={{ target: '_blank' }}>
+              {createdEvent?.returnValues?.description || 'No description'}
+            </Linkify>
           </h3>
           <div className="text-right font-semibold">
             <p className={` ${loading && 'skeleton'}`}>
@@ -160,7 +162,7 @@ export function ProposalDetailsPage() {
         <div className="flex justify-around xl:mt-24 mt-10">
           <div className="mx-3 text-right">
             <span className="xl:text-3xl text-xl font-semibold leading-5">
-              {votesForProgressPercents}%
+              {votesForProgressPercents || 0}%
             </span>
             <p className="xl:text-lg text-sm font-light">
               {kFormatter(numberFromWei(data?.forVotes || 0))} votes
@@ -169,48 +171,63 @@ export function ProposalDetailsPage() {
           <StyledBar>
             <div className="progress__blue"></div>
             <div className="progress__red"></div>
-            <div
-              className="progress__circle"
-              style={{ right: votesForProgressPercents + '%' }}
-            ></div>
+            {!isNaN(votesForProgressPercents) &&
+              !isNaN(votesAgainstProgressPercents) && (
+                <div
+                  className="progress__circle"
+                  style={{ right: votesForProgressPercents + '%' }}
+                ></div>
+              )}
           </StyledBar>
           <div className="mx-3">
             <span className="xl:text-3xl text-xl font-semibold leading-5">
-              {votesAgainstProgressPercents}%
+              {votesAgainstProgressPercents || 0}%
             </span>
             <p className="xl:text-lg text-sm font-light">
               {kFormatter(numberFromWei(data?.againstVotes || 0))} votes
             </p>
           </div>
         </div>
-        <div className="xl:flex items-center justify-between mt-20">
-          <div className="vote__success rounded-xl mb-4 xl:mb-0 border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
-            You Voted {kFormatter(numberFromWei(data?.forVotes || 0))}
+        {data?.id && isConnected && state !== ProposalState.Active && (
+          <div className="xl:flex items-center justify-between mt-20">
+            <div className="vote__success rounded-xl mb-4 xl:mb-0 border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
+              You Voted {kFormatter(numberFromWei(data?.forVotes || 0))}
+            </div>
+            <div className="vote__danger rounded-xl border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
+              {kFormatter(numberFromWei(data?.againstVotes || 0))} Votes Against
+            </div>
           </div>
-          <div className="vote__danger rounded-xl border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
-            {kFormatter(numberFromWei(data?.againstVotes || 0))} Votes Against
-          </div>
-        </div>
+        )}
 
         {data?.id && isConnected && state === ProposalState.Active && (
-          <VoteCaster proposalId={data.id} />
+          <VoteCaster
+            voutesFor={data.forVotes}
+            voutesAgainst={data.againstVotes}
+            proposalId={data.id}
+          />
         )}
 
         <div className="xl:flex -mx-2 mt-8">
-          <div className="rounded-xl border mb-4 xl:mb-0 xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48">
+          <Scrollbars
+            className="rounded-xl border mb-4 xl:mb-0 xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48"
+            style={{ height: 190 }}
+          >
             <VotingTable
               items={votes}
               showSupporters={true}
               loading={votesLoading}
             />
-          </div>
-          <div className="rounded-xl border xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48">
+          </Scrollbars>
+          <Scrollbars
+            className="rounded-xl border xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48"
+            style={{ height: 190 }}
+          >
             <VotingTable
               items={votes}
               showSupporters={false}
               loading={votesLoading}
             />
-          </div>
+          </Scrollbars>
         </div>
         <div className="xl:flex mt-10">
           <div className="xl:w-3/4 w-full mb-5 xl:mb-0">

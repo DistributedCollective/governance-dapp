@@ -131,6 +131,9 @@ export function HomePage() {
       td {
         padding: 0 30px;
         color: white;
+        a {
+          color: #fec004;
+        }
       }
 
       &:first-of-type {

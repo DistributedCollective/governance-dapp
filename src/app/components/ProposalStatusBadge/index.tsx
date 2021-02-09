@@ -57,7 +57,7 @@ interface Props {
 export function ProposalStatusBadge({ state }: Props) {
   return (
     <div
-      className={`border rounded py-0 px-1 text-xs ${getBorderColor(
+      className={`border rounded ml-auto py-0 px-1 text-xs ${getBorderColor(
         state,
       )} ${getTextColor(state)} text-center`}
       style={{ width: '70px' }}

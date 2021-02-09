@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { useContractCall } from '../../../hooks/useContractCall';
 import { RowSkeleton } from '../../../components/PageSkeleton';
 import { functionsText } from '../../HomePage/functionsText';
@@ -71,9 +72,12 @@ export function ProposalActions(props: Props) {
             <span className="text-gold break-words">{item.target}</span>
           </p>
           <p className="font-thin">Amount to transfer: {item.value} (r)BTC</p>
-          <div className="border rounded-xl bg-gray-200 p-4 mt-3 mb-10 whitespace-pre h-64 overflow-y-auto">
-            <p className="text-xs font-gray-600">{functionsText}</p>
-          </div>
+          <Scrollbars
+            className="border rounded-xl bg-gray-200 mt-3 mb-10 whitespace-pre h-64"
+            style={{ height: 300 }}
+          >
+            <p className="text-xs font-gray-600 p-4">{functionsText}</p>
+          </Scrollbars>
         </div>
       ))}
     </div>

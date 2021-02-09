@@ -4,10 +4,12 @@ import { LinkToExplorer } from '../../../components/LinkToExplorer';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
 import { useContractCall } from '../../../hooks/useContractCall';
-import { numberFromWei } from '../../../../utils/helpers';
+import { numberFromWei, kFormatter } from 'utils/helpers';
 
 interface Props {
   proposalId: number;
+  voutesAgainst: number;
+  voutesFor: number;
 }
 
 export function VoteCaster(props: Props) {
@@ -70,18 +72,18 @@ export function VoteCaster(props: Props) {
   return (
     <div className="xl:flex items-center justify-between mt-10">
       <button
-        className="vote__success bg-turquoise focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-10 rounded-xl mb-4 xl:mb-0 border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise"
+        className="vote__success w-full xl:w-auto bg-turquoise focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-10 rounded-xl mb-4 xl:mb-0 border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise"
         type="button"
         onClick={() => handleVote(true)}
       >
-        Vote For
+        {kFormatter(numberFromWei(props.voutesFor || 0))} Votes For
       </button>
       <button
-        className="vote__danger bg-red focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-10 rounded-xl border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-red border-red"
+        className="vote__danger w-full xl:w-auto bg-red focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-10 rounded-xl border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-red border-red"
         type="button"
         onClick={() => handleVote(false)}
       >
-        Vote Against
+        {kFormatter(numberFromWei(props.voutesAgainst || 0))} Votes Against
       </button>
     </div>
   );

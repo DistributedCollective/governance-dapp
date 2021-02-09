@@ -47,7 +47,7 @@ export function ProposalsPage() {
             <div className="block text-white pt-8 pb-6">
               <Link
                 to="/"
-                className="text-white hover:no-underline hover:text-gray-500"
+                className="text-white hover:no-underline hover:text-gold"
               >
                 &lt; Proposals
               </Link>
@@ -210,6 +210,9 @@ const StyledTable = styled.table`
     td {
       padding: 0 30px;
       color: white;
+      a {
+        color: #fec004;
+      }
     }
 
     &:first-of-type {

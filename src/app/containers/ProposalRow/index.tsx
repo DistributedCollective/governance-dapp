@@ -7,9 +7,8 @@
 import React from 'react';
 import { Proposal, ProposalState } from 'types/Proposal';
 import { Link, useLocation } from 'react-router-dom';
+import Linkify from 'react-linkify';
 import styled from 'styled-components/macro';
-import { dateByBlocks, numberFromWei } from '../../../utils/helpers';
-import { VoteProgress } from '../../components/VoteProgress';
 import { useGetProposalCreateEvent } from '../../hooks/useGetProposalCreateEvent';
 import { useGetProposalState } from '../../hooks/useGetProposalState';
 import { ProposalStatusBadge } from '../../components/ProposalStatusBadge';
@@ -99,32 +98,20 @@ export function ProposalRow({ proposal }: Props) {
       <tr key={proposal.id}>
         {state === ProposalState.Active ? (
           <>
-            <td className="font-montserrat">
-              SIP {String(proposal.id).padStart(3, '0')}. {created.description}
+            <td className="font-montserrat break-all max-w-xl">
+              SIP {String(proposal.id).padStart(3, '0')}.
+              <Linkify newTab={true}>{created.description}</Linkify>
             </td>
             <td className="text-right hidden md:table-cell">#{proposal.id}</td>
             <td className="text-right hidden md:table-cell">
               <ProposalStatusBadge state={state} />
-              <VoteProgress
-                max={numberFromWei(proposal.quorum)}
-                value={numberFromWei(proposal.forVotes)}
-                color="green"
-                showVotes={true}
-              />
-              <VoteProgress
-                max={numberFromWei(proposal.quorum)}
-                value={numberFromWei(proposal.againstVotes)}
-                color="gray"
-                showVotes={true}
-              />
+              <StyledBar>
+                <div className="progress__blue"></div>
+                <div className="progress__red"></div>
+              </StyledBar>
             </td>
             <td className="text-right hidden md:table-cell">
-              {dateByBlocks(
-                proposal.startTime,
-                proposal.startBlock,
-                proposal.endBlock,
-              )}
-              - #{proposal.id}
+              {proposal.endBlock} - #{proposal.id}
             </td>
             <td className="text-right">
               <Link
@@ -140,17 +127,13 @@ export function ProposalRow({ proposal }: Props) {
           </>
         ) : (
           <>
-            <td className="font-montserrat">
+            <td className="font-montserrat break-all max-w-xl">
               SIP {String(proposal.id).padStart(3, '0')}.
-              {created.description || 'Title.'}
+              <Linkify newTab={true}>{created.description || 'Title.'}</Linkify>
             </td>
             <td className="text-right hidden md:table-cell">#{proposal.id}</td>
             <td className="text-right hidden md:table-cell">
               <ProposalRowStateBadge state={state} />
-              <StyledBar>
-                <div className="progress__blue"></div>
-                <div className="progress__red"></div>
-              </StyledBar>
             </td>
             <td className="text-right hidden md:table-cell">
               {proposal.endBlock} - #{proposal.id}
