@@ -191,7 +191,7 @@ export function ProposalDetailsPage() {
         {data?.id && isConnected && state !== ProposalState.Active && (
           <div className="xl:flex items-center justify-between mt-20">
             <div className="vote__success rounded-xl mb-4 xl:mb-0 border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
-              You Voted {kFormatter(numberFromWei(data?.forVotes || 0))}
+              {kFormatter(numberFromWei(data?.forVotes || 0))} Votes For
             </div>
             <div className="vote__danger rounded-xl border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
               {kFormatter(numberFromWei(data?.againstVotes || 0))} Votes Against

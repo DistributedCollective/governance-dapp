@@ -59,12 +59,16 @@ export function VoteCaster(props: Props) {
   if ((receipt?.value as any)?.hasVoted) {
     const d = receipt.value as any;
     return (
-      <div className="bg-gray-900 text-white px-3 py-2 w-2/3">
-        <div className="text-xs text-gray-500">You voted</div>
-        <div className={`truncate text-sm ${loading && 'skeleton'}`}>
-          {numberFromWei(d.votes).toLocaleString()} votes -{' '}
-          {d.support ? 'For' : 'Against'}
-        </div>
+      <div className="xl:flex items-center justify-between mt-20">
+        {d.support ? (
+          <div className="vote__success rounded-xl mb-4 xl:mb-0 border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
+            You Voted {kFormatter(numberFromWei(d.votes))}
+          </div>
+        ) : (
+          <div className="vote__danger rounded-xl border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
+            {kFormatter(numberFromWei(d.votes))} Votes Against
+          </div>
+        )}
       </div>
     );
   }
