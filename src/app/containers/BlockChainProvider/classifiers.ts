@@ -1,11 +1,11 @@
 export const rpcNodes = {
-  30: 'https://mainnet.sovryn.app/rpc',
-  31: 'https://testnet.sovryn.app/rpc',
+  30: 'https://mainnet2.sovryn.app/rpc',
+  31: 'https://testnet2.sovryn.app/rpc',
 };
 
 export const wssNodes = {
-  30: 'wss://mainnet.sovryn.app/ws',
-  31: 'wss://testnet.sovryn.app/ws',
+  30: 'wss://mainnet2.sovryn.app/ws',
+  31: 'wss://testnet2.sovryn.app/ws',
 };
 
 export const rpcBackupNodes = {
