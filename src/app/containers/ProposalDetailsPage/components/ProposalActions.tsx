@@ -71,8 +71,8 @@ export function ProposalActions(props: Props) {
             Contract Address:
             <span className="text-gold break-words">{item.target}</span>
           </p>
-          <p className="font-thin">Amount to transfer: {item.value} (r)BTC</p>
-          {/* <Scrollbars
+          {/* <p className="font-thin">Amount to transfer: {item.value} (r)BTC</p>
+          <Scrollbars
             className="border rounded-xl bg-gray-200 mt-3 mb-10 whitespace-pre h-64"
             style={{ height: 300 }}
           >
