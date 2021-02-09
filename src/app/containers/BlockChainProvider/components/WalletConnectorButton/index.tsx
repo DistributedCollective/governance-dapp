@@ -45,7 +45,7 @@ export function WalletConnectorButton() {
           </StyledButton>
         ) : (
           <div>
-            <StyledButtonAuth className="engage-wallet w-auto justify-center items-center hidden xl:flex cursor-pointer">
+            <StyledButtonAuth className="engage-wallet w-auto justify-end items-center hidden xl:flex cursor-pointer">
               <span className="flex flex-nowrap flex-row items-center w-100 justify-between">
                 <span>{prettyTx(address, 4, 4)}</span>
                 <Icon

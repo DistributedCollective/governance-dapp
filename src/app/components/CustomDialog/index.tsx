@@ -32,9 +32,9 @@ export function CustomDialog(props: Props) {
   return (
     <Dialog
       isOpen={props.show}
-      className="bg-black w-4/5 py-16 px-16 rounded-3xl relative"
+      className="bg-black xl:w-4/5 w-11/12 xl:p-16 md:p-8 p-4 rounded-3xl relative"
     >
-      <div className="flex justify-end mb-3">
+      <div className="flex justify-end xl:mb-3 mb-10">
         <StyledClose
           onClick={closeModal}
           className="transiton-transform transform duration-300 ease-in-out hover:transform hover:rotate-180 focus:outline-none"

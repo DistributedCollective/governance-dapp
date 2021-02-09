@@ -59,7 +59,7 @@
     h3 {
         @apply text-2xl;
     }
-    @screen md {
+    @screen xl {
         h1 {
             @apply text-5xl;
         }

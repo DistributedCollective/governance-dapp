@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
+import { actions } from 'app/containers/BlockChainProvider/slice';
 import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
 import { Proposal } from '../../../types/Proposal';
 import { ProposalRow } from '../ProposalRow/Loadable';
 import { governance_proposalCount } from '../BlockChainProvider/requests/governance';
+import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
 
 export function HomePage() {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<Proposal[]>([]);
   const [total, setTotal] = useState<number>(0);
+  const dispatch = useDispatch();
+  const { connected, address } = useSelector(selectBlockChainProvider);
   useEffect(() => {
     setLoading(true);
 
@@ -159,6 +164,16 @@ export function HomePage() {
       <main>
         <div>
           <div className="container">
+            <div className="flex justify-end">
+              {connected && address && (
+                <button
+                  className="rounded-md bg-gold bg-opacity-10 focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out border px-5 py-2 text-md text-gold border-gold"
+                  onClick={() => dispatch(actions.toggleDelagationDialog(true))}
+                >
+                  Delegate Votes
+                </button>
+              )}
+            </div>
             <h2 className="text-white text-center pt-5 pb-8">
               SOVRYN Bitocracy
             </h2>
@@ -220,7 +235,7 @@ export function HomePage() {
               </>
             )}
             {total > items.length && (
-              <div className="text-center">
+              <div className="text-center mb-5">
                 <Link
                   to="/proposals"
                   className="inline-block text-center px-3 py-2 text-lg font-light hover:text-gold hover:no-underline"

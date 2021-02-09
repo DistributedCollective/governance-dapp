@@ -67,7 +67,8 @@ export function ProposalActions(props: Props) {
             {item.calldata}
           </p>
           <p>
-            Contract Address: <span className="text-gold">{item.target}</span>
+            Contract Address:
+            <span className="text-gold break-words">{item.target}</span>
           </p>
           <p className="font-thin">Amount to transfer: {item.value} (r)BTC</p>
           <div className="border rounded-xl bg-gray-200 p-4 mt-3 mb-10 whitespace-pre h-64 overflow-y-auto">

@@ -1,21 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions } from 'app/containers/BlockChainProvider/slice';
 import styled from 'styled-components/macro';
 import logoSvg from 'assets/images/sovryn-logo-white.svg';
 import { translations } from 'locales/i18n';
 import { media } from '../../../styles/media';
 import { MenuItem } from '@blueprintjs/core';
 import { WalletConnectorButton } from '../../containers/BlockChainProvider/components/WalletConnectorButton';
-import { selectBlockChainProvider } from '../../containers/BlockChainProvider/selectors';
 
 export function Header() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
-  const { connected, address } = useSelector(selectBlockChainProvider);
   const history = useHistory();
   const node = useRef(null as any);
   const StyledMenu = styled.nav.attrs(_ => ({ open: open }))`
@@ -178,14 +173,6 @@ export function Header() {
             </div>
           </div>
           <div className="flex justify-start items-center">
-            {connected && address && (
-              <button
-                className="rounded-md border px-5 py-1 mr-4 text-md text-turquoise border-turquoise"
-                onClick={() => dispatch(actions.toggleDelagationDialog(true))}
-              >
-                Delegate Votes
-              </button>
-            )}
             <WalletConnectorButton />
           </div>
         </div>
