@@ -68,23 +68,21 @@ export function VoteCaster(props: Props) {
   }
 
   return (
-    <div className="bg-gray-900 text-white px-3 py-2 w-2/3">
-      <div className="flex flex-row space-x-4 justify-between items-center">
-        <button
-          className="block px-3 py-2 bg-green-500 w-1/2"
-          type="button"
-          onClick={() => handleVote(true)}
-        >
-          Vote For
-        </button>
-        <button
-          className="block px-3 py-2 bg-gray-500 w-1/2"
-          type="button"
-          onClick={() => handleVote(false)}
-        >
-          Vote Against
-        </button>
-      </div>
+    <div className="xl:flex items-center justify-between mt-10">
+      <button
+        className="vote__success bg-turquoise focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-10 rounded-xl mb-4 xl:mb-0 border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise"
+        type="button"
+        onClick={() => handleVote(true)}
+      >
+        Vote For
+      </button>
+      <button
+        className="vote__danger bg-red focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-10 rounded-xl border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-red border-red"
+        type="button"
+        onClick={() => handleVote(false)}
+      >
+        Vote Against
+      </button>
     </div>
   );
 }

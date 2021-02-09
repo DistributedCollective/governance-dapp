@@ -156,6 +156,7 @@ export function ProposalDetailsPage() {
             </p>
           </div>
         </div>
+        {state && !stateLoading && <ProposalStatusBadge state={state} />}
         <div className="flex justify-around xl:mt-24 mt-10">
           <div className="mx-3 text-right">
             <span className="xl:text-3xl text-xl font-semibold leading-5">
@@ -190,6 +191,11 @@ export function ProposalDetailsPage() {
             {kFormatter(numberFromWei(data?.againstVotes || 0))} Votes Against
           </div>
         </div>
+
+        {data?.id && isConnected && state === ProposalState.Active && (
+          <VoteCaster proposalId={data.id} />
+        )}
+
         <div className="xl:flex -mx-2 mt-8">
           <div className="rounded-xl border mb-4 xl:mb-0 xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48">
             <VotingTable
@@ -241,36 +247,21 @@ export function ProposalDetailsPage() {
                   receive their staked funds.
                 </li>
               </ol>
-              <p className="font-semibold text-md mt-5 break-words">
+              {/* <p className="font-semibold text-md mt-5 break-words">
                 sha256:{' '}
                 63817f1519ef0bf4699899acd747ef7a856ddbda1bba7a20ec75eb9da89650b7
-              </p>
+              </p> */}
               <ProposalActions proposalId={data?.id} />
             </div>
           </div>
           <div className="xl:w-1/4 w-full px-6 pr-0">
             <ProposalHistory proposal={data} createdEvent={createdEvent} />
-            <a
+            {/* <a
               href="#!"
               className="border rounded-xl bg-gold bg-opacity-10 text-center hover:bg-opacity-40 transition duration-500 ease-in-out text-gold hover:text-gold hover:no-underline text-lg px-6 xl:inline-block block py-3 border-gold"
             >
               Verify on Github
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-dark mt-4">
-        <div className="container">
-          <div className="pb-8 flex flex-row justify-between">
-            <div>
-              {state && !stateLoading && <ProposalStatusBadge state={state} />}
-            </div>
-            <div className="flex flex-row justify-end space-x-4 w-6/12">
-              {data?.id && isConnected && state === ProposalState.Active && (
-                <VoteCaster proposalId={data.id} />
-              )}
-            </div>
+            </a> */}
           </div>
         </div>
       </div>
