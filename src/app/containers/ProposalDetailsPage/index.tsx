@@ -235,7 +235,7 @@ export function ProposalDetailsPage() {
               <h4 className="mb-8 font-semibold xl:text-2xl text-xl tracking-widest">
                 Activation of Genesis Reservation
               </h4>
-              <p className="text-sm">Resolved:</p>
+              {/* <p className="text-sm">Resolved:</p>
               <ol className="list-decimal text-sm pl-5 leading-6">
                 <li>
                   The Sovryn protocol will issue up to 2,000,000 cSOV tokens.
@@ -264,7 +264,7 @@ export function ProposalDetailsPage() {
                   receive their staked funds.
                 </li>
               </ol>
-              {/* <p className="font-semibold text-md mt-5 break-words">
+              <p className="font-semibold text-md mt-5 break-words">
                 sha256:{' '}
                 63817f1519ef0bf4699899acd747ef7a856ddbda1bba7a20ec75eb9da89650b7
               </p> */}

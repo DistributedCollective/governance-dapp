@@ -63,14 +63,27 @@ export function TransactionHistory() {
         </div>
       )}
       <Drawer
+        className="bg-black text-white"
         icon="inbox-filtered"
         onClose={() => dispatch(actions.toggleTransactionDrawer(false))}
-        title="Transactions"
         isOpen={showTransactions}
       >
+        <div className="text-bold text-lg p-4 border-b border-white flex items-center justify-between">
+          <div>
+            <Icon className="mr-3" icon="box" /> Transactions
+          </div>
+          <div>
+            <Icon
+              className="cursor-pointer"
+              icon="cross"
+              iconSize={24}
+              onClick={() => dispatch(actions.toggleTransactionDrawer(false))}
+            />
+          </div>
+        </div>
         <div className="py-5">
           {reversed.length === 0 && (
-            <div className="px-5">
+            <div className="px-5 text-white">
               <i>No transactions yet.</i>
             </div>
           )}
@@ -89,7 +102,7 @@ interface Props {
 
 function TransactionRow({ item }: Props) {
   return (
-    <div className="bordered-list-item px-5 py-3 flex flex-row justify-start space-x-4 items-center">
+    <div className="bordered-list-item text-white px-5 py-3 flex flex-row justify-start space-x-4 items-center">
       <div>
         {item.status === 'pending' && <Spinner size={16} />}
         {item.status === 'confirmed' && <Icon icon="tick" />}
@@ -97,7 +110,7 @@ function TransactionRow({ item }: Props) {
       </div>
       <LinkToExplorer
         txHash={item.transactionHash}
-        className="text-gray-600 hover:text-gray-900"
+        className="text-gold hover:underline"
       />
       {item.type && <div>{item.type}</div>}
     </div>
