@@ -40,6 +40,8 @@ export function ProposalDetailsPage() {
   const StyledBar = styled.div`
     width: 100%;
     max-width: 60%;
+    position: relative;
+    top: -10px;
     margin: 0 30px;
     display: flex;
     height: 34px;
@@ -57,7 +59,7 @@ export function ProposalDetailsPage() {
         position: absolute;
         top: -10px;
         bottom: 0;
-        border: 10px solid white;
+        border: 11px solid white;
         transition: all 0.3s;
         margin: 0 -27.5px;
       }
@@ -142,16 +144,22 @@ export function ProposalDetailsPage() {
       <div className="proposap-detail">
         <div className="xl:flex justify-between items-start">
           <h3
-            className={`proposal__title leading-10 font-semibold break-all w-5/6 ${
+            className={`proposal__title font-semibold break-all w-2/3 mt-2 leading-12 ${
               loading && 'skeleton'
             }`}
           >
+            SIP {String(data?.id).padStart(3, '0')}.
+            <br />
             <Linkify properties={{ target: '_blank' }}>
               {createdEvent?.returnValues?.description || 'No description'}
             </Linkify>
           </h3>
           <div className="text-right font-semibold">
-            <p className={` ${loading && 'skeleton'}`}>
+            <p
+              className={`mt-2 text-lg leading-6 tracking-normal ${
+                loading && 'skeleton'
+              }`}
+            >
               Voting ends: {data?.endBlock}
               <br />
               {data?.id && <>#{data.id}</>}
@@ -159,12 +167,15 @@ export function ProposalDetailsPage() {
           </div>
         </div>
         {state && !stateLoading && <ProposalStatusBadge state={state} />}
-        <div className="flex justify-around xl:mt-24 mt-10">
-          <div className="mx-3 text-right">
-            <span className="xl:text-3xl text-xl font-semibold leading-5">
+        <div
+          className={`flex justify-center xl:mt-20 mt-10
+          ${loading && 'skeleton'}`}
+        >
+          <div className="mr-10 text-right">
+            <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
               {votesForProgressPercents || 0}%
             </span>
-            <p className="xl:text-lg text-sm font-light">
+            <p className="xl:text-lg text-sm font-light tracking-normal">
               {kFormatter(numberFromWei(data?.forVotes || 0))} votes
             </p>
           </div>
@@ -179,21 +190,21 @@ export function ProposalDetailsPage() {
                 ></div>
               )}
           </StyledBar>
-          <div className="mx-3">
-            <span className="xl:text-3xl text-xl font-semibold leading-5">
+          <div className="ml-10">
+            <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
               {votesAgainstProgressPercents || 0}%
             </span>
-            <p className="xl:text-lg text-sm font-light">
+            <p className="xl:text-lg text-sm font-light tracking-normal">
               {kFormatter(numberFromWei(data?.againstVotes || 0))} votes
             </p>
           </div>
         </div>
         {data?.id && isConnected && state !== ProposalState.Active && (
-          <div className="xl:flex items-center justify-between mt-20">
-            <div className="vote__success rounded-xl mb-4 xl:mb-0 border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
+          <div className="xl:flex items-center justify-between mt-16">
+            <div className="tracking-normal vote__success rounded-xl bg-opacity-30 bg-turquoise mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
               {kFormatter(numberFromWei(data?.forVotes || 0))} Votes For
             </div>
-            <div className="vote__danger rounded-xl border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
+            <div className="tracking-normal vote__danger rounded-xl bg-opacity-30 bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
               {kFormatter(numberFromWei(data?.againstVotes || 0))} Votes Against
             </div>
           </div>
@@ -209,24 +220,28 @@ export function ProposalDetailsPage() {
 
         <div className="xl:flex -mx-2 mt-8">
           <Scrollbars
-            className="rounded-xl border mb-4 xl:mb-0 xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48"
-            style={{ height: 190 }}
+            className="rounded-2xl border mb-4 xl:mb-0 xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48"
+            style={{ height: 195 }}
           >
-            <VotingTable
-              items={votes}
-              showSupporters={true}
-              loading={votesLoading}
-            />
+            <div className="mx-4">
+              <VotingTable
+                items={votes}
+                showSupporters={true}
+                loading={votesLoading}
+              />
+            </div>
           </Scrollbars>
           <Scrollbars
-            className="rounded-xl border xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48"
-            style={{ height: 190 }}
+            className="rounded-2xl border xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48"
+            style={{ height: 195 }}
           >
-            <VotingTable
-              items={votes}
-              showSupporters={false}
-              loading={votesLoading}
-            />
+            <div className="mx-4">
+              <VotingTable
+                items={votes}
+                showSupporters={false}
+                loading={votesLoading}
+              />
+            </div>
           </Scrollbars>
         </div>
         <div className="xl:flex mt-10">
@@ -301,6 +316,7 @@ function VotingTable(props: TableProps) {
     width: 100%;
     font-size: 14px;
     font-family: 'Work Sans';
+    letter-spacing: 0;
 
     &.sovryn-table-mobile {
       font-size: 12px;
@@ -349,16 +365,25 @@ function VotingTable(props: TableProps) {
     }
     &.table-small {
       thead tr {
-        height: 30px;
+        height: 38px;
         th {
-          height: 30px;
-          padding: 0 20px;
+          height: 38px;
+          padding: 0 15px;
         }
       }
       tbody tr {
         height: 30px;
         td {
-          padding: 0 20px;
+          padding: 0 15px;
+          font-weight: 100;
+          font-family: 'Work Sans';
+          a {
+            color: #fec004;
+            font-family: 'Work Sans';
+            &:hover {
+              text-decoration: underline;
+            }
+          }
         }
         &:nth-child(even) {
           td {
@@ -503,7 +528,16 @@ function VotingRow({
           {prettyTx(voter as string)}
         </a>
       </td>
-      <td className="hidden md:table-cell">{prettyTx(voter as string)}</td>
+      <td className="hidden md:table-cell">
+        <a
+          href={`${url}/address/${voter}`}
+          target="_blank"
+          rel="noreferrer"
+          className="text-white transition no-underline p-0 m-0 duration-300 bordered-list-item hover:text-gold hover:no-underline"
+        >
+          {prettyTx(voter as string)}
+        </a>
+      </td>
       <td>{kFormatter(votes)}</td>
     </tr>
   );

@@ -61,14 +61,17 @@ export function ProposalActions(props: Props) {
     <div className="py-3">
       {items.map(item => (
         <div key={item.signature}>
-          <p className="font-semibold text-lg mt-16">
+          <p className="font-semibold text-lg mt-16 tracking-normal">
             Function to invoke: {item.signature}
           </p>
-          <p className="break-words" title={item.calldata}>
+          <p
+            className="break-words text-sm tracking-normal"
+            title={item.calldata}
+          >
             {item.calldata}
           </p>
-          <p>
-            Contract Address:
+          <p className="break-words text-sm tracking-normal">
+            Contract Address:{' '}
             <span className="text-gold break-words">{item.target}</span>
           </p>
           {/* <p className="font-thin">Amount to transfer: {item.value} (r)BTC</p>

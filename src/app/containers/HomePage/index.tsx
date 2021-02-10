@@ -59,7 +59,7 @@ export function HomePage() {
       color: white;
       font-size: 16px;
       padding: 0 22px;
-      height: 45px;
+      height: 43px;
     }
     thead tr,
     .table-header:not(.sub-header) {
@@ -68,8 +68,10 @@ export function HomePage() {
         font-weight: 300;
         color: white;
         font-size: 16px;
-        padding: 0 22px;
+        padding: 0 50px;
         height: 45px;
+        line-height: 16px;
+        letter-spacing: 0;
       }
     }
     tbody {
@@ -110,7 +112,7 @@ export function HomePage() {
           td {
             background-color: #101010;
             &:first-child {
-              border-radius: 6px 0 0 6px;
+              border-radius: 8px 0 0 6=8px;
             }
 
             &:last-child {
@@ -129,8 +131,10 @@ export function HomePage() {
       height: 80px;
 
       td {
-        padding: 0 30px;
+        padding: 10px 40px;
         color: white;
+        font-size: 15px;
+        line-height: 27px;
         a {
           color: #fec004;
         }
@@ -177,10 +181,12 @@ export function HomePage() {
                 </button>
               )}
             </div>
-            <h2 className="text-white text-center pt-5 pb-8">
+            <h2 className="text-white text-center pt-5 pb-8 tracking-normal">
               SOVRYN Bitocracy
             </h2>
-            <h2 className="font-semibold mb-2">Governance Proposals</h2>
+            <h2 className="font-semibold mb-2 tracking-normal">
+              Governance Proposals
+            </h2>
           </div>
         </div>
         <div className="container">
@@ -216,16 +222,16 @@ export function HomePage() {
                     <thead>
                       <tr>
                         <th className="text-left">Title</th>
-                        <th className="text-right hidden md:table-cell">
+                        <th className="text-center hidden md:table-cell">
                           Start Block
                         </th>
-                        <th className="text-right hidden md:table-cell">
+                        <th className="text-center hidden md:table-cell">
                           Vote Weight
                         </th>
-                        <th className="text-right hidden md:table-cell">
+                        <th className="text-center hidden md:table-cell">
                           Voting Ends
                         </th>
-                        <th className="text-right">Action</th>
+                        <th className="text-center">Action</th>
                       </tr>
                     </thead>
                     <tbody className="mt-5">

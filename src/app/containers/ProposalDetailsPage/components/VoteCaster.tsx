@@ -61,11 +61,11 @@ export function VoteCaster(props: Props) {
     return (
       <div className="xl:flex items-center justify-between mt-20">
         {d.support ? (
-          <div className="vote__success rounded-xl mb-4 xl:mb-0 border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
+          <div className="tracking-normal vote__success rounded-xl bg-turquoise bg-opacity-30 bg-opacity-30 mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
             You Voted {kFormatter(numberFromWei(d.votes))}
           </div>
         ) : (
-          <div className="vote__danger rounded-xl border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
+          <div className="tracking-normal vote__danger rounded-xl bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
             {kFormatter(numberFromWei(d.votes))} Votes Against
           </div>
         )}
@@ -76,14 +76,14 @@ export function VoteCaster(props: Props) {
   return (
     <div className="xl:flex items-center justify-between mt-10">
       <button
-        className="vote__success w-full xl:w-auto bg-turquoise focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-10 rounded-xl mb-4 xl:mb-0 border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise"
+        className="tracking-normal vote__success w-full xl:w-auto bg-turquoise focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-30 rounded-xl mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise"
         type="button"
         onClick={() => handleVote(true)}
       >
         {kFormatter(numberFromWei(props.voutesFor || 0))} Votes For
       </button>
       <button
-        className="vote__danger w-full xl:w-auto bg-red focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-10 rounded-xl border xl:px-10 px-3 py-3 text-center xl:text-lg text-sm text-red border-red"
+        className="tracking-normal vote__danger w-full xl:w-auto bg-red focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-30 rounded-xl border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red"
         type="button"
         onClick={() => handleVote(false)}
       >

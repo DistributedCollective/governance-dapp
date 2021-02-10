@@ -98,28 +98,34 @@ export function ProposalRow({ proposal }: Props) {
       <tr key={proposal.id}>
         {state === ProposalState.Active ? (
           <>
-            <td className="font-montserrat break-all max-w-xl">
-              SIP {String(proposal.id).padStart(3, '0')}.
-              <Linkify newTab={true}>{created.description}</Linkify>
+            <td className="font-montserrat max-w-sm">
+              <div className="flex items-start">
+                <b className="whitespace-no-wrap block mr-1">
+                  SIP {String(proposal.id).padStart(3, '0')}.
+                </b>
+                <div className="break-word max-h-12 overflow-hidden">
+                  <Linkify newTab={true}>{created.description}</Linkify>
+                </div>
+              </div>
             </td>
-            <td className="text-right hidden md:table-cell">#{proposal.id}</td>
-            <td className="text-right hidden md:table-cell">
+            <td className="text-center hidden md:table-cell">#{proposal.id}</td>
+            <td className="text-center hidden md:table-cell">
               <ProposalStatusBadge state={state} />
               <StyledBar>
                 <div className="progress__blue"></div>
                 <div className="progress__red"></div>
               </StyledBar>
             </td>
-            <td className="text-right hidden md:table-cell">
+            <td className="text-center hidden md:table-cell">
               {proposal.endBlock} - #{proposal.id}
             </td>
-            <td className="text-right">
+            <td className="text-center">
               <Link
                 to={{
                   pathname: `/proposals/${proposal.id}`,
                   state: { background: location },
                 }}
-                className="text-gold hover:text-gold hover:underline"
+                className="text-gold hover:text-gold hover:underline font-thin font-montserrat"
               >
                 View Proposal
               </Link>
@@ -127,24 +133,32 @@ export function ProposalRow({ proposal }: Props) {
           </>
         ) : (
           <>
-            <td className="font-montserrat break-all max-w-xl">
-              SIP {String(proposal.id).padStart(3, '0')}.
-              <Linkify newTab={true}>{created.description || 'Title.'}</Linkify>
+            <td className="font-montserrat max-w-sm">
+              <div className="flex items-start">
+                <b className="whitespace-no-wrap block mr-1">
+                  SIP {String(proposal.id).padStart(3, '0')}.
+                </b>
+                <div className="break-word max-h-12 overflow-hidden">
+                  <Linkify newTab={true}>
+                    {created.description || 'Title.'}
+                  </Linkify>
+                </div>
+              </div>
             </td>
-            <td className="text-right hidden md:table-cell">#{proposal.id}</td>
-            <td className="text-right hidden md:table-cell">
+            <td className="text-center hidden md:table-cell">#{proposal.id}</td>
+            <td className="text-center hidden md:table-cell">
               <ProposalRowStateBadge state={state} />
             </td>
-            <td className="text-right hidden md:table-cell">
+            <td className="text-center hidden md:table-cell">
               {proposal.endBlock} - #{proposal.id}
             </td>
-            <td className="text-right">
+            <td className="text-center">
               <Link
                 to={{
                   pathname: `/proposals/${proposal.id}`,
                   state: { background: location },
                 }}
-                className="text-gold hover:text-gold hover:underline"
+                className="text-gold hover:text-gold hover:underline font-thin font-montserrat"
               >
                 View Proposal
               </Link>

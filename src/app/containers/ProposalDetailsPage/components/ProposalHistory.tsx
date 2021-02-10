@@ -20,12 +20,12 @@ export function ProposalHistory(props: Props) {
       ) : (
         <>
           {props.proposal && (
-            <div className="flex items-start mb-6">
-              <p className="text-lg xl:max-w-140 leading-4 w-1/2">
+            <div className="flex items-start mb-5 -mt-1">
+              <p className="text-lg max-w-130 leading-4 tracking-normal w-1/2 font-semibold">
                 Proposed by:
               </p>
               <div className="w-auto">
-                <p className="text-gold text-sm">
+                <p className="text-gold text-sm tracking-normal">
                   {props.proposal?.proposer && (
                     <>
                       {prettyTx(props.proposal?.proposer) ||
@@ -38,12 +38,14 @@ export function ProposalHistory(props: Props) {
           )}
           {props.proposal && props.createdEvent && (
             <div className="flex mb-6">
-              <p className="text-lg xl:max-w-140 leading-4 w-1/2">
+              <p className="text-lg tracking-normal max-w-130 leading-4 w-1/2 font-semibold">
                 Proposed on:
               </p>
               <div className="w-auto">
-                <p className="text-sm">{props.createdEvent.blockNumber}</p>
-                <p className="text-gold text-sm">
+                <p className="text-sm tracking-normal">
+                  {props.createdEvent.blockNumber}
+                </p>
+                <p className="text-gold text-sm tracking-normal leading-3">
                   {props.proposal?.id && <>#{props.proposal.id}</>}
                 </p>
               </div>
@@ -51,13 +53,15 @@ export function ProposalHistory(props: Props) {
           )}
           {props.proposal && (
             <>
-              <div className="flex mb-6">
-                <p className="text-lg xl:max-w-140 leading-4 w-1/2">
+              <div className="flex mb-4">
+                <p className="text-lg max-w-130 tracking-normal leading-4 w-1/2 font-semibold">
                   Deadline:
                 </p>
                 <div className="w-auto">
-                  <p className="text-sm">{props.proposal.endBlock}</p>
-                  <p className="text-gold text-sm">
+                  <p className="text-sm tracking-normal">
+                    {props.proposal.endBlock}
+                  </p>
+                  <p className="text-gold tracking-normal text-sm leading-3">
                     {props.proposal?.id && <>#{props.proposal.id}</>}
                   </p>
                 </div>
