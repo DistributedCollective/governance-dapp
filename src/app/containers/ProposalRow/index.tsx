@@ -99,11 +99,11 @@ export function ProposalRow({ proposal }: Props) {
         {state === ProposalState.Active ? (
           <>
             <td className="font-montserrat max-w-sm">
-              <div className="flex items-start">
+              <div className="flex items-start tracking-normal">
                 <b className="whitespace-no-wrap block mr-1">
                   SIP {String(proposal.id).padStart(3, '0')}.
                 </b>
-                <div className="break-word max-h-12 overflow-hidden">
+                <div className="break-all max-h-12 overflow-hidden">
                   <Linkify newTab={true}>{created.description}</Linkify>
                 </div>
               </div>
@@ -134,11 +134,11 @@ export function ProposalRow({ proposal }: Props) {
         ) : (
           <>
             <td className="font-montserrat max-w-sm">
-              <div className="flex items-start">
+              <div className="flex items-start tracking-normal">
                 <b className="whitespace-no-wrap block mr-1">
                   SIP {String(proposal.id).padStart(3, '0')}.
                 </b>
-                <div className="break-word max-h-12 overflow-hidden">
+                <div className="break-all max-h-12 overflow-hidden">
                   <Linkify newTab={true}>
                     {created.description || 'Title.'}
                   </Linkify>

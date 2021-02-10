@@ -215,6 +215,11 @@ const StyledTable = styled.table`
       color: white;
       font-size: 15px;
       line-height: 27px;
+      &:first-child {
+          a {
+            display: none;
+          }
+        }
       a {
         color: #fec004;
       }

@@ -62,6 +62,7 @@
     h3 > a,
     h3 > a:hover {
         @apply text-gold;
+        display: none;
     }
     @screen xl {
         h1 {
