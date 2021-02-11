@@ -108,15 +108,15 @@ export function ProposalRow({ proposal }: Props) {
                 </div>
               </div>
             </td>
-            <td className="text-center hidden md:table-cell">#{proposal.id}</td>
-            <td className="text-center hidden md:table-cell">
+            <td className="text-center hidden xl:table-cell">#{proposal.id}</td>
+            <td className="text-center hidden xl:table-cell">
               <ProposalStatusBadge state={state} />
               <StyledBar>
                 <div className="progress__blue"></div>
                 <div className="progress__red"></div>
               </StyledBar>
             </td>
-            <td className="text-center hidden md:table-cell">
+            <td className="text-center hidden xl:table-cell">
               {proposal.endBlock} - #{proposal.id}
             </td>
             <td className="text-center">
@@ -125,7 +125,7 @@ export function ProposalRow({ proposal }: Props) {
                   pathname: `/proposals/${proposal.id}`,
                   state: { background: location },
                 }}
-                className="text-gold hover:text-gold hover:underline font-thin font-montserrat"
+                className="text-gold hover:text-gold hover:underline font-thin font-montserrat tracking-normal"
               >
                 View Proposal
               </Link>
@@ -133,23 +133,25 @@ export function ProposalRow({ proposal }: Props) {
           </>
         ) : (
           <>
-            <td className="font-montserrat max-w-sm">
+            <td className="font-montserrat xl:max-w-sm">
               <div className="flex items-start tracking-normal">
                 <b className="whitespace-no-wrap block mr-1">
                   SIP {String(proposal.id).padStart(3, '0')}.
                 </b>
-                <div className="break-all max-h-12 overflow-hidden">
+                <div className="break-all max-h-12 xl:overflow-hidden">
                   <Linkify newTab={true}>
                     {created.description || 'Title.'}
                   </Linkify>
                 </div>
               </div>
             </td>
-            <td className="text-center hidden md:table-cell">#{proposal.id}</td>
-            <td className="text-center hidden md:table-cell">
+            <td className="text-center hidden xl:table-cell tracking-normal">
+              #{proposal.id}
+            </td>
+            <td className="text-center hidden xl:table-cell">
               <ProposalRowStateBadge state={state} />
             </td>
-            <td className="text-center hidden md:table-cell">
+            <td className="text-center hidden xl:table-cell tracking-normal">
               {proposal.endBlock} - #{proposal.id}
             </td>
             <td className="text-center">
@@ -158,7 +160,7 @@ export function ProposalRow({ proposal }: Props) {
                   pathname: `/proposals/${proposal.id}`,
                   state: { background: location },
                 }}
-                className="text-gold hover:text-gold hover:underline font-thin font-montserrat"
+                className="text-gold hover:text-gold hover:underline font-thin font-montserrat tracking-normal"
               >
                 View Proposal
               </Link>

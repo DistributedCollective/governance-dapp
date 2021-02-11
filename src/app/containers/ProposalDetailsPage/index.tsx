@@ -12,7 +12,6 @@ import { useIsConnected } from '../../hooks/useIsConnected';
 import { blockExplorers } from '../BlockChainProvider/classifiers';
 import { ProposalActions } from './components/ProposalActions';
 import { ProposalHistory } from './components/ProposalHistory';
-import { ProposalStatusBadge } from '../../components/ProposalStatusBadge';
 import { useGetProposalState } from '../../hooks/useGetProposalState';
 import { Proposal, ProposalState } from '../../../types/Proposal';
 import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
@@ -137,14 +136,14 @@ export function ProposalDetailsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(data), syncBlockNumber]);
 
-  const { state, loading: stateLoading } = useGetProposalState(data);
+  const { state } = useGetProposalState(data);
 
   return (
     <>
       <div className="proposap-detail">
         <div className="xl:flex justify-between items-start">
           <h3
-            className={`proposal__title font-semibold break-all w-2/3 mt-2 leading-12 ${
+            className={`proposal__title font-semibold break-all w-2/3 mt-2 overflow-hidden max-h-6 leading-12 ${
               loading && 'skeleton'
             }`}
           >
@@ -166,7 +165,6 @@ export function ProposalDetailsPage() {
             </p>
           </div>
         </div>
-        {state && !stateLoading && <ProposalStatusBadge state={state} />}
         <div
           className={`flex justify-center xl:mt-20 mt-10
           ${loading && 'skeleton'}`}
@@ -344,21 +342,29 @@ function VotingTable(props: TableProps) {
     }
     tbody {
       tr {
+        td {
+          background-color: #1f1f1f;
+
+          &:first-child {
+            border-radius: 6px 0 0 6px;
+          }
+
+          &:last-child {
+            border-radius: 0 6px 6px 0;
+          }
+
+          &:only-child {
+            border-radius: 6px;
+          }
+        }
         &:nth-child(odd) {
           td {
-            background-color: #282828;
-
-            &:first-child {
-              border-radius: 6px 0 0 6px;
-            }
-
-            &:last-child {
-              border-radius: 0 6px 6px 0;
-            }
-
-            &:only-child {
-              border-radius: 6px;
-            }
+            background-color: #1f1f1f;
+          }
+        }
+        &:nth-child(even) {
+          td {
+            background-color: #181818;
           }
         }
       }

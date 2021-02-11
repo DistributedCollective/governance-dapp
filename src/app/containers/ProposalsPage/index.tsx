@@ -69,18 +69,18 @@ export function ProposalsPage() {
               </>
             )}
             <>
-              <div className="rounded-lg border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
+              <div className="rounded-lg bg-gray-lighter border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
                 <StyledTable className="w-full">
                   <thead>
                     <tr>
                       <th className="text-left">Title</th>
-                      <th className="text-center hidden md:table-cell">
+                      <th className="text-center hidden xl:table-cell">
                         Start Block
                       </th>
-                      <th className="text-center hidden md:table-cell">
+                      <th className="text-center hidden xl:table-cell">
                         Vote Weight
                       </th>
-                      <th className="text-center hidden md:table-cell">
+                      <th className="text-center hidden xl:table-cell">
                         Voting Ends
                       </th>
                       <th className="text-center">Action</th>
@@ -156,21 +156,29 @@ const StyledTable = styled.table`
   }
   tbody {
     tr {
+      td {
+        background-color: #1f1f1f;
+
+        &:first-child {
+          border-radius: 6px 0 0 6px;
+        }
+
+        &:last-child {
+          border-radius: 0 6px 6px 0;
+        }
+
+        &:only-child {
+          border-radius: 6px;
+        }
+      }
       &:nth-child(odd) {
         td {
-          background-color: #282828;
-
-          &:first-child {
-            border-radius: 6px 0 0 6px;
-          }
-
-          &:last-child {
-            border-radius: 0 6px 6px 0;
-          }
-
-          &:only-child {
-            border-radius: 6px;
-          }
+          background-color: #1f1f1f;
+        }
+      }
+      &:nth-child(even) {
+        td {
+          background-color: #181818;
         }
       }
     }

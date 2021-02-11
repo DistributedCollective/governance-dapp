@@ -36,7 +36,7 @@ export function ProposalRowStateBadge({ state }: Props) {
   return (
     <StyledDiv>
       <div
-        className={`proposal-state font-thin font-montserrat ${getStateClass(
+        className={`proposal-state font-thin tracking-normal font-montserrat ${getStateClass(
           state,
         )}`}
       >

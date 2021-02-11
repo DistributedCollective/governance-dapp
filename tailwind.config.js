@@ -45,6 +45,7 @@ module.exports = {
         600: '#F4F4F4',
         dark: '#707070',
         light: '#181818',
+        lighter: '#161616',
       },
       gold: '#FEC004',
       white: 'white',

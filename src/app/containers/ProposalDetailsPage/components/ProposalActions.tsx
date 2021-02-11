@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 // import { Scrollbars } from 'react-custom-scrollbars';
 import { useContractCall } from '../../../hooks/useContractCall';
+import { blockExplorers } from '../../BlockChainProvider/classifiers';
 import { RowSkeleton } from '../../../components/PageSkeleton';
+import { selectBlockChainProvider } from '../../BlockChainProvider/selectors';
 // import { functionsText } from '../../HomePage/functionsText';
 
 interface Props {
@@ -30,6 +33,11 @@ export function ProposalActions(props: Props) {
   );
 
   const [items, setItems] = useState<FormattedAction[]>([]);
+  const { chainId } = useSelector(selectBlockChainProvider);
+  const getUrl = useCallback(() => {
+    return blockExplorers[chainId];
+  }, [chainId]);
+  const [url, setUrl] = useState(getUrl());
 
   useEffect(() => {
     if (actions) {
@@ -48,6 +56,10 @@ export function ProposalActions(props: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(actions)]);
+
+  useEffect(() => {
+    setUrl(getUrl());
+  }, [chainId, getUrl]);
 
   if (loading || !props.proposalId) {
     return (
@@ -72,7 +84,14 @@ export function ProposalActions(props: Props) {
           </p>
           <p className="break-words text-sm tracking-normal">
             Contract Address:{' '}
-            <span className="text-gold break-words">{item.target}</span>
+            <a
+              href={`${url}/address/${item.target}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-gold text-sm break-words transition no-underline p-0 m-0 duration-300 hover:text-gold hover:underline"
+            >
+              {item.target}
+            </a>
           </p>
           {/* <p className="font-thin">Amount to transfer: {item.value} (r)BTC</p>
           <Scrollbars

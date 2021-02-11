@@ -59,7 +59,7 @@ export function ProposalStatusBadge({ state }: Props) {
     <div
       className={`border rounded ml-auto py-0 px-1 text-xs ${getBorderColor(
         state,
-      )} ${getTextColor(state)} text-center`}
+      )} ${getTextColor(state)} text-center tracking-normal`}
       style={{ width: '70px' }}
     >
       {getTitle(state)}
