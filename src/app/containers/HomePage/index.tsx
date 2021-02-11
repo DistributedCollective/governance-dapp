@@ -217,12 +217,21 @@ export function HomePage() {
                   <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
                     <div className="w-full skeleton h-4" />
                     <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
                   </div>
                   <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
                     <div className="w-full skeleton h-4" />
                     <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
                   </div>
                   <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
                     <div className="w-full skeleton h-4" />
                     <div className="w-full skeleton h-4" />
                   </div>
