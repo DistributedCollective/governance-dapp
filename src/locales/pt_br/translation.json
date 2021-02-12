@@ -1,0 +1,712 @@
+{
+  "common": {
+    "back": "Voltar",
+    "min": "min",
+    "max": "max",
+    "close": "Fechar"
+  },
+  "global": {
+    "liquidationPrice": "Preço de liquidação",
+    "interestApr": "Juros anual"
+  },
+  "title": "Sovryn",
+  "announcement": {
+    "message": "Sovryn has just lifted transaction limits (hooray!). This means you can now take any position size. Please be aware, however, since the limits were only just removed, liquidity in the system may be low initially."
+  },
+  "homePage": {
+    "title": "Página inicial",
+    "meta": "Página inicial da Sovryn",
+    "lend": "Emprestar",
+    "trade": "Operar"
+  },
+  "hintHowToConnect": {
+    "hintOne": "Para usar a Sovryn, você precisa antes conectar a sua carteira na rede da RSK.",
+    "hintTwo": "Veja instruções sobre como configurar a <0>Metamask</0> ou <1>Nifty</1> e conectar sua carteira:"
+  },
+  "serviceWorkerToaster": {
+    "title": "O aplicativo foi atualizado.",
+    "message": "Novo conteúdo disponível e será usado quando todas as guias desta página forem fechadas.",
+    "button": "Atualizar agora"
+  },
+  "tradingActivity": {
+    "title": "Minhas operações",
+    "walletNote": "Primeiro conecte sua carteira!",
+    "tabs": {
+      "activeTrades": "Abertas",
+      "tradingHistory": "Fechadas"
+    }
+  },
+  "tradingPage": {
+    "meta": {
+      "title": "Operações",
+      "description": "Opere com a Sovryn."
+    },
+    "email": {
+      "optin": {
+        "title": "Sucesso",
+        "text": "Agora você receberá notificações por e-mail quando suas posições estiverem próximas da liquidação e se uma posição for liquidada. Você pode cancelar a inscrição a qualquer momento"
+      },
+      "unsubscribe": {
+        "title": "Você cancelou a inscrição nas notificações por e-mail",
+        "text": "Você não receberá mais e-mails sobre chamadas de margem ou posições liquidadas. Você pode se inscrever novamente a qualquer momento."
+      }
+    }
+  },
+  "tradingHistoryPage": {
+    "title": "Histórico de operações",
+    "auth": "Por favor, conecte e autorize sua carteira.",
+    "noClosedTrades": "Você não tem operações fechadas.",
+    "table": {
+      "positionSize": "Tamanho da posição",
+      "leverage": "Alavancagem",
+      "openPrice": "Preço de entrada",
+      "closePrice": "Preço de fechamento",
+      "profit": "Lucro / Prejuízo"
+    }
+  },
+  "fastBtcPage": {
+    "meta": {
+      "title": "Depositar-BTC",
+      "description": "Transfira seu Bitcoin para a rede RSK."
+    }
+  },
+  "fastBtcForm": {
+    "title": "Depositar-BTC",
+    "history": {
+      "title": "Histórico",
+      "empty": "Histórico vazio.",
+      "walletHistory": "Insira seu endereço da carteira RSK para ver o histórico.",
+      "loading": "Carregando..."
+    },
+    "connectWallet": "Você precisa primeiro conectar sua carteira com o dapp.",
+    "connect": "Conecte sua carteira ou insira você mesmo um endereço no campo acima.",
+    "depositAdress": "Endereço de depósito BTC",
+    "depositAddressCopied": "Seu endereço BTC de depósito foi copiado para a área de transferência",
+    "toDepositWallet": "depositar carteira",
+    "placeholder": "Seu endereço da carteira RSK",
+    "waitingForDeposit": "Aguardando depósito",
+    "exchanging": "Nós estamos trocando seu BTC para rBTC.",
+    "transfered": "foi transferido para sua carteira RSK",
+    "swapAgain": "Realizar outra troca",
+    "disabledText": "Os depósitos foram temporariamente desativados. Pedimos que você não envie fundos até que seja reativado. Obrigado!"
+  },
+  "tradeOrSwapTabs": {
+    "tabs": {
+      "trade": "Operar",
+      "swap": "Trocar ativos"
+    }
+  },
+  "marginTradeForm": {
+    "fields": {
+      "currency": "Ativo",
+      "currency_placeholder": "Escolha o ativo",
+      "amount": "Quantidade",
+      "startPrice": "Preço de entrada"
+    },
+    "buttons": {
+      "submit": "Realizar operação"
+    },
+    "liquidity": {
+      "line_1": "Liquidez muito baixa para trocas.",
+      "line_2": "Tente com outro par de ativos ou aguarde até alguém realizar arbitragem para rebalancear o sistema."
+    }
+  },
+  "swapTradeForm": {
+    "fields": {
+      "currency_placeholder": "Escolha o ativo",
+      "send": "Você envia",
+      "receive": "Você recebe"
+    },
+    "buttons": {
+      "submit": "Realizar troca"
+    }
+  },
+  "amountField": {
+    "placeholder": "Insira a quantidade",
+    "btn_max": "Max"
+  },
+  "wallet": {
+    "btn": "Conectar carteira",
+    "connect_btn": "Conectar carteira",
+    "disconnect": "Sair",
+    "my_wallet": "Minha carteira",
+    "referrals": "Convide um amigo"
+  },
+  "hintDialog": {
+    "title": "Dicas Sovryn"
+  },
+  "footer": {
+    "title": "Fornecido por <0>Bitcoin</0>",
+    "notice_1": "Esteja ciente de que somente você possui controle e acesso ao seus ativos, qualquer ação que você realizar pode causar uma perda considerável de fundos.",
+    "notice_2": "Sempre verifique as taxas de transação antes de realizar operações na SOVRYN. Algumas carteiras podem configurar automaticamente taxas muito altas.",
+    "notice_3": "Visite nosso <0>FAQ</0> se tiver dúvidas.",
+    "notice_4": "Se você é um usuário novato, veja o <0>tutorial</0> e aprenda a usar a SOVRYN."
+  },
+  "mainMenu": {
+    "trade": "Operar",
+    "lend": "Empréstimos",
+    "fastBtc": "Depositar-Btc",
+    "wallet": "Minha carteira",
+    "liquidity": "Liquidez",
+    "stats": "Dados",
+    "faqs": "FAQs",
+    "help": "Ajuda",
+    "referral": "Referral"
+  },
+  "trandingPositionSelector": {
+    "long": "Comprado",
+    "short": "Vendido"
+  },
+  "assetWalletBalance": {
+    "accountBalance": "Saldo disponível",
+    "suppliedBalance": "Saldo disponibilizado",
+    "connect": "Conectar carteira"
+  },
+  "leverageSelector": {
+    "text": "Alavancagem"
+  },
+  "activeLoan": {
+    "expandedRow": {
+      "leverage": "Alavancagem",
+      "startMargin": "Margem inicial",
+      "mainenanceMargin": "Margem de manutenção",
+      "currentPrice": "Preço atual",
+      "liquidationPrice": "Preço de liquidação",
+      "renewalDate": "Data de renovação"
+    },
+    "table": {
+      "positionSize": "Tamanho da posição",
+      "profit": "Lucro / Prejuízo",
+      "currentMargin": "Margem atual",
+      "interestApr": "Juros anual",
+      "startPrice": "Preço de entrada",
+      "container": {
+        "topUp": "Aumentar posição",
+        "close": "Fechar posição"
+      }
+    }
+  },
+  "expandedRowMobile": {
+    "currentMargin": "Margem atual",
+    "interestAPR": "Juros anual",
+    "startPrice": "Preço de entrada",
+    "leverage": "Alavancagem",
+    "startMargin": "Margem inicial",
+    "maintenanceMargin": "Margem de manutenção",
+    "currentPrice": "Preço atual",
+    "liquidationPrice": "Preço de liquidação",
+    "renewalDate": "Data de renovação"
+  },
+  "statsPage": {
+    "asset": "Ativos",
+    "totalAssetSupplied": "Fornecidos",
+    "totalAssetBorrowed": "Emprestados",
+    "totalAvailable": "Disponíveis",
+    "supplyAPR": "Juros anual (Emprestador)",
+    "borrowAPR": "Juros anual (Tomador)"
+  },
+  "pageNotFound": {
+    "text": "Página não encontrada.",
+    "backHome": "Ir para página inicial"
+  },
+  "liquidity": {
+    "title": "Liquidez",
+    "meta": "Adicionar liquidez",
+    "pool": "Pool",
+    "currency": "Ativo",
+    "currencySelect": "Selecionar ativo",
+    "poolSelect": "Selecionar pool",
+    "amount": "Insira a quantidade",
+    "amountTarget": "Quantidade desejada",
+    "token": "Pool tokens a receber",
+    "fee": "Taxa",
+    "supply": "Fornecer liquidez",
+    "withdraw": "Retirar liquidez"
+  },
+  "modal": {
+    "close": "Fechar"
+  },
+  "formSelect": {
+    "loading": "Abrindo, por favor aguarde.",
+    "noresults": "Sem resultados.",
+    "placeholder": "Selecione algo"
+  },
+  "hintHowToTopUp": {
+    "hintOne": "Você está conectado! Para operar e emprestar com a Sovryn, você vai precisar de alguns bitcoins na rede RSK.",
+    "hintTwo": "Carregue sua carteira na",
+    "hintThree": "e comece a usar!"
+  },
+  "notificationFormContainer": {
+    "want": "Deseja receber notificações por e-mail sobre chamadas de margem e posições liquidadas?",
+    "update": "Atualize o nome ou endereço de e-mail associado a este endereço de carteira.",
+    "receive": "Eu gostaria de receber e-mails sobre atualizações e novos recursos da Sovryn",
+    "emailSettingsBtn_update": "Configurações de e-mail",
+    "emailSettingsBtn_get": "Receba notificações por e-mail",
+    "dialog": {
+      "title": "Notificações de e-mail",
+      "form": {
+        "name": {
+          "label": "Nome / Apelido",
+          "info": "(obrigatório)",
+          "placeholder": "nome / apelido"
+        },
+        "email": {
+          "label": "Endereço de e-mail",
+          "info": "(obrigatório)",
+          "placeholder": "email@email.com"
+        }
+      },
+      "wantBtn": "enviar",
+      "updateBtn": "atualizar",
+      "error": "Ocorreu um erro ao enviar os dados"
+    },
+    "updated_success": "Você será notificado por e-mail sobre chamadas de margem e posições liquidadas.",
+    "updated_success_user": "Seus dados foram atualizados."
+  },
+  "whiteListedNotification": {
+    "text": "Atualmente a Sovryn está disponível apenas para usuários convidados e sua carteira ainda não está na lista de permissões. Todas as interações estão desativadas até que o endereço da sua carteira esteja liberado."
+  },
+  "limitsNotification": {
+    "text": "A Sovryn acaba de aumentar os limites de transação (viva!). Isso significa que agora você pode operar com qualquer valor. Esteja ciente, no entanto, como os limites acabaram de ser removidos, a liquidez do sistema pode estar atualmente baixa."
+  },
+  "lend": {
+    "history": {
+      "title": "Histórico",
+      "amount": "Valor do empréstimo",
+      "date": "Data e hora",
+      "price": "Preço",
+      "transaction": "Transação",
+      "emptyState": "Histórico vazio."
+    },
+    "currency": {
+      "lend": "Emprestar",
+      "borrow": "Tomar empréstimo",
+      "lendArp": "Juros anual (Emprestador)",
+      "borrowArp": "Juros anual (Tomador)"
+    },
+    "container": {
+      "leftBtn": "Fornecer",
+      "rightBtn": "Retirar",
+      "amountName": "Valor do depósito",
+      "balance": "Emprestado",
+      "profit": "Lucro",
+      "supply": "Fornecer"
+    },
+    "borrowingContainer": {
+      "amount": "Valor do empréstimo",
+      "tokenAssetCollateral": "Ativo a ser colaterizado e quantidade",
+      "borrow": "Tomar empréstimo",
+      "chooseDays": "Quantidade de dias"
+    }
+  },
+  "activeUserBorrows": {
+    "text": "Você não tem nenhum empréstimo ativo."
+  },
+  "activeUserLoans": {
+    "text": "Você não tem nenhuma operação de compra ou venda aberta.",
+    "info": {
+      "line_1": "Precisa de ajuda? Leia nosso guia ",
+      "line_2": " de como usar a Sovryn",
+      "line_3": "."
+    }
+  },
+  "topUpTradingPositionHandler": {
+    "title": "Aumentar posição",
+    "topUpAmount": "Aumentar quantidade",
+    "topUp": "Aumentar",
+    "currency": "Ativo"
+  },
+  "liquidityRemoveContainer": {
+    "fields": {
+      "currency": "Ativo",
+      "currency_placeholder": "Escolha o ativo",
+      "amount": "Insira a quantidade",
+      "target_amount": "Quantidade desejada",
+      "fee": "Taxa"
+    },
+    "supplied_balance": "Saldo fornecido",
+    "not_connected": "Conectar carteira",
+    "btn": "Retirar"
+  },
+  "borrowActivity": {
+    "title": "Minhas dívidas",
+    "tabs": {
+      "active": "Ativas",
+      "history": "Quitadas"
+    },
+    "walletNote": "Primeiro conecte sua carteira!"
+  },
+  "borrowHistory": {
+    "table": {
+      "headers": {
+        "borrowAmount": "Valor do empréstimo",
+        "collateralAmount": "Colateral",
+        "interestAPR": "Juros anual",
+        "timestamp": "Data"
+      }
+    },
+    "no_items": "Seu histórico de empréstimos está vazio."
+  },
+  "rskConnectTutorial": {
+    "browser_wallet": "Carteira de navegador",
+    "mobile_wallet": "Carteira de celular",
+    "mobile_wallet_alert_line1": "Certifique-se de usar uma carteira compatível com a rede RSK. Sugerimos a RWallet ou a Defiant.",
+    "mobile_wallet_alert_line2": "A MetaMask tem problemas com o cálculo das taxas de transação quando usada com a rede RSK - sempre revise se não está pagando muito antes de aprovar a transação!",
+    "hardware_wallet": "Carteira física",
+    "speech": {
+      "1": "Abra sua carteira de navegador",
+      "2": "Vá para o menu rede",
+      "3": "Selecione RPC personalizado",
+      "4": "Insira os detalhes da rede",
+      "5": "Clique em salvar",
+      "6": "Clique em adicionar rede",
+      "7": "Conecte sua carteira!"
+    },
+    "mobileSpeech": {
+      "1": "Vá para o menu da carteira ",
+      "2": "Selecione configurações",
+      "3": "Selecione redes",
+      "4": "Clique em adicionar rede",
+      "5": "Insira as configurações de rede",
+      "6": "Clique em adicionar",
+      "7": "Leia o código QR para conectar!"
+    },
+    "speech_qr_code": "Leia o código QR com uma carteira compatível com a função wallet-connect",
+    "input_settings": {
+      "title": "Configurações de rede RSK",
+      "network": "Nome da rede",
+      "new_RPC": "Nova URL RPC",
+      "chain_Id": "Chain ID",
+      "symbol": "Símbolo",
+      "explorer_url": "Block Explorer URL"
+    },
+    "step": "Passo",
+    "screens": {
+      "1": {
+        "title": "Conecte sua carteira",
+        "banner": "Ainda não tem uma carteira? Nós recomendamos"
+      },
+      "11": {
+        "title": "Conecte na rede RSK",
+        "banner": "Ainda não tem uma carteira? Nós recomendamos"
+      },
+      "2": {
+        "title": "Como se conectar à rede RSK",
+        "banner": "Para obter ajuda, entre em contato com a comunidade"
+      },
+      "3": {
+        "title": "Leia o código QR",
+        "banner": "Para obter ajuda, entre em contato com a comunidade"
+      },
+      "4": {
+        "title": "Conecte com uma carteira de celular",
+        "banner": "Para obter ajuda, entre em contato com a comunidade"
+      },
+      "5": {
+        "title": "Escolha sua carteira",
+        "banner": "Para obter ajuda, entre em contato com a comunidade"
+      }
+    }
+  },
+  "SOVConnectTutorial": {
+    "browser_wallet": "Carteira de navegador",
+    "mobile_wallet": "Carteira de celular",
+    "hardware_wallet": "Carteira física",
+    "speech": {
+      "1": "Abra sua carteira de navegador",
+      "2": "Vá para o menu rede",
+      "3": "Selecione RPC personalizado",
+      "4": "Insira os detalhes da rede",
+      "5": "Clique em salvar",
+      "6": "Clique em adicionar rede",
+      "7": "Conecte sua carteira!"
+    },
+    "mobileSpeech": {
+      "1": "Vá para o menu da carteira",
+      "2": "Selecione configurações",
+      "3": "Selecione redes",
+      "4": "Clique em adicionar rede",
+      "5": "Insira as configurações da rede",
+      "6": "Clique em adicionar",
+      "7": "Leia o código QR para conectar!"
+    },
+    "speech_qr_code": "Leia o código QR com uma carteira compatível com a função wallet-connect",
+    "input_settings": {
+      "title": "CONFIGURAÇÕES DO ATIVO SOV",
+      "token_address": "Endereço do contrato do ativo",
+      "symbol": "Símbolo",
+      "decimals": "Decimais"
+    },
+    "step": "Passo",
+    "screens": {
+      "1": {
+        "title": "Conecte sua carteira",
+        "banner": "Para obter ajuda, entre em contato com a comunidade"
+      },
+      "11": {
+        "title": "Conecte na rede RSK",
+        "banner": "Para obter ajuda, entre em contato com a comunidade"
+      },
+      "2": {
+        "title": "Como se conectar à rede RSK",
+        "banner": "Para obter ajuda, entre em contato com a comunidade"
+      },
+      "3": {
+        "title": "Leia o código QR",
+        "banner": "Para obter ajuda, entre em contato com a comunidade"
+      },
+      "4": {
+        "title": "Como conectar SOV à sua carteira Metamask",
+        "banner": "Para obter ajuda, entre em contato com a comunidade"
+      }
+    }
+  },
+  "mobileNotReady": {
+    "submit": "Enviar",
+    "p1": "A Sovryn ainda não foi otimizada para celulares.",
+    "p2": "Cadastre seu e-mail para ser notificado do lançamento da versão otimizada para celulares!",
+    "p3": "Até lá, por que não tentar a versão para navegadores?",
+    "errorText": "Erro ao enviar formulário",
+    "success": "Sucesso!",
+    "successText": "Entraremos em contato assim que a Sovryn estiver otimizada para celulares."
+  },
+  "fastBTC": {
+    "screens": {
+      "1": {
+        "title": "You Are Connected!",
+        "p1": "In order to borrow/lend and trade on Sovryn, you must first enable your Bitcoin by transferring them to your rsk wallet.",
+        "p2": "You do this by creating a unique btc address that pegs to your RSK address, supercharging your BTC into RBTC.",
+        "createAddress": "Create Address"
+      },
+      "2": {
+        "p1": "Your unique BTC address has been created, transfer BTC to receive RBTC in your RSK wallet.",
+        "depositRequirements": "Deposit requirements",
+        "fee": "Fee",
+        "feeExplainer": "Deducted from transaction amount",
+        "important": "Important",
+        "important1": "Do not deposit any non - BTC assets to this address, otherwise your assets will be lost permanently",
+        "important2": "Please allow upto 15 mins for the transaction to process",
+        "contactUs": "For support please join us on",
+        "txDetected": "Transaction detected"
+      },
+      "3": {
+        "txDetails": "Detalhes da transação",
+        "txHash": "rBTC Tx hash",
+        "txId": " BTC Tx ID",
+        "from": "Da carteira",
+        "to": "Para carteira",
+        "amount": "Valor transacionado",
+        "fee": "Taxa",
+        "initiated": "Iniciado",
+        "status": "Status",
+        "estimated": "Tempo estimado"
+      }
+    }
+  },
+  "walletProvider": {
+    "txRequestDialog": {
+      "closeButton": "Ok",
+      "approve": {
+        "title": "Aprovar gastos",
+        "description": "Confirme a transação na sua carteira para aprovar gastos de ativos neste contrato inteligente.",
+        "error": "Falha na solicitação de aprovação:"
+      }
+    }
+  },
+  "sendTxProgress": {
+    "pending_for_user": {
+      "title": "Pendente para o usuário",
+      "text": "Por favor, confirme a transação na sua carteira."
+    },
+    "pending": {
+      "title": "Transação pendente",
+      "text": "Sua transação está sendo processada."
+    },
+    "confirmed": {
+      "title": "Transação confirmada!",
+      "text": "Sua transação foi confirmada na blockchain."
+    },
+    "failed": {
+      "title": "Transação falhou!",
+      "text": "Transação revertida pelo contrato."
+    },
+    "denied": {
+      "title": "Rejeitada!",
+      "text": "Transação negada pelo usuário."
+    },
+    "texts": {
+      "transaction": "Transação",
+      "closeButton": "Fechar"
+    }
+  },
+  "topUpBtcDialog": {
+    "meta": {
+      "title": "Depositar"
+    }
+  },
+  "walletPage": {
+    "meta": {
+      "title": "Minha carteira",
+      "description": "Informações sobre a carteira conectada"
+    },
+    "tabs": {
+      "userAssets": "Meus ativos",
+      "userNFTS": "NFTS"
+    }
+  },
+  "salesPage": {
+    "meta": {
+      "title": "Pré-venda",
+      "description": "Página de pré-venda SOV"
+    }
+  },
+  "userAssets": {
+    "meta": {
+      "title": "Carteira"
+    },
+    "tableHeaders": {
+      "asset": "Ativo",
+      "totalBalance": "Saldo total",
+      "dollarBalance": "Saldo em dólar",
+      "action": "Ação"
+    },
+    "actions": {
+      "deposit": "Depositar",
+      "swap": "Trocar",
+      "trade": "Operar"
+    }
+  },
+  "topUpHistory": {
+    "meta": {
+      "title": "Histórico de depósitos"
+    },
+    "tableHeaders": {
+      "time": "Data e hora",
+      "asset": "Ativo",
+      "amount": "Quantidade",
+      "fee": "Taxa",
+      "depositTx": "ID depósito BTC",
+      "transferTx": "ID recebimento RBTC ",
+      "txHash": "Transação"
+    },
+    "emptyState": "Histórico vázio.",
+    "walletHistory": "A carteira precisa estar conectada.",
+    "loading": "Carregando..."
+  },
+  "lendingPage": {
+    "tabs": {
+      "deposit": "Depositar",
+      "redeem": "Resgatar"
+    },
+    "amount": {
+      "deposit": "Valor a ser depositado",
+      "redeem": "Valor a ser resgatado"
+    },
+    "tradeButtons": {
+      "deposit": "Depositar e emprestar {{asset}}",
+      "redeem": "Resgatar empréstimo {{asset}}"
+    },
+    "liquidity": {
+      "redeem": {
+        "line_1": "Não há {{currency}} suficiente no pool de empréstimo.",
+        "line_2": "O pool atual tem somente {{amount}} {{currency}} disponível.",
+        "line_3": "O pool irá aumentar quando os usuários quitarem seus empréstimos."
+      },
+      "borrow": {
+        "line_1": "Não há {{currency}} suficiente no pool de empréstimos disponíveis para serem emprestados.",
+        "line_2": "O pool atual tem somente {{amount}} {{currency}} disponível.",
+        "line_3": "O pool irá aumentar quando os usuários quitarem seus empréstimos."
+      }
+    }
+  },
+  "activeBorrowTable": {
+    "headers": {
+      "borrowAmount": "Valor do empréstimo",
+      "collateralAmount": "Colateral",
+      "interestAPR": "Juros anual",
+      "endTimestamp": "Quitar até"
+    },
+    "repayButton": "Quitar"
+  },
+  "repayPositionForm": {
+    "title": "Quitar empréstimo",
+    "labels": {
+      "borrowedAmount": "Valor do empréstimo",
+      "amountToRepay": "{{currency}} Valor a ser quitado",
+      "amountToReceive": "Você irá receber"
+    },
+    "button": "Quitar"
+  },
+  "closeTradingPositionHandler": {
+    "title": "Liquidar posição",
+    "titleDone": "Posição liquidada",
+    "positionSize": "Tamanho da posição",
+    "withdrawIn": "Resgatar em",
+    "returnAmount": "Valor devolvido",
+    "closePosition": "Fechar posição",
+    "closeAmount": "Valor de fechamento",
+    "liquidity": {
+      "line_1": "Liquidez muito baixa para fechar a posição.",
+      "line_2": "Tente resgatar usando outro ativo ou aguarde até alguém realizar arbitragem para rebalancear o sistema."
+    }
+  },
+  "tradeConfirmationDialog": {
+    "main": {
+      "positionSize": "Posição",
+      "positionLeverge": "Alavancagem",
+      "maintenanceMargin": "Margem de manutenção",
+      "estimatedLiquidationPrice": "Preço de liquidação aproximado",
+      "gasPriceNote": "Verifique se a taxa não excede 0.06 GWEI",
+      "positionEntryPrice": "Preço de entrada aproximado",
+      "entryPriceNote": "O preço é fornecido pelo nosso AMM e, como tal, está sujeito a flutuações.",
+      "tradeButtonLong": "Confirmar",
+      "tradeButtonShort": "Confirmar"
+    },
+    "positions": {
+      "long": "Comprado",
+      "short": "Vendido"
+    },
+    "tx": {
+      "pendingForUserTitle": "Revisão da transação",
+      "pendingForUserText": "Revise e confirme a transação na sua carteira"
+    }
+  },
+  "notifyDialog": {
+    "heading": "Cuidado",
+    "acceptTerms": "Eu li e compreendi que somente eu tenho responsabilidade pelos meus atos",
+    "salesBtn": "Eu entendo",
+    "generalAlert": {
+      "p1": "A SOVRYN é uma plataforma descentralizada de negociação e empréstimo de bitcoins, a primeira desse tipo!",
+      "p2": "Esteja ciente de que somente você possui controle e acesso ao seus ativos, qualquer ação que você realizar pode causar uma perda considerável de fundos.",
+      "p3": "Sempre verifique as taxas de transação antes de realizar operações na SOVRYN. Algumas carteiras podem configurar automaticamente taxas muito altas.",
+      "p4_1": "Visite nosso ",
+      "p4_2": "FAQ",
+      "p4_3": " se tiver dúvidas.",
+      "p5_1": "Se você é um usuário novato, veja o ",
+      "p5_2": "tutorial",
+      "p5_3": " e aprenda a usar a SOVRYN."
+    },
+    "metamaskAlert": {
+      "p1": "Verificamos que você tem a MetaMask instalada.",
+      "p2_1": "Existem problemas conhecidos ao usar a MetaMask com a SOVRYN. Sugerimos usar uma carteira de navegador como a ",
+      "p2_2": "Carteira Liquality",
+      "p2_3": " ou a ",
+      "p2_4": "Carteira Nifty",
+      "p2_5": ". Se você pretende continuar usando a MetaMask, esteja ciente do seguintes problemas:",
+      "knownErrors": {
+        "defaultGasPrice": {
+          "title": "A taxa padrão usada é muito alta",
+          "description": "defina a taxa manualmente para 0.06 GWEI"
+        },
+        "checksum": {
+          "title": "ETH checksum ao invés do RSK checksum",
+          "description": "use endereços em letras minúsculas para receber transações"
+        },
+        "price": {
+          "title": "É mostrado o preço como se fosse ETH em vez de (r)BTC",
+          "description": "atulamente sugerimos você verificar o saldo dos seus ativos na aba minha carteira da Sovryn."
+        }
+      }
+    }
+  }
+}

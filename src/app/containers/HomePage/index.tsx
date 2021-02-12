@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components/macro';
+import { actions } from 'app/containers/BlockChainProvider/slice';
 import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
 import { Proposal } from '../../../types/Proposal';
 import { ProposalRow } from '../ProposalRow/Loadable';
 import { governance_proposalCount } from '../BlockChainProvider/requests/governance';
+import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
 
 export function HomePage() {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<Proposal[]>([]);
   const [total, setTotal] = useState<number>(0);
+  const dispatch = useDispatch();
+  const { connected, address } = useSelector(selectBlockChainProvider);
   useEffect(() => {
     setLoading(true);
 
@@ -36,69 +42,168 @@ export function HomePage() {
     get().then().catch();
   }, []);
 
+  const StyledTable = styled.table`
+    font-weight: 100;
+    width: 100%;
+    font-size: 14px;
+    font-family: 'Work Sans';
+
+    &.sovryn-table-mobile {
+      font-size: 12px;
+      @media (max-width: 335px) {
+        font-size: 11px;
+      }
+    }
+    .table-header div {
+      font-weight: 300;
+      color: white;
+      font-size: 16px;
+      padding: 0 22px;
+      height: 43px;
+    }
+    thead tr,
+    .table-header:not(.sub-header) {
+      height: 40px;
+      th {
+        font-weight: 300;
+        color: white;
+        font-size: 16px;
+        padding: 0 50px;
+        height: 45px;
+        line-height: 16px;
+        letter-spacing: 0;
+      }
+    }
+    tbody {
+      tr {
+        td {
+          background-color: #1f1f1f;
+
+          &:first-child {
+            border-radius: 6px 0 0 6px;
+          }
+
+          &:last-child {
+            border-radius: 0 6px 6px 0;
+          }
+
+          &:only-child {
+            border-radius: 6px;
+          }
+        }
+        &:nth-child(odd) {
+          td {
+            background-color: #1f1f1f;
+          }
+        }
+        &:nth-child(even) {
+          td {
+            background-color: #181818;
+          }
+        }
+      }
+    }
+    &.table-small {
+      thead tr {
+        height: 30px;
+        th {
+          height: 30px;
+          padding: 0 20px;
+        }
+      }
+      tbody tr {
+        height: 30px;
+        td {
+          padding: 0 20px;
+        }
+        &:nth-child(even) {
+          td {
+            background-color: #101010;
+            &:first-child {
+              border-radius: 8px 0 0 6=8px;
+            }
+
+            &:last-child {
+              border-radius: 0 6px 6px 0;
+            }
+
+            &:only-child {
+              border-radius: 6px;
+            }
+          }
+        }
+      }
+    }
+    tbody tr,
+    .mobile-row {
+      height: 80px;
+
+      td {
+        padding: 10px 40px;
+        color: white;
+        font-size: 15px;
+        line-height: 27px;
+        &:first-child {
+          a {
+            display: none;
+          }
+        }
+        a {
+          color: #fec004;
+        }
+      }
+
+      &:first-of-type {
+        border-top: none;
+      }
+
+      &.table-header {
+        height: 60%;
+
+        > td {
+          font-weight: 300;
+          color: white;
+          font-size: 16px;
+          height: 45px;
+          padding-top: 20px;
+        }
+      }
+    }
+    .mobile-row {
+      align-content: center;
+    }
+  `;
+
   return (
     <>
       <Helmet>
-        <title>Home Page</title>
-        <meta name="description" content="A Boilerplate application homepage" />
+        <title>SOVRYN Bitocracy</title>
+        <meta name="description" content="SOVRYN Bitocracy" />
       </Helmet>
       <Header />
       <main>
-        <div className="bg-black">
+        <div>
           <div className="container">
-            <h2 className="text-white pt-20 pb-8">Governance Overview</h2>
-
-            {/*<div className="flex flex-col pb-8 md:flex-row md:space-x-4">*/}
-            {/*  <Link*/}
-            {/*    to="/sov"*/}
-            {/*    className="flex flex-row flex-no-wrap justify-between bg-gray-900 text-white p-3 w-full md:w-1/2 mb-3 md:mb-0"*/}
-            {/*  >*/}
-            {/*    <div>*/}
-            {/*      <div className="text-white text-xl">*/}
-            {/*        {(123456).toLocaleString()}*/}
-            {/*      </div>*/}
-            {/*      <div className="text-gray-600 text-sm">SOV Remaining</div>*/}
-            {/*    </div>*/}
-            {/*    <div className="flex flex-col items-end justify-center w-1/2 border-1 border-red-300">*/}
-            {/*      <div className="uppercase text-sm text-green-500 font-bold">*/}
-            {/*        View*/}
-            {/*      </div>*/}
-            {/*      <div className="mt-3 w-full">*/}
-            {/*        <VoteProgress value={0} max={0} color="green" />*/}
-            {/*      </div>*/}
-            {/*    </div>*/}
-            {/*  </Link>*/}
-            {/*  <div className="flex flex-row space-x-4 w-full md:w-1/2">*/}
-            {/*    <div className="d-flex bg-gray-900 text-white p-3 w-1/2">*/}
-            {/*      <div className="text-white text-xl">*/}
-            {/*        {(0).toLocaleString()}*/}
-            {/*      </div>*/}
-            {/*      <div className="text-gray-600 text-sm">Votes Delegated</div>*/}
-            {/*    </div>*/}
-            {/*    <div className="d-flex bg-gray-900 text-white p-3 w-1/2">*/}
-            {/*      <div className="text-white text-xl">*/}
-            {/*        {(0).toLocaleString()}*/}
-            {/*      </div>*/}
-            {/*      <div className="text-gray-600 text-sm">Voting Addresses</div>*/}
-            {/*    </div>*/}
-            {/*  </div>*/}
-            {/*</div>*/}
-
-            <div className="bg-white rounded-t shadow p-3">
-              <h4 className="font-bold">Recent Proposals</h4>
+            <div className="flex justify-end">
+              {connected && address && (
+                <button
+                  className="rounded-md bg-gold bg-opacity-10 focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out border px-5 py-2 text-md text-gold border-gold"
+                  onClick={() => dispatch(actions.toggleDelagationDialog(true))}
+                >
+                  Delegate Votes
+                </button>
+              )}
             </div>
+            <h2 className="text-white text-center pt-5 pb-8 tracking-normal">
+              SOVRYN Bitocracy
+            </h2>
+            <h2 className="font-semibold mb-2 tracking-normal">
+              Governance Proposals
+            </h2>
           </div>
         </div>
         <div className="container">
-          <div className="bg-white rounded-b shadow">
-            {loading && !items.length && (
-              <>
-                <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
-                  <div className="w-full skeleton h-4" />
-                  <div className="w-full skeleton h-4" />
-                </div>
-              </>
-            )}
+          <div className="bg-gray-light rounded-b shadow">
             {!loading && total === 0 && (
               <>
                 <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
@@ -106,16 +211,69 @@ export function HomePage() {
                 </div>
               </>
             )}
-            {items.map(item => (
-              <ProposalRow key={item.id} proposal={item} />
-            ))}
+            {loading && !items.length ? (
+              <>
+                <div className="rounded-lg border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
+                  <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                  </div>
+                  <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                  </div>
+                  <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                    <div className="w-full skeleton h-4" />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="rounded-lg bg-gray-lighter border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
+                  <StyledTable className="w-full">
+                    <thead>
+                      <tr>
+                        <th className="text-left">Title</th>
+                        <th className="text-center hidden xl:table-cell">
+                          Start Block
+                        </th>
+                        <th className="text-center hidden xl:table-cell">
+                          Vote Weight
+                        </th>
+                        <th className="text-center hidden xl:table-cell">
+                          Voting Ends
+                        </th>
+                        <th className="text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="mt-5">
+                      {items.map(item => (
+                        <ProposalRow key={item.id} proposal={item} />
+                      ))}
+                    </tbody>
+                  </StyledTable>
+                </div>
+              </>
+            )}
             {total > items.length && (
-              <Link
-                to="/proposals"
-                className="block uppercase text-center px-3 py-2 font-bold text-sm hover:text-green-500 transition easy-in-out duration-300 border-t-1"
-              >
-                View All Proposals
-              </Link>
+              <div className="text-center mb-5">
+                <Link
+                  to="/proposals"
+                  className="inline-block text-center px-3 py-2 text-lg font-light hover:text-gold hover:no-underline tracking-normal"
+                >
+                  View All Proposals
+                </Link>
+              </div>
             )}
           </div>
         </div>

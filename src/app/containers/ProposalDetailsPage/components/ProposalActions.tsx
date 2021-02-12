@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+// import { Scrollbars } from 'react-custom-scrollbars';
 import { useContractCall } from '../../../hooks/useContractCall';
+import { blockExplorers } from '../../BlockChainProvider/classifiers';
 import { RowSkeleton } from '../../../components/PageSkeleton';
+import { selectBlockChainProvider } from '../../BlockChainProvider/selectors';
+// import { functionsText } from '../../HomePage/functionsText';
 
 interface Props {
   proposalId: number;
@@ -28,6 +33,11 @@ export function ProposalActions(props: Props) {
   );
 
   const [items, setItems] = useState<FormattedAction[]>([]);
+  const { chainId } = useSelector(selectBlockChainProvider);
+  const getUrl = useCallback(() => {
+    return blockExplorers[chainId];
+  }, [chainId]);
+  const [url, setUrl] = useState(getUrl());
 
   useEffect(() => {
     if (actions) {
@@ -47,6 +57,10 @@ export function ProposalActions(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(actions)]);
 
+  useEffect(() => {
+    setUrl(getUrl());
+  }, [chainId, getUrl]);
+
   if (loading || !props.proposalId) {
     return (
       <div className="p-3">
@@ -58,14 +72,34 @@ export function ProposalActions(props: Props) {
   return (
     <div className="py-3">
       {items.map(item => (
-        <div
-          className="bordered-list-item px-5 py-3 flex flex-row space-x-4"
-          key={item.signature}
-        >
-          <div className="truncate w-1/4">{item.target}</div>
-          <div className="truncate w-1/4">{item.signature}</div>
-          <div className="truncate w-1/4">{item.calldata}</div>
-          <div className="truncate w-1/4">{item.value}</div>
+        <div key={item.signature}>
+          <p className="font-semibold text-lg mt-16 tracking-normal">
+            Function to invoke: {item.signature}
+          </p>
+          <p
+            className="break-words text-sm tracking-normal"
+            title={item.calldata}
+          >
+            {item.calldata}
+          </p>
+          <p className="break-words text-sm tracking-normal">
+            Contract Address:{' '}
+            <a
+              href={`${url}/address/${item.target}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-gold text-sm break-words transition no-underline p-0 m-0 duration-300 hover:text-gold hover:underline"
+            >
+              {item.target}
+            </a>
+          </p>
+          {/* <p className="font-thin">Amount to transfer: {item.value} (r)BTC</p>
+          <Scrollbars
+            className="border rounded-xl bg-gray-200 mt-3 mb-10 whitespace-pre h-64"
+            style={{ height: 300 }}
+          >
+            <p className="text-xs font-gray-600 p-4">{functionsText}</p>
+          </Scrollbars> */}
         </div>
       ))}
     </div>

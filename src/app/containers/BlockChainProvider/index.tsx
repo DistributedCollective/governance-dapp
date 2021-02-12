@@ -14,6 +14,7 @@ import { blockChainProviderSaga } from './saga';
 import { PageSkeleton } from '../../components/PageSkeleton';
 import { TransactionHistory } from '../TransactionHistory/Loadable';
 import { ChainId } from './types';
+import { DelegationDialog } from './components/DelegationDialog';
 
 interface Props {
   children: React.ReactNode;
@@ -43,6 +44,9 @@ export function BlockChainProvider(props: Props) {
   return (
     <>
       <TransactionHistory />
+      {blockChainProvider.connected && blockChainProvider.address && (
+        <DelegationDialog />
+      )}
       {props.children}
     </>
   );

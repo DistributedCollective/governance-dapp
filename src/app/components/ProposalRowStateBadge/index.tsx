@@ -1,5 +1,6 @@
 import React from 'react';
 import { getStatus, ProposalState } from 'types/Proposal';
+import styled from 'styled-components/macro';
 
 const getStateClass = (state: ProposalState) => {
   switch (state) {
@@ -21,10 +22,26 @@ interface Props {
   state: ProposalState;
 }
 
+const StyledDiv = styled.div`
+  .proposal-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 1rem;
+    position: relative;
+  }
+`;
+
 export function ProposalRowStateBadge({ state }: Props) {
   return (
-    <div className={`proposal-state ${getStateClass(state)}`}>
-      {getStatus(state)}
-    </div>
+    <StyledDiv>
+      <div
+        className={`proposal-state font-thin tracking-normal font-montserrat ${getStateClass(
+          state,
+        )}`}
+      >
+        {getStatus(state)}
+      </div>
+    </StyledDiv>
   );
 }

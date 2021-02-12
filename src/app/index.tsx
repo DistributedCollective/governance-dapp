@@ -8,19 +8,45 @@
 
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
-
+import { Switch, Route, BrowserRouter, useLocation } from 'react-router-dom';
 import { GlobalStyle } from 'styles/global-styles';
-
 import { BlockChainProvider } from './containers/BlockChainProvider';
-
 import { HomePage } from './containers/HomePage/Loadable';
-import { NotFoundPage } from './components/NotFoundPage/Loadable';
-import { ProposalsPage } from './containers/ProposalsPage/Loadable';
-import { ProposalDetailsPage } from './containers/ProposalDetailsPage/Loadable';
 import { StakePage } from './containers/StakePage/Loadable';
+import { NotFoundPage } from './components/NotFoundPage/Loadable';
+import { CustomDialog } from './components/CustomDialog';
+import { ProposalsPage } from './containers/ProposalsPage/Loadable';
+
+interface stateType {
+  location: { pathname: string };
+  background: { location: string };
+}
 
 export function App() {
+  function RouteSwitch() {
+    const location = useLocation<stateType>();
+    const background = location.state && location.state.background;
+
+    return (
+      <div>
+        <Switch location={location || background}>
+          <Route exact path="/" component={HomePage} />
+          <Route exact path="/proposals" component={ProposalsPage} />
+          <Route exact path="/stake" component={StakePage} />
+          <Route exact path="/proposals/:id" component={HomePage} />
+          <Route component={NotFoundPage} />
+        </Switch>
+
+        {background && (
+          <Route
+            path="/proposals/:id"
+            children={<CustomDialog show={true} />}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Helmet
@@ -28,13 +54,7 @@ export function App() {
         defaultTitle="Sovryn Governance"
       />
       <BlockChainProvider>
-        <Switch>
-          <Route exact path="/" component={HomePage} />
-          <Route exact path="/proposals" component={ProposalsPage} />
-          <Route exact path="/proposals/:id" component={ProposalDetailsPage} />
-          <Route exact path="/stake" component={StakePage} />
-          <Route component={NotFoundPage} />
-        </Switch>
+        <RouteSwitch />
       </BlockChainProvider>
       <GlobalStyle />
     </BrowserRouter>

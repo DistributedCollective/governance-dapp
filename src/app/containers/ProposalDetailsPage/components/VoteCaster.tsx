@@ -4,10 +4,12 @@ import { LinkToExplorer } from '../../../components/LinkToExplorer';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
 import { useContractCall } from '../../../hooks/useContractCall';
-import { numberFromWei } from '../../../../utils/helpers';
+import { numberFromWei, kFormatter } from 'utils/helpers';
 
 interface Props {
   proposalId: number;
+  voutesAgainst: number;
+  voutesFor: number;
 }
 
 export function VoteCaster(props: Props) {
@@ -57,34 +59,36 @@ export function VoteCaster(props: Props) {
   if ((receipt?.value as any)?.hasVoted) {
     const d = receipt.value as any;
     return (
-      <div className="bg-gray-900 text-white px-3 py-2 w-2/3">
-        <div className="text-xs text-gray-500">You voted</div>
-        <div className={`truncate text-sm ${loading && 'skeleton'}`}>
-          {numberFromWei(d.votes).toLocaleString()} votes -{' '}
-          {d.support ? 'For' : 'Against'}
-        </div>
+      <div className="xl:flex items-center justify-between mt-20">
+        {d.support ? (
+          <div className="tracking-normal vote__success rounded-xl bg-turquoise bg-opacity-30 bg-opacity-30 mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
+            You Voted {kFormatter(numberFromWei(d.votes))}
+          </div>
+        ) : (
+          <div className="tracking-normal vote__danger rounded-xl bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
+            {kFormatter(numberFromWei(d.votes))} Votes Against
+          </div>
+        )}
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-900 text-white px-3 py-2 w-2/3">
-      <div className="flex flex-row space-x-4 justify-between items-center">
-        <button
-          className="block px-3 py-2 bg-green-500 w-1/2"
-          type="button"
-          onClick={() => handleVote(true)}
-        >
-          Vote For
-        </button>
-        <button
-          className="block px-3 py-2 bg-gray-500 w-1/2"
-          type="button"
-          onClick={() => handleVote(false)}
-        >
-          Vote Against
-        </button>
-      </div>
+    <div className="xl:flex items-center justify-between mt-10">
+      <button
+        className="tracking-normal vote__success w-full xl:w-auto bg-turquoise focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-30 rounded-xl mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise"
+        type="button"
+        onClick={() => handleVote(true)}
+      >
+        {kFormatter(numberFromWei(props.voutesFor || 0))} Votes For
+      </button>
+      <button
+        className="tracking-normal vote__danger w-full xl:w-auto bg-red focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-30 rounded-xl border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red"
+        type="button"
+        onClick={() => handleVote(false)}
+      >
+        {kFormatter(numberFromWei(props.voutesAgainst || 0))} Votes Against
+      </button>
     </div>
   );
 }

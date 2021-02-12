@@ -1,3 +1,713 @@
 {
-  "title": "welcome"
+  "common": {
+    "back": "Back",
+    "min": "min",
+    "max": "max",
+    "close": "Close"
+  },
+  "global": {
+    "liquidationPrice": "Liquidation Price",
+    "interestApr": "Interest APR"
+  },
+  "title": "Sovryn",
+  "announcement": {
+    "message": "Sovryn has just lifted transaction limits (hooray!). This means you can now take any position size. Please be aware, however, since the limits were only just removed, liquidity in the system may be low initially."
+  },
+  "homePage": {
+    "title": "Home Page",
+    "meta": "Sovryn Homepage",
+    "lend": "Lend",
+    "trade": "Trade"
+  },
+  "hintHowToConnect": {
+    "hintOne": "Before you can trade and lend with Sovryn, you need to connect to the RSK network.",
+    "hintTwo": "Get instructions on how to connect with <0>Metamask</0> or <1>Nifty</1> and then connect your wallet:"
+  },
+  "serviceWorkerToaster": {
+    "title": "App was updated.",
+    "message": "New content is available and will be used when all tabs for this page are closed.",
+    "button": "Update Now"
+  },
+  "tradingActivity": {
+    "title": "My Trading Activity",
+    "walletNote": "Connect your wallet first!",
+    "tabs": {
+      "activeTrades": "Active",
+      "tradingHistory": "Closed"
+    }
+  },
+  "tradingPage": {
+    "meta": {
+      "title": "Trading",
+      "description": "Trade with Sovryn."
+    },
+    "email": {
+      "optin": {
+        "title": "Success",
+        "text": "You will now receive email notifications when your positions are close to liquidation, and if a position has been liquidated. You may opt out of these at any time"
+      },
+      "unsubscribe": {
+        "title": "You are now unsubscribed from email notifications",
+        "text": "You will no longer receive emails about margin calls or liquidated positions. You can re-subscribe to these notifications at any time."
+      }
+    }
+  },
+  "tradingHistoryPage": {
+    "title": "Trading History",
+    "auth": "Please connect and authorize your wallet.",
+    "noClosedTrades": "You do not have any closed trades.",
+    "table": {
+      "positionSize": "Position Size",
+      "leverage": "Leverage",
+      "openPrice": "Open Price",
+      "closePrice": "Close Price",
+      "profit": "Profit"
+    }
+  },
+  "fastBtcPage": {
+    "meta": {
+      "title": "Fast-BTC",
+      "description": "Move your Bitcoin to RSK network."
+    }
+  },
+  "fastBtcForm": {
+    "title": "Top-Up",
+    "history": {
+      "title": "BTC Deposit History",
+      "empty": "History is empty.",
+      "walletHistory": "Enter your RSK wallet address to see history.",
+      "loading": "Loading..."
+    },
+    "connectWallet": "To use Top-Up you need to connect your wallet with the dapp.",
+    "connect": "Connect to your wallet or just enter wallet address above yourself.",
+    "depositAdress": "BTC Deposit Address",
+    "depositAddressCopied": "Your BTC deposit address copied to clipboard",
+    "toDepositWallet": "to deposit wallet",
+    "placeholder": "Your RSK Wallet",
+    "waitingForDeposit": "Waiting for deposit",
+    "exchanging": "We are exchanging to rBTC it now.",
+    "transfered": "was transfered to your RSK walllet",
+    "swapAgain": "Swap again",
+    "disabledText": "Top-up deposits have been temporarily disabled. We ask that you not send funds until re-enabled. Thank you!"
+  },
+  "tradeOrSwapTabs": {
+    "tabs": {
+      "trade": "Trade",
+      "swap": "Swap"
+    }
+  },
+  "marginTradeForm": {
+    "fields": {
+      "currency": "Currency",
+      "currency_placeholder": "Choose currency",
+      "amount": "Amount",
+      "startPrice": "Start Price"
+    },
+    "buttons": {
+      "submit": "Place Trade"
+    },
+    "liquidity": {
+      "line_1": "Liquidity is too low for swapping.",
+      "line_2": "Try another pair or wait for arbiters to re-balance."
+    }
+  },
+  "swapTradeForm": {
+    "fields": {
+      "currency_placeholder": "Choose currency",
+      "send": "You send",
+      "receive": "You receive"
+    },
+    "buttons": {
+      "submit": "Place Trade"
+    }
+  },
+  "amountField": {
+    "placeholder": "Enter amount",
+    "btn_max": "Max"
+  },
+  "wallet": {
+    "btn": "Connect Wallet",
+    "connect_btn": "Engage wallet",
+    "disconnect": "Disconnect",
+    "my_wallet": "My Wallet",
+    "referrals": "Refer a friend"
+  },
+  "hintDialog": {
+    "title": "Sovryn Tips"
+  },
+  "footer": {
+    "title": "Powered by <0>Bitcoin</0>",
+    "notice_1": "Only you control and have access to your wealth, any actions you take could cause a potential loss of funds.",
+    "notice_2": "Particularly please be sure to check all transaction fee prices before proceeding as third party wallets may automatically present high fees.",
+    "notice_3": "Please visit our <0>FAQ</0> if you have any questions.",
+    "notice_4": "If you’re new to DeFi, here is the <0>tutorial</0> on how to use SOVRYN."
+  },
+  "mainMenu": {
+    "trade": "Trade",
+    "lend": "Lend/Borrow",
+    "fastBtc": "Top-Up",
+    "wallet": "My wallet",
+    "liquidity": "Market-making",
+    "stats": "Stats",
+    "faqs": "FAQs",
+    "help": "Help",
+    "referral": "Referral"
+  },
+  "trandingPositionSelector": {
+    "long": "Long",
+    "short": "Short"
+  },
+  "assetWalletBalance": {
+    "accountBalance": "Account Balance",
+    "suppliedBalance": "Supplied Balance",
+    "connect": "Connect to wallet"
+  },
+  "leverageSelector": {
+    "text": "Leverage"
+  },
+  "activeLoan": {
+    "expandedRow": {
+      "leverage": "leverage",
+      "startMargin": "Start Margin",
+      "mainenanceMargin": "Maintenance Margin",
+      "currentPrice": "Current Price",
+      "liquidationPrice": "Liquidation Price",
+      "renewalDate": "Renewal Date"
+    },
+    "table": {
+      "positionSize": "Position Size",
+      "profit": "Profit / Loss",
+      "currentMargin": "Current Margin",
+      "interestApr": "Interest APR",
+      "startPrice": "Start Price",
+      "container": {
+        "topUp": "Top-Up",
+        "close": "Close"
+      }
+    }
+  },
+  "expandedRowMobile": {
+    "currentMargin": "Current Margin",
+    "interestAPR": "Interest APR",
+    "startPrice": "Start Price",
+    "leverage": "Leverage",
+    "startMargin": "Start Margin",
+    "maintenanceMargin": "Maintenance Margin",
+    "currentPrice": "Current Price",
+    "liquidationPrice": "Liquidation Price",
+    "renewalDate": "Renewal Date"
+  },
+  "statsPage": {
+    "asset": "Asset",
+    "totalAssetSupplied": "Total Asset Supplied",
+    "totalAssetBorrowed": "Total Asset Borrowed",
+    "totalAvailable": "Total Available",
+    "supplyAPR": "Supply APR",
+    "borrowAPR": "Borrow APR"
+  },
+  "pageNotFound": {
+    "text": "Page not found.",
+    "backHome": "Go home"
+  },
+  "liquidity": {
+    "title": "Liquidity",
+    "meta": "Add liquidity",
+    "pool": "Pool",
+    "currency": "Currency",
+    "currencySelect": "Select currency",
+    "poolSelect": "Select pool",
+    "amount": "Enter amount",
+    "amountTarget": "Target Amount",
+    "token": "Expected pool tokens",
+    "fee": "fee",
+    "supply": "Supply",
+    "withdraw": "Withdraw"
+  },
+  "modal": {
+    "close": "Close"
+  },
+  "formSelect": {
+    "loading": "Loading, please wait.",
+    "noresults": "No results.",
+    "placeholder": "Select something"
+  },
+  "hintHowToTopUp": {
+    "hintOne": "You're connected! To trade and lend with Sovryn, you will need some Bitcoin on the RSK platform.",
+    "hintTwo": "Top up your wallet at",
+    "hintThree": "and get started!"
+  },
+  "notificationFormContainer": {
+    "want": "Want to receive email notifications about margin calls and liquidated positions?",
+    "update": "Update the name or email address associated with this wallet address.",
+    "receive": "I would like to receive emails about updates and new features from Sovryn",
+    "emailSettingsBtn_update": "Update email settings",
+    "emailSettingsBtn_get": "Get email notifications",
+    "dialog": {
+      "title": "Email Notifications",
+      "form": {
+        "name": {
+          "label": "Name / Pseudonym",
+          "info": "(required)",
+          "placeholder": "name / pseudonym"
+        },
+        "email": {
+          "label": "Email Address",
+          "info": "(required)",
+          "placeholder": "email@email.com"
+        }
+      },
+      "wantBtn": "submit",
+      "updateBtn": "update",
+      "error": "There was an error submitting your form"
+    },
+    "updated_success": "You will now receive email notifications about margin calls and liquidated positions.",
+    "updated_success_user": "Your details have been updated."
+  },
+  "whiteListedNotification": {
+    "text": "Currently Sovryn is available for invited users only and your wallet is not yet whitelisted. All interactions is disabled until you switch to whitelisted wallet or get whitelisted for current one."
+  },
+  "limitsNotification": {
+    "text": "Sovryn has just lifted transaction limits (hooray!). This means you can now take any position size. Please be aware, however, since the limits were only just removed, liquidity in the system may be low initially."
+  },
+  "lend": {
+    "history": {
+      "title": "Lending history",
+      "amount": "Lend Amount",
+      "date": "Date & time",
+      "price": "Price",
+      "transaction": "Transaction",
+      "emptyState": "History is empty."
+    },
+    "currency": {
+      "lend": "Lend",
+      "borrow": "Borrow",
+      "lendArp": "Lend APR",
+      "borrowArp": "Borrow APR"
+    },
+    "container": {
+      "leftBtn": "Deposit",
+      "rightBtn": "Withdraw",
+      "amountName": "Deposit Amount",
+      "balance": "Balance",
+      "profit": "Profit",
+      "supply": "Supply"
+    },
+    "borrowingContainer": {
+      "amount": "Amount to borrow",
+      "tokenAssetCollateral": "Asset to collateralize and amount",
+      "borrow": "Borrow",
+      "chooseDays": "Choose days"
+    }
+  },
+  "activeUserBorrows": {
+    "text": "You do not have any active loans."
+  },
+  "activeUserLoans": {
+    "text": "You do not have any active trades.",
+    "info": {
+      "line_1": "Need help making a transaction? Read our guide on ",
+      "line_2": " how to trade and lend with Sovryn",
+      "line_3": "."
+    }
+  },
+  "topUpTradingPositionHandler": {
+    "title": "Top Up position",
+    "topUpAmount": "Top Up Amount",
+    "topUp": "Top Up",
+    "currency": "Currency"
+  },
+  "liquidityRemoveContainer": {
+    "fields": {
+      "currency": "Currency",
+      "currency_placeholder": "Select currency",
+      "amount": "Enter amount",
+      "target_amount": "Target Amount",
+      "fee": "Fee"
+    },
+    "supplied_balance": "Supplied Balance",
+    "not_connected": "Connect to Wallet",
+    "btn": "Withdraw"
+  },
+  "borrowActivity": {
+    "title": "My Debts",
+    "tabs": {
+      "active": "Active",
+      "history": "Repaid"
+    },
+    "walletNote": "Connect your wallet first!"
+  },
+  "borrowHistory": {
+    "table": {
+      "headers": {
+        "borrowAmount": "Borrowed",
+        "collateralAmount": "Collateral",
+        "interestAPR": "Interest APR",
+        "timestamp": "Date"
+      }
+    },
+    "no_items": "Your borrow history is empty."
+  },
+  "rskConnectTutorial": {
+    "browser_wallet": "Browser Wallet",
+    "mobile_wallet": "Mobile Wallet",
+    "mobile_wallet_alert_line1": "Make sure to use mobile wallet that supports RSK wallet. We suggest RWallet or Defiant.",
+    "mobile_wallet_alert_line2": "MetaMask has issues with calculating gas price for RSK network - always review if it's not to large before approving transaction!",
+    "hardware_wallet": "Hardware Wallet",
+    "speech": {
+      "1": "Open up your browser wallet",
+      "2": "Go to network dropdown",
+      "3": "Select custom RPC",
+      "4": "Input network details",
+      "5": "Click Save",
+      "6": "Click Add Network",
+      "7": "Engage Your Wallet!"
+    },
+    "mobileSpeech": {
+      "1": "Go to Wallet Menu",
+      "2": "Select Settings",
+      "3": "Select Networks",
+      "4": "Click Add Network",
+      "5": "Input Network Settings",
+      "6": "Click Add",
+      "7": "Scan QR Code to Connect!"
+    },
+    "speech_qr_code": "Scan QR code with a wallet-connect compatible wallet",
+    "input_settings": {
+      "title": "RSK Network Settings",
+      "network": "Network Name",
+      "new_RPC": "New RPC URL",
+      "chain_Id": "Chain ID",
+      "symbol": "Symbol",
+      "explorer_url": "Block Explorer URL"
+    },
+    "step": "Step",
+    "screens": {
+      "1": {
+        "title": "Connect Your Wallet",
+        "banner": "For any assistance, reach out to the community"
+      },
+      "11": {
+        "title": "Connect to the RSK Network",
+        "banner": "For any assistance, reach out to the community"
+      },
+      "2": {
+        "title": "How to Connect to RSK Network",
+        "banner": "For any assistance, reach out to the community"
+      },
+      "3": {
+        "title": "Scan QR Code",
+        "banner": "For any assistance, reach out to the community"
+      },
+      "4": {
+        "title": "Connect With Mobile Wallet",
+        "banner": "For any assistance, reach out to the community"
+      },
+      "5": {
+        "title": "Choose Your Wallet",
+        "banner": "For any assistance, reach out to the community"
+      }
+    }
+  },
+  "SOVConnectTutorial": {
+    "browser_wallet": "Browser Wallet",
+    "mobile_wallet": "Mobile Wallet",
+    "hardware_wallet": "Hardware Wallet",
+    "speech": {
+      "1": "Open up your browser wallet",
+      "2": "Go to network dropdown",
+      "3": "Select custom RPC",
+      "4": "Input network details",
+      "5": "Click Save",
+      "6": "Click Add Network",
+      "7": "Engage Your Wallet!"
+    },
+    "mobileSpeech": {
+      "1": "Go to Wallet Menu",
+      "2": "Select Settings",
+      "3": "Select Networks",
+      "4": "Click Add Network",
+      "5": "Input Network Settings",
+      "6": "Click Add",
+      "7": "Scan QR Code to Connect!"
+    },
+    "speech_qr_code": "Scan QR code with a wallet-connect compatible wallet",
+    "input_settings": {
+      "title": "SOV TOKEN SETTINGS",
+      "token_address": "Token Contract Address",
+      "symbol": "Symbol",
+      "decimals": "Decimals"
+    },
+    "step": "Step",
+    "screens": {
+      "1": {
+        "title": "Connect Your Wallet",
+        "banner": "For any assistance, reach out to the community"
+      },
+      "11": {
+        "title": "Connect to the RSK Network",
+        "banner": "For any assistance, reach out to the community"
+      },
+      "2": {
+        "title": "How to Connect to RSK Network",
+        "banner": "For any assistance, reach out to the community"
+      },
+      "3": {
+        "title": "Scan QR Code",
+        "banner": "For any assistance, reach out to the community"
+      },
+      "4": {
+        "title": "How to connect SOV to your Metamask wallet",
+        "banner": "For any assistance, reach out to the community"
+      }
+    }
+  },
+  "mobileNotReady": {
+    "submit": "Submit",
+    "p1": "The Sovryn user experience is not yet optimized for mobile.",
+    "p2": "Register your email to hear when our mobile version is ready!",
+    "p3": "Until then, why not try the desktop version?",
+    "errorText": "Error submitting form",
+    "success": "Success!",
+    "successText": "We will contact you as soon as Sovryn Mobile is live."
+  },
+  "fastBTC": {
+    "screens": {
+      "1": {
+        "title": "You Are Connected!",
+        "p1": "In order to borrow/lend and trade on Sovryn, you must first enable your Bitcoin by transferring them to your rsk wallet.",
+        "p2": "You do this by creating a unique btc address that pegs to your RSK address, supercharging your BTC into RBTC.",
+        "createAddress": "Create Address"
+      },
+      "2": {
+        "p1": "Your unique BTC address has been created, transfer BTC to receive RBTC in your RSK wallet.",
+        "depositRequirements": "Deposit requirements",
+        "fee": "Fee",
+        "feeExplainer": "Deducted from transaction amount",
+        "important": "Important",
+        "important1": "Do not deposit any non - BTC assets to this address, otherwise your assets will be lost permanently",
+        "important2": "Please allow upto 15 mins for the transaction to process",
+        "contactUs": "For support please join us on",
+        "txDetected": "Transaction detected"
+      },
+      "3": {
+        "txDetails": "Transaction Details",
+        "txHash": "rBTC Tx hash",
+        "txId": " BTC Tx ID",
+        "from": "From wallet",
+        "to": "To wallet",
+        "amount": "Amount transacted",
+        "fee": "Fee",
+        "initiated": "Initiated",
+        "status": "Status",
+        "estimated": "Estimated Time"
+      }
+    }
+  },
+  "walletProvider": {
+    "txRequestDialog": {
+      "closeButton": "Ok",
+      "approve": {
+        "title": "Approve Tokens",
+        "description": "Confirm transaction in your wallet to approve token spending in this smart-contract.",
+        "error": "Approve request failed:"
+      }
+    }
+  },
+  "sendTxProgress": {
+    "pending_for_user": {
+      "title": "Pending for user",
+      "text": "Please confirm transaction in your wallet."
+    },
+    "pending": {
+      "title": "Transaction pending",
+      "text": "Your transaction is being processed."
+    },
+    "confirmed": {
+      "title": "Transaction confirmed!",
+      "text": "Your transaction was confirmed in the blockchain."
+    },
+    "failed": {
+      "title": "Transaction failed!",
+      "text": "Transaction was reverted by contract."
+    },
+    "denied": {
+      "title": "Rejected!",
+      "text": "User denied transaction."
+    },
+    "texts": {
+      "transaction": "Transaction",
+      "closeButton": "Close"
+    }
+  },
+  "topUpBtcDialog": {
+    "meta": {
+      "title": "Top-UP"
+    }
+  },
+  "walletPage": {
+    "meta": {
+      "title": "My Wallet",
+      "description": "Information about connected wallet"
+    },
+    "tabs": {
+      "userAssets": "My assets",
+      "userNFTS": "NFTS"
+    }
+  },
+  "salesPage": {
+    "meta": {
+      "title": "Presale",
+      "description": "SOV Presale Page"
+    }
+  },
+  "userAssets": {
+    "meta": {
+      "title": "Connected Wallet"
+    },
+    "tableHeaders": {
+      "asset": "Asset",
+      "totalBalance": "Total Balance",
+      "dollarBalance": "Dollar Balance",
+      "action": "Action"
+    },
+    "actions": {
+      "deposit": "Top-Up",
+      "swap": "Swap",
+      "trade": "Trade",
+      "claimSov": "Claim SOV"
+    }
+  },
+  "topUpHistory": {
+    "meta": {
+      "title": "Top-Up History"
+    },
+    "tableHeaders": {
+      "time": "Date/Time",
+      "asset": "Asset",
+      "amount": "Amount",
+      "fee": "Fee",
+      "depositTx": "BTC Deposit ID",
+      "transferTx": "RSK Relay Hash",
+      "txHash": "Transaction"
+    },
+    "emptyState": "History is empty.",
+    "walletHistory": "Wallet must be connected.",
+    "loading": "Loading..."
+  },
+  "lendingPage": {
+    "tabs": {
+      "deposit": "Deposit",
+      "redeem": "Redeem"
+    },
+    "amount": {
+      "deposit": "Amount to deposit",
+      "redeem": "Amount to redeem"
+    },
+    "tradeButtons": {
+      "deposit": "Deposit {{asset}}",
+      "redeem": "Redeem {{asset}}"
+    },
+    "liquidity": {
+      "redeem": {
+        "line_1": "There is not enough {{currency}} in lending pool.",
+        "line_2": "Currently pool has only {{amount}} {{currency}} available.",
+        "line_3": "Pool will increase once users will repay their loans."
+      },
+      "borrow": {
+        "line_1": "There is not enough {{currency}} in lending pool to borrow.",
+        "line_2": "Currently pool has only {{amount}} {{currency}} available.",
+        "line_3": "Pool will increase once users will repay their loans."
+      }
+    }
+  },
+  "activeBorrowTable": {
+    "headers": {
+      "borrowAmount": "Borrowed",
+      "collateralAmount": "Collateral",
+      "interestAPR": "Interest APR",
+      "endTimestamp": "Payback until"
+    },
+    "repayButton": "Repay"
+  },
+  "repayPositionForm": {
+    "title": "Repay Loan",
+    "labels": {
+      "borrowedAmount": "Borrowed amount",
+      "amountToRepay": "{{currency}} amount to repay",
+      "amountToReceive": "You will receive"
+    },
+    "button": "Repay"
+  },
+  "closeTradingPositionHandler": {
+    "title": "Liquidate position",
+    "titleDone": "Position liquidated",
+    "positionSize": "Position size",
+    "withdrawIn": "Withdraw in",
+    "returnAmount": "Return amount",
+    "closePosition": "Close Position",
+    "closeAmount": "Close Amount",
+    "liquidity": {
+      "line_1": "Liquidity is too low for closing position.",
+      "line_2": "Try another return asset or wait for arbiters to re-balance."
+    }
+  },
+  "tradeConfirmationDialog": {
+    "main": {
+      "positionSize": "Position Size",
+      "positionLeverge": "Position Leverage",
+      "maintenanceMargin": "Maintenance Margin",
+      "estimatedLiquidationPrice": "Est. Liquidation Price",
+      "gasPriceNote": "Make sure gas price does not exceed 0.06 GWEI",
+      "positionEntryPrice": "Approx. Position Entry Price",
+      "entryPriceNote": "The price is taken from our AMM and as such is subject to flunctuations.",
+      "tradeButtonLong": "Place Long",
+      "tradeButtonShort": "Place Short"
+    },
+    "positions": {
+      "long": "Long",
+      "short": "Short"
+    },
+    "tx": {
+      "pendingForUserTitle": "Review Transaction",
+      "pendingForUserText": "Review and confirm transaction in your wallet"
+    }
+  },
+  "notifyDialog": {
+    "heading": "Caution… No Really",
+    "acceptTerms": "I have read and understand that I am responsible for my own Sovrynity",
+    "salesBtn": "I Understand",
+    "generalAlert": {
+      "p1": "SOVRYN is a decentralized bitcoin trading and lending platform, the first of it kind!",
+      "p2": "Only you control and have access to your wealth, any actions you take could cause a potential loss of funds.",
+      "p3": "Make sure to check all transaction fee prices before proceeding as third party wallets may automatically present high fees.",
+      "p4_1": "Please visit our ",
+      "p4_2": "FAQ",
+      "p4_3": " if you have any questions.",
+      "p5_1": "If you’re new to DeFi, here is the ",
+      "p5_2": "tutorial",
+      "p5_3": " on how to use SOVRYN."
+    },
+    "metamaskAlert": {
+      "p1": "We noticed you have MetaMask installed.",
+      "p2_1": "There are known issues when using MetaMask with SOVRYN. We suggest using a browser wallet like ",
+      "p2_2": "Liquality Wallet",
+      "p2_3": " or ",
+      "p2_4": "Nifty Wallet",
+      "p2_5": ". If you wish to continue with MetaMask please be aware of the following known errors:",
+      "knownErrors": {
+        "defaultGasPrice": {
+          "title": "High default gas price",
+          "description": "set your gas price manually to 0.06 GWEI"
+        },
+        "checksum": {
+          "title": "ETH checksum instead of RSK checksum",
+          "description": "use lower case addresses as receiver for manual transactions"
+        },
+        "price": {
+          "title": "Shows price as ETH instead of (r)BTC",
+          "description": "currently we suggest checking your token balances in the SOVRYN My Wallet section."
+        }
+      }
+    }
+  }
 }
