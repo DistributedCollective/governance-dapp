@@ -18,7 +18,6 @@ import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
 
 export function ProposalDetailsPage() {
   const { id } = useParams<any>();
-
   const isConnected = useIsConnected();
   const { syncBlockNumber } = useSelector(selectBlockChainProvider);
   const [data, setData] = useState<Proposal>(null as any);
