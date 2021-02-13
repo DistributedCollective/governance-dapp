@@ -25,8 +25,8 @@ import { useSoV_balanceOf } from '../../hooks/sov/useSoV_balanceOf';
 import { useStaking_getCurrentVotes } from '../../hooks/staking/useStaking_getCurrentVotes';
 import { useStaking_computeWeightByDate } from '../../hooks/staking/useStaking_computeWeightByDate';
 import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
+import { useStaking_currentBalance } from '../../hooks/staking/useStaking_currentBalance';
 import { useStaking_WEIGHT_FACTOR } from '../../hooks/staking/useStaking_WEIGHT_FACTOR';
-import { useStaking_currentLock } from '../../hooks/staking/useStaking_currentLock';
 import {
   staking_allowance,
   staking_approve,
@@ -124,7 +124,7 @@ function InnerStakePage(props: Props) {
 
   const sovBalanceOf = useSoV_balanceOf(account);
   const totalStakedBalance = useSoV_balanceOf(getContract('staking').address);
-  const s = useStaking_currentLock(account);
+  const s = useStaking_currentBalance(account);
 
   const [amount, setAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');

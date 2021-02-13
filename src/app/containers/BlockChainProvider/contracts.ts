@@ -1,31 +1,22 @@
 import { IContractNetworks } from './types';
 import GovernorAdminABI from './abi/GovernorAdmin.json';
 import StakingABI from './abi/Staking.json';
-import TimelockABI from './abi/Timelock.json';
-import ERC20TokenABI from './abi/ERC20Token.json';
-import NtSOVABi from './abi/NTSOV.json';
+import SovTokenABI from './abi/SOV.json';
+import VestingRegistryABI from './abi/VestingRegistry.json';
 
 export const contracts: IContractNetworks = {
   testnet: {
     sovToken: {
-      address: '0x4c2bE6C604A3181Ef531914671902c2De068EA63',
-      abi: ERC20TokenABI as any,
-    },
-    ntSovToken: {
-      address: '0x4c2bE6C604A3181Ef531914671902c2De068EA63',
-      abi: NtSOVABi as any,
+      address: '0x6a9A07972D07e58F0daf5122d11E069288A375fb',
+      abi: SovTokenABI as any,
     },
     staking: {
       address: '0xc37A85e35d7eECC82c4544dcba84CF7E61e1F1a3',
       abi: StakingABI as any,
     },
-    timelock: {
-      address: '0x462Ac951756EE704e5116F247071D2663A41fF9d',
-      abi: TimelockABI as any,
-    },
-    governorAlpha: {
-      address: '0xE8276A1680CB970c2334B3201044Ddf7c492F52A',
-      abi: GovernorAlphaABI as any,
+    governorAdmin: {
+      address: '0x1528f0341a1Ea546780caD690F54b4FBE1834ED4',
+      abi: GovernorAdminABI as any,
     },
     vestingRegistry: {
       address: '0x80ec7ADd6CC1003BBEa89527ce93722e1DaD5c2a',
@@ -35,23 +26,15 @@ export const contracts: IContractNetworks = {
   mainnet: {
     sovToken: {
       address: '0xEFc78fc7d48b64958315949279Ba181c2114ABBd',
-      abi: ERC20TokenABI as any,
-    },
-    ntSovToken: {
-      address: '0xEFc78fc7d48b64958315949279Ba181c2114ABBd',
-      abi: NtSOVABi as any,
+      abi: SovTokenABI as any,
     },
     staking: {
       address: '0x5684a06CaB22Db16d901fEe2A5C081b4C91eA40e',
       abi: StakingABI as any,
     },
-    timelock: {
-      address: '0x462Ac951756EE704e5116F247071D2663A41fF9d',
-      abi: TimelockABI as any,
-    },
-    governorAlpha: {
-      address: '0xC7A1637b37190a456b017897207bceb2A29f19b9',
-      abi: GovernorAlphaABI as any,
+    governorAdmin: {
+      address: '0xfF25f66b7D7F385503D70574AE0170b6B1622dAd',
+      abi: GovernorAdminABI as any,
     },
     vestingRegistry: {
       address: '0x80B036ae59B3e38B573837c01BB1DB95515b7E6B',
