@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
-import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
 import { Proposal } from '../../../types/Proposal';
 import { ProposalRow } from '../ProposalRow/Loadable';
 import { governance_proposalCount } from '../BlockChainProvider/requests/governance';
+import { Header } from 'app/components/Header';
 
 export function ProposalsPage() {
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ export function ProposalsPage() {
       }
       const items: Proposal[] = [];
       for (let index = proposalCount; index > to; index--) {
-        const item = ((await network.call('governorAlpha', 'proposals', [
+        const item = ((await network.call('governorAdmin', 'proposals', [
           index,
         ])) as unknown) as Proposal;
         items.push(item);

@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 import { actions } from 'app/containers/BlockChainProvider/slice';
-import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
 import { Proposal } from '../../../types/Proposal';
 import { ProposalRow } from '../ProposalRow/Loadable';
-import { governance_proposalCount } from '../BlockChainProvider/requests/governance';
+import {
+  governance_proposalCount,
+  governance_propose,
+} from '../BlockChainProvider/requests/governance';
 import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
+import { Header } from 'app/components/Header';
 
 export function HomePage() {
   const [loading, setLoading] = useState(false);
@@ -29,7 +32,7 @@ export function HomePage() {
       }
       const items: Proposal[] = [];
       for (let index = proposalCount; index > to; index--) {
-        const item = ((await network.call('governorAlpha', 'proposals', [
+        const item = ((await network.call('governorAdmin', 'proposals', [
           index,
         ])) as unknown) as Proposal;
         items.push(item);
@@ -174,6 +177,18 @@ export function HomePage() {
     }
   `;
 
+  const createProposal = useCallback(async () => {
+    const nextId = (await governance_proposalCount()) + 1;
+    await governance_propose(
+      ['0xc37A85e35d7eECC82c4544dcba84CF7E61e1F1a3'],
+      ['0'],
+      ['setWeightScaling(uint96)'],
+      ['0x0000000000000000000000000000000000000000000000000000000000000004'],
+      `testing: set weight scaling to 4 ${nextId}`,
+      address,
+    );
+  }, [address]);
+
   return (
     <>
       <Helmet>
@@ -186,12 +201,22 @@ export function HomePage() {
           <div className="container">
             <div className="flex justify-end">
               {connected && address && (
-                <button
-                  className="rounded-md bg-gold bg-opacity-10 focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out border px-5 py-2 text-md text-gold border-gold"
-                  onClick={() => dispatch(actions.toggleDelagationDialog(true))}
-                >
-                  Delegate Votes
-                </button>
+                <>
+                  <button
+                    className="rounded-md bg-gold bg-opacity-10 focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out border px-5 py-2 text-md text-gold border-gold"
+                    onClick={() =>
+                      dispatch(actions.toggleDelagationDialog(true))
+                    }
+                  >
+                    Delegate Votes
+                  </button>
+                  <button
+                    className="rounded-md bg-gold bg-opacity-10 focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out border px-5 py-2 text-md text-gold border-gold"
+                    onClick={() => createProposal()}
+                  >
+                    Make test proposal
+                  </button>
+                </>
               )}
             </div>
             <h2 className="text-white text-center pt-5 pb-8 tracking-normal">
@@ -204,13 +229,6 @@ export function HomePage() {
         </div>
         <div className="container">
           <div className="bg-gray-light rounded-b shadow">
-            {!loading && total === 0 && (
-              <>
-                <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
-                  <i>No proposals yet.</i>
-                </div>
-              </>
-            )}
             {loading && !items.length ? (
               <>
                 <div className="rounded-lg border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
@@ -257,6 +275,13 @@ export function HomePage() {
                       </tr>
                     </thead>
                     <tbody className="mt-5">
+                      {!loading && total === 0 && (
+                        <tr>
+                          <td colSpan={99}>
+                            <i>No proposals yet.</i>
+                          </td>
+                        </tr>
+                      )}
                       {items.map(item => (
                         <ProposalRow key={item.id} proposal={item} />
                       ))}

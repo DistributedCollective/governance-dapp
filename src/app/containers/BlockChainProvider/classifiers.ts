@@ -1,3 +1,5 @@
+import { ChainId } from './types';
+
 export const rpcNodes = {
   30: 'https://mainnet2.sovryn.app/rpc',
   31: 'https://testnet2.sovryn.app/rpc',
@@ -20,3 +22,5 @@ export const blockExplorers = {
 
 // Block time in seconds
 export const blockTime = 30;
+
+export const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID || 31) as ChainId;

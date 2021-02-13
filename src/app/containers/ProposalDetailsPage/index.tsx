@@ -91,12 +91,12 @@ export function ProposalDetailsPage() {
   useEffect(() => {
     setLoading(true);
     const get = async () => {
-      const proposal = ((await network.call('governorAlpha', 'proposals', [
+      const proposal = ((await network.call('governorAdmin', 'proposals', [
         id,
       ])) as unknown) as Proposal;
       setData(proposal);
       const events = await network.getPastEvents(
-        'governorAlpha',
+        'governorAdmin',
         'ProposalCreated',
         { id: proposal.id },
         proposal.startBlock - 1,
@@ -113,7 +113,7 @@ export function ProposalDetailsPage() {
       setVotesLoading(true);
       network
         .getPastEvents(
-          'governorAlpha',
+          'governorAdmin',
           'VoteCast',
           {
             proposalId: data.id,

@@ -1,7 +1,5 @@
-import WalletConnectProvider from '@walletconnect/web3-provider';
-// import Portis from '@portis/web3';
 import Web3Modal, { IProviderOptions } from 'web3modal';
-import { rpcNodes } from './classifiers';
+import { CHAIN_ID } from './classifiers';
 import { ChainId } from './types';
 import { store } from '../../../store/store';
 import { actions } from './slice';
@@ -11,28 +9,7 @@ import Web3 from 'web3';
 class WalletConnection {
   private _web3Modal: Web3Modal = null as any;
   public init(chainId: ChainId) {
-    const providerOptions: IProviderOptions = {
-      walletconnect: {
-        display: {
-          // logo: 'data:image/gif;base64,INSERT_BASE64_STRING',
-          name: 'Mobile',
-          description: 'Scan qrcode with your mobile wallet',
-        },
-        package: WalletConnectProvider,
-        options: {
-          chainId: chainId,
-          rpc: rpcNodes,
-        },
-      },
-      // portis: {
-      //   package: Portis, // required
-      //   options: {
-      //     dappId: process.env.REACT_APP_PORTIS_ID,
-      //     network: chainId === 30 ? 'orchid' : 'orchidTestnet',
-      //     id: process.env.REACT_APP_PORTIS_ID,
-      //   },
-      // },
-    };
+    const providerOptions: IProviderOptions = {};
 
     this._web3Modal = new Web3Modal({
       disableInjectedProvider: false,
@@ -82,7 +59,7 @@ class WalletConnection {
 
       const web3 = new Web3(provider);
       const networkId = await web3.eth.net.getId();
-      network.setWriteWeb3(web3, networkId === 30 ? 'mainnet' : 'testnet');
+      network.setWriteWeb3(web3, CHAIN_ID === 30 ? 'mainnet' : 'testnet');
 
       const accounts = await network.writeWeb3.eth.getAccounts();
 
@@ -120,13 +97,11 @@ class WalletConnection {
         });
         provider.on('chainChanged', async (chainId: ChainId) => {
           const networkId = await network.writeWeb3.eth.net.getId();
-          await store.dispatch(actions.setup(chainId));
           store.dispatch(actions.chainChanged({ chainId, networkId }));
         });
 
         provider.on('networkChanged', async (networkId: number) => {
           const chainId = await (network.writeWeb3.eth as any).chainId();
-          await store.dispatch(actions.setup(chainId));
           store.dispatch(actions.chainChanged({ chainId, networkId }));
         });
       }

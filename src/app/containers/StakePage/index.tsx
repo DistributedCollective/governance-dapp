@@ -14,7 +14,6 @@ import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import { reducer, sliceKey } from './slice';
 import { selectStakePage } from './selectors';
 import { stakePageSaga } from './saga';
-import { Header } from '../../components/Header/Loadable';
 import { Footer } from '../../components/Footer/Loadable';
 import { VoteProgress } from '../../components/VoteProgress';
 import { useAccount } from '../../hooks/useAccount';
@@ -46,6 +45,7 @@ import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
 //   governance_propose,
 // } from '../BlockChainProvider/requests/governance';
 import { StakingDateSelector } from '../../components/StakingDateSelector';
+import { Header } from 'app/components/Header';
 
 interface Props {}
 
@@ -357,17 +357,17 @@ function InnerStakePage(props: Props) {
     [prevTimestamp, timestamp, account],
   );
 
-  /*const createProposal = useCallback(async () => {
-    const nextId = (await governance_proposalCount()) + 1;
-    await governance_propose(
-      ['0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083'],
-      ['0'],
-      ['setWeightScaling(uint96)'],
-      ['0x0000000000000000000000000000000000000000000000000000000000000004'],
-      `set weight scaling to 4 ${nextId}`,
-      account,
-    );
-  }, [account]);*/
+  // const createProposal = useCallback(async () => {
+  //   const nextId = (await governance_proposalCount()) + 1;
+  //   await governance_propose(
+  //     ['0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083'],
+  //     ['0'],
+  //     ['setWeightScaling(uint96)'],
+  //     ['0x0000000000000000000000000000000000000000000000000000000000000004'],
+  //     `set weight scaling to 4 ${nextId}`,
+  //     account,
+  //   );
+  // }, [account]);
 
   return (
     <>

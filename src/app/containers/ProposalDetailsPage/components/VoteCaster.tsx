@@ -17,7 +17,7 @@ export function VoteCaster(props: Props) {
   const account = useAccount();
 
   const receipt = useContractCall(
-    'governorAlpha',
+    'governorAdmin',
     'getReceipt',
     props.proposalId,
     account,
@@ -30,7 +30,7 @@ export function VoteCaster(props: Props) {
     async (support: boolean) => {
       setLoading(true);
       const tx = await network.send(
-        'governorAlpha',
+        'governorAdmin',
         'castVote',
         [props.proposalId, support, { from: account }],
         { type: 'vote' },

@@ -27,7 +27,7 @@ interface FormattedAction {
 
 export function ProposalActions(props: Props) {
   const { loading, value: actions } = useContractCall(
-    'governorAlpha',
+    'governorAdmin',
     'getActions',
     props.proposalId || '0',
   );

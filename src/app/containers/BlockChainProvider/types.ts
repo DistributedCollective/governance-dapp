@@ -29,10 +29,9 @@ export interface IContractNetworks {
 
 export interface INetworkToContract {
   sovToken: IContract;
-  ntSovToken: IContract;
   staking: IContract;
-  timelock: IContract;
-  governorAlpha: IContract;
+  governorAdmin: IContract;
+  vestingRegistry: IContract;
 }
 
 export interface IContract {

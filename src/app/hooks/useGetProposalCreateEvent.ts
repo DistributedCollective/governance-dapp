@@ -13,7 +13,7 @@ export function useGetProposalCreateEvent(proposal: Proposal) {
   const getEvent = useCallback(async () => {
     setState(prevState => ({ ...prevState, loading: true }));
     const events = await network.getPastEvents(
-      'governorAlpha',
+      'governorAdmin',
       'ProposalCreated',
       { id: proposal.id },
       proposal.startBlock - 1,

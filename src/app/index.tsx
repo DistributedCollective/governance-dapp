@@ -50,8 +50,8 @@ export function App() {
   return (
     <BrowserRouter>
       <Helmet
-        titleTemplate="%s | Sovryn Governance"
-        defaultTitle="Sovryn Governance"
+        titleTemplate="%s | Sovryn Bitocracy"
+        defaultTitle="Sovryn Bitocracy"
       />
       <BlockChainProvider>
         <RouteSwitch />

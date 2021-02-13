@@ -38,7 +38,7 @@ export function useContractCall<T = string>(
         .catch(error => {
           // todo add logger?
           // silence...
-          console.error(error);
+          console.error(contractName, methodName, args, error);
           setState(prevState => ({
             ...prevState,
             loading: false,

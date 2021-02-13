@@ -17,7 +17,7 @@ export function useGetProposalState(proposal: Proposal) {
     if (proposal?.id) {
       setState(prevState => ({ ...prevState, loading: true }));
       network
-        .call('governorAlpha', 'state', [proposal.id])
+        .call('governorAdmin', 'state', [proposal.id])
         .then(result => {
           setState(prevState => ({
             ...prevState,

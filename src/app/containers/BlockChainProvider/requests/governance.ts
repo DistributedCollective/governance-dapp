@@ -9,7 +9,7 @@ export function governance_propose(
   account,
 ) {
   return network.send(
-    'governorAlpha',
+    'governorAdmin',
     'propose',
     [targets, values, signatures, calldatas, description, { from: account }],
     {
@@ -25,15 +25,15 @@ export function governance_cancel(proposalId: number) {}
 export function governance_execute(proposalId: number) {}
 
 export function governance_proposalThreshold() {
-  return network.call('governorAlpha', 'proposalThreshold', []);
+  return network.call('governorAdmin', 'proposalThreshold', []);
 }
 
 export function governance_quorumVotes() {
-  return network.call('governorAlpha', 'quorumVotes', []);
+  return network.call('governorAdmin', 'quorumVotes', []);
 }
 
 export function governance_proposalCount() {
   return network
-    .call('governorAlpha', 'proposalCount', [])
+    .call('governorAdmin', 'proposalCount', [])
     .then(result => Number(result));
 }

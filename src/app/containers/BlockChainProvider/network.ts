@@ -12,7 +12,7 @@ import { contracts } from './contracts';
 import { store } from '../../../store/store';
 import { actions } from './slice';
 import { getContract } from '../../../utils/helpers';
-import { DEFAULT_CHAIN } from './index';
+import { CHAIN_ID } from './classifiers';
 
 interface SendTxOptions {
   type?: TransactionType;
@@ -53,7 +53,7 @@ class Network {
         provider.removeAllListeners('end');
         this.contracts = {};
         this.web3 = undefined as any;
-        store.dispatch(actions.setup(DEFAULT_CHAIN));
+        store.dispatch(actions.setup(CHAIN_ID));
       });
     }
   }

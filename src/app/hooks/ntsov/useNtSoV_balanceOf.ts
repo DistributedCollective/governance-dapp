@@ -1,11 +1,12 @@
-import { useContractCallWithValue } from '../useContractCallWithValue';
-import { genesisAddress } from 'utils/helpers';
+// import { useContractCallWithValue } from '../useContractCallWithValue';
+// import { genesisAddress } from 'utils/helpers';
 
 export function useNtSoV_balanceOf(address: string) {
-  return useContractCallWithValue(
-    'ntSovToken',
-    'balanceOf',
-    '0',
-    address || genesisAddress,
-  );
+  return { value: '0', loading: false, error: null };
+  // return useContractCallWithValue(
+  //   'ntSovToken',
+  //   'balanceOf',
+  //   '0',
+  //   address || genesisAddress,
+  // );
 }

@@ -1,5 +1,5 @@
 import { IContractNetworks } from './types';
-import GovernorAlphaABI from './abi/GovernorAlpha.json';
+import GovernorAdminABI from './abi/GovernorAdmin.json';
 import StakingABI from './abi/Staking.json';
 import TimelockABI from './abi/Timelock.json';
 import ERC20TokenABI from './abi/ERC20Token.json';
@@ -16,7 +16,7 @@ export const contracts: IContractNetworks = {
       abi: NtSOVABi as any,
     },
     staking: {
-      address: '0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083',
+      address: '0xc37A85e35d7eECC82c4544dcba84CF7E61e1F1a3',
       abi: StakingABI as any,
     },
     timelock: {
@@ -26,6 +26,10 @@ export const contracts: IContractNetworks = {
     governorAlpha: {
       address: '0xE8276A1680CB970c2334B3201044Ddf7c492F52A',
       abi: GovernorAlphaABI as any,
+    },
+    vestingRegistry: {
+      address: '0x80ec7ADd6CC1003BBEa89527ce93722e1DaD5c2a',
+      abi: VestingRegistryABI as any,
     },
   },
   mainnet: {
@@ -48,6 +52,10 @@ export const contracts: IContractNetworks = {
     governorAlpha: {
       address: '0xC7A1637b37190a456b017897207bceb2A29f19b9',
       abi: GovernorAlphaABI as any,
+    },
+    vestingRegistry: {
+      address: '0x80B036ae59B3e38B573837c01BB1DB95515b7E6B',
+      abi: VestingRegistryABI as any,
     },
   },
 };

@@ -13,8 +13,7 @@ import Web3 from 'web3';
 import { network } from './network';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { ChainId } from './types';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { rpcBackupNodes, wssNodes } from './classifiers';
+import { wssNodes } from './classifiers';
 import { walletConnection } from './web3-modal';
 import { selectBlockChainProvider } from './selectors';
 import { TransactionReceipt } from 'web3-core';
