@@ -17,23 +17,16 @@ import { NotFoundPage } from './components/NotFoundPage/Loadable';
 import { CustomDialog } from './components/CustomDialog';
 import { ProposalsPage } from './containers/ProposalsPage/Loadable';
 
-interface stateType {
-  location: { pathname: string };
-  background: { location: string };
-}
-
 export function App() {
   function RouteSwitch() {
-    const location = useLocation<stateType>();
+    const location = useLocation<{ background: any; location: any }>();
     const background = location.state && location.state.background;
-
     return (
       <div>
-        <Switch location={location || background}>
+        <Switch location={background || location}>
           <Route exact path="/" component={HomePage} />
           <Route exact path="/proposals" component={ProposalsPage} />
           <Route exact path="/stake" component={StakePage} />
-          <Route exact path="/proposals/:id" component={HomePage} />
           <Route component={NotFoundPage} />
         </Switch>
 
