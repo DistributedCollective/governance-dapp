@@ -30,6 +30,7 @@ interface Props {
   startTs?: number;
   stakes?: undefined;
   prevExtend?: number;
+  autoselect?: boolean;
 }
 
 export function StakingDateSelector(props: Props) {
@@ -106,6 +107,13 @@ export function StakingDateSelector(props: Props) {
   useEffect(() => {
     setSelected(getSelected());
   }, [getSelected, props.value, dateWithoutStake]);
+
+  useEffect(() => {
+    if (props.autoselect && !props.value && dateWithoutStake.length) {
+      props.onChange(dateWithoutStake[0].key);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.autoselect, props.value, dateWithoutStake]);
 
   return (
     <>

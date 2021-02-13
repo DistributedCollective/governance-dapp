@@ -5,36 +5,34 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectBlockChainProvider } from '../../selectors';
 import { actions } from '../../slice';
 import { useAccount } from '../../../../hooks/useAccount';
-import { csov_delegate } from '../../requests/csov';
-import { useNtSoV_delegates } from '../../../../hooks/ntsov/useNtSoV_delegates';
-import { useNtSoV_balanceOf } from '../../../../hooks/ntsov/useNtSoV_balanceOf';
-import { fromWei, genesisAddress } from '../../../../../utils/helpers';
+import { fromWei } from '../../../../../utils/helpers';
+import { useStaking_getCurrentVotes } from '../../../../hooks/staking/useStaking_getCurrentVotes';
+import { staking_delegate } from '../../requests/staking';
+import { StakingDateSelector } from '../../../../components/StakingDateSelector';
+import { useStaking_kickoffTs } from '../../../../hooks/staking/useStaking_kickoffTs';
 
 export function DelegationDialog() {
   const { showDelegationDialog } = useSelector(selectBlockChainProvider);
   const dispatch = useDispatch();
 
   const account = useAccount();
-  const delegates = useNtSoV_delegates();
-  const balance = useNtSoV_balanceOf(account);
+  const balance = useStaking_getCurrentVotes(account);
+  const kickoff = useStaking_kickoffTs();
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState('');
+  const [ts, setTs] = useState<any>();
 
   const handleSubmit = async e => {
     e && e.preventDefault && e.preventDefault();
     setLoading(true);
     try {
-      await csov_delegate(address.toLowerCase(), account);
+      await staking_delegate(address.toLowerCase(), ts, account);
       setLoading(false);
     } catch (e) {
       setLoading(false);
       console.error(e);
     }
   };
-
-  const delegated =
-    delegates.value.toLowerCase() !== genesisAddress.toLowerCase() &&
-    delegates.value.toLowerCase() !== account.toLowerCase();
 
   return (
     <Dialog
@@ -54,15 +52,8 @@ export function DelegationDialog() {
             Delegate to
           </label>
 
-          {delegated && (
-            <p className="mt-2 mb-3 text-sm">
-              To delegate voting rights to yourself enter your own wallet
-              address
-            </p>
-          )}
-
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline mb-5"
             id="stake-amount"
             type="text"
             placeholder="RSK wallet address"
@@ -70,11 +61,16 @@ export function DelegationDialog() {
             onChange={e => setAddress(e.currentTarget.value)}
           />
 
+          <StakingDateSelector
+            title="Delegate until"
+            kickoffTs={Number(kickoff.value)}
+            value={ts}
+            onChange={e => setTs(e)}
+            autoselect
+          />
+
           <Text tagName="p" ellipsize className="mt-2 mb-3 text-sm">
-            Your NTSOV: {Number(fromWei(balance.value)).toLocaleString()}
-          </Text>
-          <Text tagName="p" ellipsize className="mb-3 text-sm">
-            Delegated to: {delegated ? delegates.value : 'Yourself'}
+            My Votes: {Number(fromWei(balance.value)).toLocaleString()}
           </Text>
 
           <div className="text-right mt-3">

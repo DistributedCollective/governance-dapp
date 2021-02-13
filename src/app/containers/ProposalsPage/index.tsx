@@ -70,7 +70,7 @@ export function ProposalsPage() {
             )}
             <>
               <div className="rounded-lg bg-gray-lighter border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
-                <StyledTable className="w-full">
+                <StyledTable className="w-full table-fixed">
                   <thead>
                     <tr>
                       <th className="text-left">Title</th>

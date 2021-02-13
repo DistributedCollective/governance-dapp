@@ -5,10 +5,10 @@ module.exports = {
   },
   theme: {
     screens: {
-      'sm': '100%',
-      'md': '768px',
-      'lg': '992px',
-      'xl': '1200px',
+      sm: '100%',
+      md: '768px',
+      lg: '992px',
+      xl: '1200px',
     },
     fontFamily: {
       montserrat: ['Montserrat', 'sans-serif'],
@@ -18,9 +18,9 @@ module.exports = {
       center: true,
       padding: '15px',
       screens: {
-        'sm': '100%',
-        'md': {'min': '1920px'},
-      }
+        sm: '100%',
+        md: { min: '1920px' },
+      },
     },
     opacity: {
       '0': '0',
@@ -51,7 +51,7 @@ module.exports = {
       white: 'white',
       black: 'black',
       turquoise: '#4ECDC4',
-      red: '#CD4E4E'
+      red: '#CD4E4E',
     },
     extend: {
       minHeight: {
@@ -62,7 +62,5 @@ module.exports = {
   variants: {
     opacity: ['responsive', 'hover'],
   },
-  plugins: [
-    require('tailwindcss'),
-  ],
+  plugins: [require('tailwindcss')],
 };

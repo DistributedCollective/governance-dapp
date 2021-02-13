@@ -96,12 +96,19 @@ class WalletConnection {
           store.dispatch(actions.accountChanged(accounts[0]));
         });
         provider.on('chainChanged', async (chainId: ChainId) => {
-          const networkId = await network.writeWeb3.eth.net.getId();
-          store.dispatch(actions.chainChanged({ chainId, networkId }));
+          const networkId = Number(await network.writeWeb3.eth.net.getId());
+          store.dispatch(
+            actions.chainChanged({
+              chainId: Number(chainId) as ChainId,
+              networkId,
+            }),
+          );
         });
 
         provider.on('networkChanged', async (networkId: number) => {
-          const chainId = await (network.writeWeb3.eth as any).chainId();
+          const chainId = Number(
+            await (network.writeWeb3.eth as any).chainId(),
+          ) as ChainId;
           store.dispatch(actions.chainChanged({ chainId, networkId }));
         });
       }

@@ -4,7 +4,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Proposal, ProposalState } from 'types/Proposal';
 import { Link, useLocation } from 'react-router-dom';
 import Linkify from 'react-linkify';
@@ -13,6 +13,7 @@ import { useGetProposalCreateEvent } from '../../hooks/useGetProposalCreateEvent
 import { useGetProposalState } from '../../hooks/useGetProposalState';
 import { ProposalStatusBadge } from '../../components/ProposalStatusBadge';
 import { ProposalRowStateBadge } from '../../components/ProposalRowStateBadge';
+import { dateByBlocks } from '../../../utils/helpers';
 
 interface Props {
   proposal: Proposal;
@@ -54,6 +55,15 @@ export function ProposalRow({ proposal }: Props) {
   const { loading: loadingState, state } = useGetProposalState(proposal);
   const location = useLocation();
 
+  const [wasLoaded, setWasLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!wasLoaded && !(loadingState || loadingCreated || !created || !state)) {
+      setWasLoaded(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadingState, loadingState, created, state, wasLoaded]);
+
   if (loadingState || loadingCreated || !created || !state) {
     return (
       <>
@@ -88,31 +98,52 @@ export function ProposalRow({ proposal }: Props) {
     );
   }
 
+  let blue = 50;
+  if (proposal.forVotes !== proposal.againstVotes) {
+    blue = Math.min(
+      Math.round(
+        (proposal.forVotes / proposal.forVotes + proposal.againstVotes) * 100,
+      ) || 0,
+      100,
+    );
+  }
+  const red = 100 - blue;
+
   return (
     <>
       <tr key={proposal.id}>
         {state === ProposalState.Active ? (
           <>
-            <td className="font-montserrat max-w-sm">
-              <div className="flex items-start tracking-normal">
-                <b className="whitespace-no-wrap block mr-1">
-                  SIP {String(proposal.id).padStart(3, '0')}.
-                </b>
-                <div className="break-all max-h-12 overflow-hidden">
-                  <Linkify newTab={true}>{created.description}</Linkify>
-                </div>
+            <td className="font-montserrat max-w-sm truncate">
+              <Linkify newTab={true}>
+                {String(proposal.id).padStart(3, '0')} • {created.description}
+              </Linkify>
+            </td>
+            <td className="text-center hidden xl:table-cell truncate">
+              {dateByBlocks(
+                proposal.startTime,
+                proposal.startBlock,
+                proposal.startBlock,
+              )}
+            </td>
+            <td className="text-center hidden xl:table-cell">
+              <div className="flex flex-row space-x-4 items-center">
+                <ProposalStatusBadge state={state} />
+                <StyledBar>
+                  <div
+                    className="progress__blue"
+                    style={{ width: `${blue}%` }}
+                  />
+                  <div className="progress__red" style={{ width: `${red}%` }} />
+                </StyledBar>
               </div>
             </td>
-            <td className="text-center hidden xl:table-cell">#{proposal.id}</td>
-            <td className="text-center hidden xl:table-cell">
-              <ProposalStatusBadge state={state} />
-              <StyledBar>
-                <div className="progress__blue"></div>
-                <div className="progress__red"></div>
-              </StyledBar>
-            </td>
-            <td className="text-center hidden xl:table-cell">
-              {proposal.endBlock} - #{proposal.id}
+            <td className="text-center hidden xl:table-cell truncate">
+              {dateByBlocks(
+                proposal.startTime,
+                proposal.startBlock,
+                proposal.endBlock,
+              )}
             </td>
             <td className="text-center">
               <Link
@@ -128,26 +159,27 @@ export function ProposalRow({ proposal }: Props) {
           </>
         ) : (
           <>
-            <td className="font-montserrat xl:max-w-sm">
-              <div className="flex items-start tracking-normal">
-                <b className="whitespace-no-wrap block mr-1">
-                  SIP {String(proposal.id).padStart(3, '0')}.
-                </b>
-                <div className="break-all max-h-12 xl:overflow-hidden">
-                  <Linkify newTab={true}>
-                    {created.description || 'Title.'}
-                  </Linkify>
-                </div>
-              </div>
+            <td className="font-montserrat max-w-sm truncate">
+              <Linkify newTab={true}>
+                {String(proposal.id).padStart(3, '0')} • {created.description}
+              </Linkify>
             </td>
-            <td className="text-center hidden xl:table-cell tracking-normal">
-              #{proposal.id}
+            <td className="text-center hidden xl:table-cell tracking-normal truncate">
+              {dateByBlocks(
+                proposal.startTime,
+                proposal.startBlock,
+                proposal.startBlock,
+              )}
             </td>
             <td className="text-center hidden xl:table-cell">
               <ProposalRowStateBadge state={state} />
             </td>
-            <td className="text-center hidden xl:table-cell tracking-normal">
-              {proposal.endBlock} - #{proposal.id}
+            <td className="text-center hidden xl:table-cell tracking-normal truncate">
+              {dateByBlocks(
+                proposal.startTime,
+                proposal.startBlock,
+                proposal.endBlock,
+              )}
             </td>
             <td className="text-center">
               <Link

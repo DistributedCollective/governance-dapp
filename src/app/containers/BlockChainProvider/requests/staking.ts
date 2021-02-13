@@ -117,3 +117,14 @@ export function staking_extendStakingDuration(
     },
   );
 }
+
+export function staking_delegate(address: string, lockDate: number, account) {
+  return network.send(
+    'staking',
+    'delegate',
+    [address, lockDate, { from: account }],
+    {
+      type: 'delegate',
+    },
+  );
+}

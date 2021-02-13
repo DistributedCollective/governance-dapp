@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,10 +8,7 @@ import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
 import { Proposal } from '../../../types/Proposal';
 import { ProposalRow } from '../ProposalRow/Loadable';
-import {
-  governance_proposalCount,
-  governance_propose,
-} from '../BlockChainProvider/requests/governance';
+import { governance_proposalCount } from '../BlockChainProvider/requests/governance';
 import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
 import { Header } from 'app/components/Header';
 
@@ -45,150 +42,6 @@ export function HomePage() {
     get().then().catch();
   }, []);
 
-  const StyledTable = styled.table`
-    font-weight: 100;
-    width: 100%;
-    font-size: 14px;
-    font-family: 'Work Sans';
-
-    &.sovryn-table-mobile {
-      font-size: 12px;
-      @media (max-width: 335px) {
-        font-size: 11px;
-      }
-    }
-    .table-header div {
-      font-weight: 300;
-      color: white;
-      font-size: 16px;
-      padding: 0 22px;
-      height: 43px;
-    }
-    thead tr,
-    .table-header:not(.sub-header) {
-      height: 40px;
-      th {
-        font-weight: 300;
-        color: white;
-        font-size: 16px;
-        padding: 0 50px;
-        height: 45px;
-        line-height: 16px;
-        letter-spacing: 0;
-      }
-    }
-    tbody {
-      tr {
-        td {
-          background-color: #1f1f1f;
-
-          &:first-child {
-            border-radius: 6px 0 0 6px;
-          }
-
-          &:last-child {
-            border-radius: 0 6px 6px 0;
-          }
-
-          &:only-child {
-            border-radius: 6px;
-          }
-        }
-        &:nth-child(odd) {
-          td {
-            background-color: #1f1f1f;
-          }
-        }
-        &:nth-child(even) {
-          td {
-            background-color: #181818;
-          }
-        }
-      }
-    }
-    &.table-small {
-      thead tr {
-        height: 30px;
-        th {
-          height: 30px;
-          padding: 0 20px;
-        }
-      }
-      tbody tr {
-        height: 30px;
-        td {
-          padding: 0 20px;
-        }
-        &:nth-child(even) {
-          td {
-            background-color: #101010;
-            &:first-child {
-              border-radius: 8px 0 0 6=8px;
-            }
-
-            &:last-child {
-              border-radius: 0 6px 6px 0;
-            }
-
-            &:only-child {
-              border-radius: 6px;
-            }
-          }
-        }
-      }
-    }
-    tbody tr,
-    .mobile-row {
-      height: 80px;
-
-      td {
-        padding: 10px 40px;
-        color: white;
-        font-size: 15px;
-        line-height: 27px;
-        &:first-child {
-          a {
-            display: none;
-          }
-        }
-        a {
-          color: #fec004;
-        }
-      }
-
-      &:first-of-type {
-        border-top: none;
-      }
-
-      &.table-header {
-        height: 60%;
-
-        > td {
-          font-weight: 300;
-          color: white;
-          font-size: 16px;
-          height: 45px;
-          padding-top: 20px;
-        }
-      }
-    }
-    .mobile-row {
-      align-content: center;
-    }
-  `;
-
-  const createProposal = useCallback(async () => {
-    const nextId = (await governance_proposalCount()) + 1;
-    await governance_propose(
-      ['0xc37A85e35d7eECC82c4544dcba84CF7E61e1F1a3'],
-      ['0'],
-      ['setWeightScaling(uint96)'],
-      ['0x0000000000000000000000000000000000000000000000000000000000000004'],
-      `testing: set weight scaling to 4 ${nextId}`,
-      address,
-    );
-  }, [address]);
-
   return (
     <>
       <Helmet>
@@ -209,12 +62,6 @@ export function HomePage() {
                     }
                   >
                     Delegate Votes
-                  </button>
-                  <button
-                    className="rounded-md bg-gold bg-opacity-10 focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out border px-5 py-2 text-md text-gold border-gold"
-                    onClick={() => createProposal()}
-                  >
-                    Make test proposal
                   </button>
                 </>
               )}
@@ -258,7 +105,7 @@ export function HomePage() {
             ) : (
               <>
                 <div className="rounded-lg bg-gray-lighter border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
-                  <StyledTable className="w-full">
+                  <StyledTable className="w-full table-fixed">
                     <thead>
                       <tr>
                         <th className="text-left">Title</th>
@@ -307,3 +154,135 @@ export function HomePage() {
     </>
   );
 }
+
+const StyledTable = styled.table`
+  font-weight: 100;
+  width: 100%;
+  font-size: 14px;
+  font-family: 'Work Sans';
+
+  &.sovryn-table-mobile {
+    font-size: 12px;
+    @media (max-width: 335px) {
+      font-size: 11px;
+    }
+  }
+  .table-header div {
+    font-weight: 300;
+    color: white;
+    font-size: 16px;
+    padding: 0 22px;
+    height: 43px;
+  }
+  thead tr,
+  .table-header:not(.sub-header) {
+    height: 40px;
+    th {
+      font-weight: 300;
+      color: white;
+      font-size: 16px;
+      padding: 0 50px;
+      height: 45px;
+      line-height: 16px;
+      letter-spacing: 0;
+    }
+  }
+  tbody {
+    tr {
+      td {
+        background-color: #1f1f1f;
+
+        &:first-child {
+          border-radius: 6px 0 0 6px;
+        }
+
+        &:last-child {
+          border-radius: 0 6px 6px 0;
+        }
+
+        &:only-child {
+          border-radius: 6px;
+        }
+      }
+      &:nth-child(odd) {
+        td {
+          background-color: #1f1f1f;
+        }
+      }
+      &:nth-child(even) {
+        td {
+          background-color: #181818;
+        }
+      }
+    }
+  }
+  &.table-small {
+    thead tr {
+      height: 30px;
+      th {
+        height: 30px;
+        padding: 0 20px;
+      }
+    }
+    tbody tr {
+      height: 30px;
+      td {
+        padding: 0 20px;
+      }
+      &:nth-child(even) {
+        td {
+          background-color: #101010;
+          &:first-child {
+            border-radius: 8px 0 0 6=8px;
+          }
+
+          &:last-child {
+            border-radius: 0 6px 6px 0;
+          }
+
+          &:only-child {
+            border-radius: 6px;
+          }
+        }
+      }
+    }
+  }
+  tbody tr,
+  .mobile-row {
+    height: 80px;
+
+    td {
+      padding: 10px 40px;
+      color: white;
+      font-size: 15px;
+      line-height: 27px;
+      &:first-child {
+        a {
+          display: none;
+        }
+      }
+      a {
+        color: #fec004;
+      }
+    }
+
+    &:first-of-type {
+      border-top: none;
+    }
+
+    &.table-header {
+      height: 60%;
+
+      > td {
+        font-weight: 300;
+        color: white;
+        font-size: 16px;
+        height: 45px;
+        padding-top: 20px;
+      }
+    }
+  }
+  .mobile-row {
+    align-content: center;
+  }
+`;

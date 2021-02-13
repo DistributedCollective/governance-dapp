@@ -4,7 +4,12 @@ import { useSelector } from 'react-redux';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Linkify from 'react-linkify';
 import styled from 'styled-components/macro';
-import { kFormatter, numberFromWei, prettyTx } from 'utils/helpers';
+import {
+  dateByBlocks,
+  kFormatter,
+  numberFromWei,
+  prettyTx,
+} from 'utils/helpers';
 import { media } from '../../../styles/media';
 import { network } from '../BlockChainProvider/network';
 import { VoteCaster } from './components/VoteCaster';
@@ -34,58 +39,6 @@ export function ProposalDetailsPage() {
     100;
 
   const votesAgainstProgressPercents = 100 - votesForProgressPercents;
-
-  const StyledBar = styled.div`
-    width: 100%;
-    max-width: 60%;
-    position: relative;
-    top: -10px;
-    margin: 0 30px;
-    display: flex;
-    height: 34px;
-    flex-wrap: nowrap;
-    position: relative;
-    ${media.xl`
-      max-width: 750px;
-    `}
-    .progress {
-      &__circle {
-        width: 55px;
-        height: 55px;
-        border-radius: 100%;
-        display: block;
-        position: absolute;
-        top: -10px;
-        bottom: 0;
-        border: 11px solid white;
-        transition: all 0.3s;
-        margin: 0 -27.5px;
-      }
-      &__blue {
-        width: 50%;
-        border-radius: 24px 0 0 24px;
-        background: rgb(78, 205, 196);
-        margin-left: -27.5px;
-        background: linear-gradient(
-          90deg,
-          rgba(78, 205, 196, 1) 0%,
-          rgba(0, 0, 0, 1) 100%
-        );
-      }
-      &__red {
-        width: 50%;
-        border-radius: 0 24px 24px 0;
-        background: rgb(0, 0, 0);
-        margin-left: 55px;
-        margin-right: -27.5px;
-        background: linear-gradient(
-          90deg,
-          rgba(0, 0, 0, 1) 0%,
-          rgba(205, 78, 78, 1) 100%
-        );
-      }
-    }
-  `;
 
   useEffect(() => {
     setLoading(true);
@@ -142,11 +95,11 @@ export function ProposalDetailsPage() {
       <div className="proposap-detail">
         <div className="xl:flex justify-between items-start">
           <h3
-            className={`proposal__title font-semibold break-all w-2/3 mt-2 overflow-hidden max-h-6 leading-12 ${
+            className={`proposal__title font-semibold break-all w-2/3 mt-2 overflow-hidden max-h-6 leading-12 truncate ${
               loading && 'skeleton'
             }`}
           >
-            SIP {String(data?.id).padStart(3, '0')}.
+            {String(data?.id).padStart(3, '0')}
             <br />
             <Linkify properties={{ target: '_blank' }}>
               {createdEvent?.returnValues?.description || 'No description'}
@@ -158,9 +111,8 @@ export function ProposalDetailsPage() {
                 loading && 'skeleton'
               }`}
             >
-              Voting ends: {data?.endBlock}
-              <br />
-              {data?.id && <>#{data.id}</>}
+              Voting ends:{' '}
+              {dateByBlocks(data?.startTime, data?.startBlock, data?.endBlock)}
             </p>
           </div>
         </div>
@@ -177,14 +129,14 @@ export function ProposalDetailsPage() {
             </p>
           </div>
           <StyledBar>
-            <div className="progress__blue"></div>
-            <div className="progress__red"></div>
+            <div className="progress__blue" />
+            <div className="progress__red" />
             {!isNaN(votesForProgressPercents) &&
               !isNaN(votesAgainstProgressPercents) && (
                 <div
                   className="progress__circle"
                   style={{ right: votesForProgressPercents + '%' }}
-                ></div>
+                />
               )}
           </StyledBar>
           <div className="ml-10">
@@ -308,135 +260,6 @@ function VotingTable(props: TableProps) {
   const [items, setItems] = useState<
     { support: boolean; voter: string; votes: number }[]
   >([]);
-  const StyledTable = styled.table`
-    font-weight: 100;
-    width: 100%;
-    font-size: 14px;
-    font-family: 'Work Sans';
-    letter-spacing: 0;
-
-    &.sovryn-table-mobile {
-      font-size: 12px;
-      @media (max-width: 335px) {
-        font-size: 11px;
-      }
-    }
-    .table-header div {
-      font-weight: 300;
-      color: white;
-      font-size: 16px;
-      padding: 0 22px;
-      height: 45px;
-    }
-    thead tr,
-    .table-header:not(.sub-header) {
-      height: 40px;
-      th {
-        font-weight: 300;
-        color: white;
-        font-size: 16px;
-        padding: 0 22px;
-        height: 45px;
-      }
-    }
-    tbody {
-      tr {
-        td {
-          background-color: #1f1f1f;
-
-          &:first-child {
-            border-radius: 6px 0 0 6px;
-          }
-
-          &:last-child {
-            border-radius: 0 6px 6px 0;
-          }
-
-          &:only-child {
-            border-radius: 6px;
-          }
-        }
-        &:nth-child(odd) {
-          td {
-            background-color: #1f1f1f;
-          }
-        }
-        &:nth-child(even) {
-          td {
-            background-color: #181818;
-          }
-        }
-      }
-    }
-    &.table-small {
-      thead tr {
-        height: 38px;
-        th {
-          height: 38px;
-          padding: 0 15px;
-        }
-      }
-      tbody tr {
-        height: 30px;
-        td {
-          padding: 0 15px;
-          font-weight: 100;
-          font-family: 'Work Sans';
-          a {
-            color: #fec004;
-            font-family: 'Work Sans';
-            &:hover {
-              text-decoration: underline;
-            }
-          }
-        }
-        &:nth-child(even) {
-          td {
-            background-color: #101010;
-            &:first-child {
-              border-radius: 6px 0 0 6px;
-            }
-
-            &:last-child {
-              border-radius: 0 6px 6px 0;
-            }
-
-            &:only-child {
-              border-radius: 6px;
-            }
-          }
-        }
-      }
-    }
-    tbody tr,
-    .mobile-row {
-      height: 80px;
-
-      td {
-        padding: 0 30px;
-        color: white;
-      }
-
-      &:first-of-type {
-        border-top: none;
-      }
-
-      &.table-header {
-        height: 60%;
-
-        > td {
-          font-weight: 300;
-          color: white;
-          font-size: 16px;
-          height: 45px;
-          padding-top: 20px;
-        }
-      }
-    }
-    .mobile-row {
-      align-content: center;
-    }
-  `;
 
   useEffect(() => {
     setItems(
@@ -547,3 +370,185 @@ function VotingRow({
     </tr>
   );
 }
+
+const StyledBar = styled.div`
+  width: 100%;
+  max-width: 60%;
+  position: relative;
+  top: -10px;
+  margin: 0 30px;
+  display: flex;
+  height: 34px;
+  flex-wrap: nowrap;
+  position: relative;
+  ${media.xl`
+      max-width: 750px;
+    `}
+  .progress {
+    &__circle {
+      width: 55px;
+      height: 55px;
+      border-radius: 100%;
+      display: block;
+      position: absolute;
+      top: -10px;
+      bottom: 0;
+      border: 11px solid white;
+      transition: all 0.3s;
+      margin: 0 -27.5px;
+    }
+    &__blue {
+      width: 50%;
+      border-radius: 24px 0 0 24px;
+      background: rgb(78, 205, 196);
+      margin-left: -27.5px;
+      background: linear-gradient(
+        90deg,
+        rgba(78, 205, 196, 1) 0%,
+        rgba(0, 0, 0, 1) 100%
+      );
+    }
+    &__red {
+      width: 50%;
+      border-radius: 0 24px 24px 0;
+      background: rgb(0, 0, 0);
+      margin-left: 55px;
+      margin-right: -27.5px;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(205, 78, 78, 1) 100%
+      );
+    }
+  }
+`;
+
+const StyledTable = styled.table`
+  font-weight: 100;
+  width: 100%;
+  font-size: 14px;
+  font-family: 'Work Sans';
+  letter-spacing: 0;
+
+  &.sovryn-table-mobile {
+    font-size: 12px;
+    @media (max-width: 335px) {
+      font-size: 11px;
+    }
+  }
+  .table-header div {
+    font-weight: 300;
+    color: white;
+    font-size: 16px;
+    padding: 0 22px;
+    height: 45px;
+  }
+  thead tr,
+  .table-header:not(.sub-header) {
+    height: 40px;
+    th {
+      font-weight: 300;
+      color: white;
+      font-size: 16px;
+      padding: 0 22px;
+      height: 45px;
+    }
+  }
+  tbody {
+    tr {
+      td {
+        background-color: #1f1f1f;
+
+        &:first-child {
+          border-radius: 6px 0 0 6px;
+        }
+
+        &:last-child {
+          border-radius: 0 6px 6px 0;
+        }
+
+        &:only-child {
+          border-radius: 6px;
+        }
+      }
+      &:nth-child(odd) {
+        td {
+          background-color: #1f1f1f;
+        }
+      }
+      &:nth-child(even) {
+        td {
+          background-color: #181818;
+        }
+      }
+    }
+  }
+  &.table-small {
+    thead tr {
+      height: 38px;
+      th {
+        height: 38px;
+        padding: 0 15px;
+      }
+    }
+    tbody tr {
+      height: 30px;
+      td {
+        padding: 0 15px;
+        font-weight: 100;
+        font-family: 'Work Sans';
+        a {
+          color: #fec004;
+          font-family: 'Work Sans';
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+      &:nth-child(even) {
+        td {
+          background-color: #101010;
+          &:first-child {
+            border-radius: 6px 0 0 6px;
+          }
+
+          &:last-child {
+            border-radius: 0 6px 6px 0;
+          }
+
+          &:only-child {
+            border-radius: 6px;
+          }
+        }
+      }
+    }
+  }
+  tbody tr,
+  .mobile-row {
+    height: 80px;
+
+    td {
+      padding: 0 30px;
+      color: white;
+    }
+
+    &:first-of-type {
+      border-top: none;
+    }
+
+    &.table-header {
+      height: 60%;
+
+      > td {
+        font-weight: 300;
+        color: white;
+        font-size: 16px;
+        height: 45px;
+        padding-top: 20px;
+      }
+    }
+  }
+  .mobile-row {
+    align-content: center;
+  }
+`;

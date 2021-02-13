@@ -64,7 +64,6 @@ export function TransactionHistory() {
       )}
       <Drawer
         className="bg-black text-white"
-        icon="inbox-filtered"
         onClose={() => dispatch(actions.toggleTransactionDrawer(false))}
         isOpen={showTransactions}
       >
