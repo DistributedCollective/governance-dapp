@@ -97,6 +97,16 @@ class Network {
     return this.contracts[contractName].methods[methodName](...args).call();
   }
 
+  public async callCustomContract(
+    contractAddress: string,
+    abi: any,
+    methodName: string,
+    args: Array<any>,
+  ) {
+    const contract = new this.web3.eth.Contract(abi, contractAddress);
+    return contract.methods[methodName](...args).call();
+  }
+
   public async send(
     contractName: ContractName,
     methodName,
@@ -117,6 +127,40 @@ class Network {
             actions.addTransaction({
               transactionHash: tx,
               to: getContract(contractName).address,
+              type: sendTxOptions?.type,
+            }),
+          );
+          resolve(tx);
+        })
+        .catch(e => {
+          console.log('rejecting');
+          reject(e);
+        });
+    });
+  }
+
+  public async sendCustomContract(
+    contractAddress: string,
+    abi: any,
+    methodName,
+    args: any[],
+    sendTxOptions?: SendTxOptions,
+  ) {
+    let params = args;
+    let options = {};
+    if (args && args.length && typeof args[args.length - 1] === 'object') {
+      params = args.slice(0, -1);
+      options = args[args.length - 1];
+    }
+    return new Promise<string>((resolve, reject) => {
+      const contract = new this.writeWeb3.eth.Contract(abi, contractAddress);
+      return contract.methods[methodName](...params)
+        .send(options)
+        .once('transactionHash', tx => {
+          store.dispatch(
+            actions.addTransaction({
+              transactionHash: tx,
+              to: contractAddress,
               type: sendTxOptions?.type,
             }),
           );

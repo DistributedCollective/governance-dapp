@@ -8,6 +8,8 @@ export function useVestedStaking_balanceOf(address: string) {
   const [value, setValue] = useState('0');
   const [error, setError] = useState<any>(null);
 
+  const [vestingContract, setVestingContract] = useState(genesisAddress);
+
   useEffect(() => {
     setLoading(true);
 
@@ -18,12 +20,25 @@ export function useVestedStaking_balanceOf(address: string) {
       const adr2 = await network.call('vestingRegistry', 'getTeamVesting', [
         address,
       ]);
-      const bal1 = await network.call('staking', 'balanceOf', [adr1]);
-      const bal2 = await network.call('staking', 'balanceOf', [adr2]);
-      const bal3 = await network.call('staking', 'balanceOf', [address]);
-      setValue(
-        bignumber(String(bal1)).add(String(bal2)).add(String(bal3)).toString(),
-      );
+
+      let bal1: any = '0';
+
+      if (adr1 !== genesisAddress) {
+        bal1 = await network.call('staking', 'balanceOf', [adr1]);
+        setVestingContract(String(adr1));
+      }
+
+      if (adr2 !== genesisAddress) {
+        bal1 = await network.call('staking', 'balanceOf', [adr2]);
+        setVestingContract(String(adr2));
+      }
+
+      if (adr1 === adr2 && adr1 === genesisAddress) {
+        setVestingContract(genesisAddress);
+      }
+
+      const bal2 = await network.call('staking', 'balanceOf', [address]);
+      setValue(bignumber(String(bal1)).add(String(bal2)).toString());
       setLoading(false);
       setError(null);
     };
@@ -33,9 +48,10 @@ export function useVestedStaking_balanceOf(address: string) {
         setValue('0');
         setError(e);
         setLoading(false);
+        setVestingContract(genesisAddress);
       });
     }
   }, [address]);
 
-  return { value, loading, error };
+  return { value, loading, error, vestingContract };
 }

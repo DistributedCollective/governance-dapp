@@ -5,12 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectBlockChainProvider } from '../../selectors';
 import { actions } from '../../slice';
 import { useAccount } from '../../../../hooks/useAccount';
-import { fromWei, genesisAddress } from '../../../../../utils/helpers';
+import {
+  fromWei,
+  genesisAddress,
+  kFormatter,
+} from '../../../../../utils/helpers';
 import { useStaking_getCurrentVotes } from '../../../../hooks/staking/useStaking_getCurrentVotes';
-import { staking_delegate } from '../../requests/staking';
-import { StakingDateSelector } from '../../../../components/StakingDateSelector';
-import { useStaking_kickoffTs } from '../../../../hooks/staking/useStaking_kickoffTs';
 import { useVestedStaking_balanceOf } from '../../../../hooks/staking/useVestedStaking_balanceOf';
+import { vesting_delegate } from '../../requests/vesting';
 
 export function DelegationDialog() {
   const { showDelegationDialog } = useSelector(selectBlockChainProvider);
@@ -18,10 +20,8 @@ export function DelegationDialog() {
   const account = useAccount();
 
   const votes = useStaking_getCurrentVotes(account);
-  const kickoff = useStaking_kickoffTs();
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState('');
-  const [ts, setTs] = useState<any>();
 
   const balance = useVestedStaking_balanceOf(account || genesisAddress);
 
@@ -29,7 +29,11 @@ export function DelegationDialog() {
     e && e.preventDefault && e.preventDefault();
     setLoading(true);
     try {
-      await staking_delegate(address.toLowerCase(), ts, account);
+      await vesting_delegate(
+        balance.vestingContract,
+        account,
+        address.toLowerCase(),
+      );
       setLoading(false);
     } catch (e) {
       setLoading(false);
@@ -64,14 +68,6 @@ export function DelegationDialog() {
             onChange={e => setAddress(e.currentTarget.value)}
           />
 
-          <StakingDateSelector
-            title="Delegate until"
-            kickoffTs={Number(kickoff.value)}
-            value={ts}
-            onChange={e => setTs(e)}
-            autoselect
-          />
-
           <Text tagName="p" ellipsize className="mt-6 mb-3 text-sm">
             My SOV:{' '}
             {Number(fromWei(balance.value)).toLocaleString(undefined, {
@@ -81,11 +77,7 @@ export function DelegationDialog() {
           </Text>
 
           <Text tagName="p" ellipsize className="mt-2 mb-3 text-sm">
-            Votes:{' '}
-            {Number(fromWei(votes.value)).toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 4,
-            })}
+            Voting Power: {kFormatter(fromWei(votes.value))}
           </Text>
 
           <div className="text-right mt-3">
@@ -94,13 +86,15 @@ export function DelegationDialog() {
               className={`rounded-md bg-gold bg-opacity-10 focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out border px-5 py-2 text-md text-gold border-gold ${
                 (!address ||
                   loading ||
-                  !Rsk3.utils.isAddress((address || '').toLowerCase())) &&
+                  !Rsk3.utils.isAddress((address || '').toLowerCase()) ||
+                  balance.vestingContract === genesisAddress) &&
                 'opacity-50 cursor-not-allowed'
               }`}
               disabled={
                 !address ||
                 loading ||
-                !Rsk3.utils.isAddress((address || '').toLowerCase())
+                !Rsk3.utils.isAddress((address || '').toLowerCase()) ||
+                balance.vestingContract === genesisAddress
               }
             >
               Delegate
