@@ -61,29 +61,22 @@ export function ProposalsPage() {
         </div>
         <div className="container">
           <div className="bg-gray-light rounded-b shadow">
-            {!loading && total === 0 && (
-              <>
-                <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
-                  <i>No proposals yet.</i>
-                </div>
-              </>
-            )}
             <>
               <div className="rounded-lg bg-gray-lighter border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
                 <StyledTable className="w-full table-fixed">
                   <thead>
                     <tr>
-                      <th className="text-left">Title</th>
-                      <th className="text-center hidden xl:table-cell">
+                      <th className="text-left w-2/3 xl:w-1/5">Title</th>
+                      <th className="text-center hidden xl:table-cell xl:w-1/5">
                         Start Block
                       </th>
-                      <th className="text-center hidden xl:table-cell">
+                      <th className="text-center hidden xl:table-cell xl:w-1/5">
                         Vote Weight
                       </th>
-                      <th className="text-center hidden xl:table-cell">
+                      <th className="text-center hidden xl:table-cell xl:w-1/5">
                         Voting Ends
                       </th>
-                      <th className="text-center">Action</th>
+                      <th className="text-center w-1/3 xl:w-1/5">Action</th>
                     </tr>
                   </thead>
                   <tbody className="mt-5">
@@ -107,6 +100,13 @@ export function ProposalsPage() {
                           </td>
                         </tr>
                       </>
+                    )}
+                    {!loading && total === 0 && (
+                      <tr>
+                        <td colSpan={99}>
+                          <i>No proposals yet.</i>
+                        </td>
+                      </tr>
                     )}
                     {items.map(item => (
                       <ProposalRow key={item.id} proposal={item} />

@@ -5,22 +5,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectBlockChainProvider } from '../../selectors';
 import { actions } from '../../slice';
 import { useAccount } from '../../../../hooks/useAccount';
-import { fromWei } from '../../../../../utils/helpers';
+import { fromWei, genesisAddress } from '../../../../../utils/helpers';
 import { useStaking_getCurrentVotes } from '../../../../hooks/staking/useStaking_getCurrentVotes';
 import { staking_delegate } from '../../requests/staking';
 import { StakingDateSelector } from '../../../../components/StakingDateSelector';
 import { useStaking_kickoffTs } from '../../../../hooks/staking/useStaking_kickoffTs';
+import { useVestedStaking_balanceOf } from '../../../../hooks/staking/useVestedStaking_balanceOf';
 
 export function DelegationDialog() {
   const { showDelegationDialog } = useSelector(selectBlockChainProvider);
   const dispatch = useDispatch();
-
   const account = useAccount();
-  const balance = useStaking_getCurrentVotes(account);
+
+  const votes = useStaking_getCurrentVotes(account);
   const kickoff = useStaking_kickoffTs();
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState('');
   const [ts, setTs] = useState<any>();
+
+  const balance = useVestedStaking_balanceOf(account || genesisAddress);
 
   const handleSubmit = async e => {
     e && e.preventDefault && e.preventDefault();
@@ -69,14 +72,26 @@ export function DelegationDialog() {
             autoselect
           />
 
+          <Text tagName="p" ellipsize className="mt-6 mb-3 text-sm">
+            My SOV:{' '}
+            {Number(fromWei(balance.value)).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })}
+          </Text>
+
           <Text tagName="p" ellipsize className="mt-2 mb-3 text-sm">
-            My Votes: {Number(fromWei(balance.value)).toLocaleString()}
+            Votes:{' '}
+            {Number(fromWei(votes.value)).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })}
           </Text>
 
           <div className="text-right mt-3">
             <button
               type="submit"
-              className={`bg-green-500 text-white px-4 py-2 rounded ${
+              className={`rounded-md bg-gold bg-opacity-10 focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out border px-5 py-2 text-md text-gold border-gold ${
                 (!address ||
                   loading ||
                   !Rsk3.utils.isAddress((address || '').toLowerCase())) &&

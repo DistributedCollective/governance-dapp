@@ -108,17 +108,17 @@ export function HomePage() {
                   <StyledTable className="w-full table-fixed">
                     <thead>
                       <tr>
-                        <th className="text-left">Title</th>
-                        <th className="text-center hidden xl:table-cell">
+                        <th className="text-left w-2/3 xl:w-1/5">Title</th>
+                        <th className="text-center hidden xl:table-cell xl:w-1/5">
                           Start Block
                         </th>
-                        <th className="text-center hidden xl:table-cell">
+                        <th className="text-center hidden xl:table-cell xl:w-1/5">
                           Vote Weight
                         </th>
-                        <th className="text-center hidden xl:table-cell">
+                        <th className="text-center hidden xl:table-cell xl:w-1/5">
                           Voting Ends
                         </th>
-                        <th className="text-center">Action</th>
+                        <th className="text-center w-1/3 xl:w-1/5">Action</th>
                       </tr>
                     </thead>
                     <tbody className="mt-5">

@@ -120,11 +120,7 @@ export function ProposalRow({ proposal }: Props) {
               </Linkify>
             </td>
             <td className="text-center hidden xl:table-cell truncate">
-              {dateByBlocks(
-                proposal.startTime,
-                proposal.startBlock,
-                proposal.startBlock,
-              )}
+              #{proposal.startBlock}
             </td>
             <td className="text-center hidden xl:table-cell">
               <div className="flex flex-row space-x-4 items-center">
@@ -143,7 +139,8 @@ export function ProposalRow({ proposal }: Props) {
                 proposal.startTime,
                 proposal.startBlock,
                 proposal.endBlock,
-              )}
+              )}{' '}
+              - #{proposal.endBlock}
             </td>
             <td className="text-center">
               <Link

@@ -122,7 +122,11 @@ export function ProposalDetailsPage() {
         >
           <div className="mr-10 text-right">
             <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
-              {votesForProgressPercents || 0}%
+              {(votesForProgressPercents || 0).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+              %
             </span>
             <p className="xl:text-lg text-sm font-light tracking-normal">
               {kFormatter(numberFromWei(data?.forVotes || 0))} votes
@@ -141,7 +145,11 @@ export function ProposalDetailsPage() {
           </StyledBar>
           <div className="ml-10">
             <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
-              {votesAgainstProgressPercents || 0}%
+              {(votesAgainstProgressPercents || 0).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+              %
             </span>
             <p className="xl:text-lg text-sm font-light tracking-normal">
               {kFormatter(numberFromWei(data?.againstVotes || 0))} votes
