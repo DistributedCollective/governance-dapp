@@ -20,7 +20,10 @@ export function useVestedStaking_balanceOf(address: string) {
       ]);
       const bal1 = await network.call('staking', 'balanceOf', [adr1]);
       const bal2 = await network.call('staking', 'balanceOf', [adr2]);
-      setValue(bignumber(String(bal1)).add(String(bal2)).toString());
+      const bal3 = await network.call('staking', 'balanceOf', [address]);
+      setValue(
+        bignumber(String(bal1)).add(String(bal2)).add(String(bal3)).toString(),
+      );
       setLoading(false);
       setError(null);
     };
