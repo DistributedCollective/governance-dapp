@@ -1,13 +1,14 @@
 import { useContractCallWithValue } from '../useContractCallWithValue';
-import { useAccount } from '../useAccount';
+import { genesisAddress } from '../../../utils/helpers';
+
+const date = new Date().getTime() + 86400e3 * 32;
 
 export function useStaking_delegates(address: string) {
-  const account = useAccount();
   return useContractCallWithValue(
     'staking',
     'delegates',
-    '0',
-    account,
-    address || account,
+    genesisAddress,
+    address,
+    date,
   );
 }
