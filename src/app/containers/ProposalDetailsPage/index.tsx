@@ -204,9 +204,14 @@ export function ProposalDetailsPage() {
         <div className="xl:flex mt-10">
           <div className="xl:w-3/4 w-full mb-5 xl:mb-0">
             <div className="bg-gray-100 xl:py-8 py-4 xl:px-20 px-4 rounded-2xl">
-              <h4 className="mb-8 font-semibold xl:text-2xl text-xl tracking-widest">
-                Activation of Genesis Reservation
-              </h4>
+              {/*<h4 className="mb-8 font-semibold xl:text-2xl text-xl tracking-widest">*/}
+              {/*  {createdEvent.description}*/}
+              {/*</h4>*/}
+              <p className="break-all mt-8">
+                <Linkify properties={{ target: '_blank' }}>
+                  {createdEvent?.returnValues?.description || 'No description'}
+                </Linkify>
+              </p>
               {/* <p className="text-sm">Resolved:</p>
               <ol className="list-decimal text-sm pl-5 leading-6">
                 <li>
