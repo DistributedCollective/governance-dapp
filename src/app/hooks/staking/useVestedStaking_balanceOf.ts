@@ -1,14 +1,18 @@
 import { genesisAddress } from 'utils/helpers';
 import { useEffect, useState } from 'react';
-import { bignumber } from 'mathjs';
 import { network } from '../../containers/BlockChainProvider/network';
 
 export function useVestedStaking_balanceOf(address: string) {
   const [loading, setLoading] = useState(true);
   const [value, setValue] = useState('0');
+  const [vestedValue, setVestedValue] = useState('0');
+  const [teamVestedValue, setTeamVestedValue] = useState('0');
   const [error, setError] = useState<any>(null);
 
   const [vestingContract, setVestingContract] = useState(genesisAddress);
+  const [teamVestingContract, setTeamVestingContract] = useState(
+    genesisAddress,
+  );
 
   useEffect(() => {
     setLoading(true);
@@ -21,24 +25,25 @@ export function useVestedStaking_balanceOf(address: string) {
         address,
       ]);
 
-      let bal1: any = '0';
-
       if (adr1 !== genesisAddress) {
-        bal1 = await network.call('staking', 'balanceOf', [adr1]);
+        const vested = await network.call('staking', 'balanceOf', [adr1]);
         setVestingContract(String(adr1));
+        setVestedValue(String(vested));
       }
 
       if (adr2 !== genesisAddress) {
-        bal1 = await network.call('staking', 'balanceOf', [adr2]);
-        setVestingContract(String(adr2));
+        const teamVested = await network.call('staking', 'balanceOf', [adr2]);
+        setTeamVestingContract(String(adr2));
+        setTeamVestedValue(String(teamVested));
       }
 
       if (adr1 === adr2 && adr1 === genesisAddress) {
         setVestingContract(genesisAddress);
+        setTeamVestingContract(genesisAddress);
       }
 
-      const bal2 = await network.call('staking', 'balanceOf', [address]);
-      setValue(bignumber(String(bal1)).add(String(bal2)).toString());
+      const staked = await network.call('staking', 'balanceOf', [address]);
+      setValue(String(staked));
       setLoading(false);
       setError(null);
     };
@@ -53,5 +58,13 @@ export function useVestedStaking_balanceOf(address: string) {
     }
   }, [address]);
 
-  return { value, loading, error, vestingContract };
+  return {
+    value,
+    loading,
+    error,
+    vestingContract,
+    vestedValue,
+    teamVestedValue,
+    teamVestingContract,
+  };
 }
