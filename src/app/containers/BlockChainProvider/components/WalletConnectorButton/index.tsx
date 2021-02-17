@@ -92,7 +92,7 @@ const StyledButtonAuth = styled.button.attrs(_ => ({
     transition: background 0.3s;
     color: #fec004;
     border-radius: 0 8px 8px 0;
-    margin-left: 0.7rem;
+    margin-left: 1.6rem;
 
     &:hover {
       background: rgba(0, 0, 0, 0.36);

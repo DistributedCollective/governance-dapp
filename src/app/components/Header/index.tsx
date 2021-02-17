@@ -196,8 +196,8 @@ const StyledLogo = styled.img.attrs(_ => ({
   height: 50px;
   margin: 0 0 0 1rem;
   ${media.xl`
-      width: 284px;
-      height: 48px;
-      margin: 0;
-    `}
+    width: 284px;
+    height: 48px;
+    margin: 0;
+  `}
 `;
