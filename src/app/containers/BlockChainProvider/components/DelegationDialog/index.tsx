@@ -26,16 +26,14 @@ export function DelegationDialog() {
 
   const balance = useVestedStaking_balanceOf(account || genesisAddress);
 
-  // const delegates = useStaking_delegates(balance.vestingContract);
-  //
-  // console.log(delegates);
+  // const delegatesVested = useStaking_delegates(balance.vestingContract);
+  // const delegatesTeam = useStaking_delegates(balance.teamVestingContract);
 
-  const handleSubmit = async e => {
-    e && e.preventDefault && e.preventDefault();
+  const handleSubmit = async (team: boolean) => {
     setLoading(true);
     try {
       await vesting_delegate(
-        balance.vestingContract,
+        team ? balance.teamVestingContract : balance.vestingContract,
         account,
         address.toLowerCase(),
       );
@@ -60,51 +58,84 @@ export function DelegationDialog() {
       title="Delegate Voting Rights"
     >
       <div className="container pt-4">
-        <form onSubmit={handleSubmit}>
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="amount"
-          >
-            Delegate to
-          </label>
+        <label
+          className="block text-gray-700 text-sm font-bold mb-2"
+          htmlFor="amount"
+        >
+          Delegate to
+        </label>
 
-          {/*{delegated && (*/}
-          {/*  <p className="mt-2 mb-3 text-sm">*/}
-          {/*    To delegate voting rights to yourself enter your own wallet*/}
-          {/*    address*/}
-          {/*  </p>*/}
-          {/*)}*/}
+        {/*{delegated && (*/}
+        {/*  <p className="mt-2 mb-3 text-sm">*/}
+        {/*    To delegate voting rights to yourself enter your own wallet*/}
+        {/*    address*/}
+        {/*  </p>*/}
+        {/*)}*/}
 
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline mb-5"
-            id="stake-amount"
-            type="text"
-            placeholder="RSK wallet address"
-            value={address}
-            onChange={e => setAddress(e.currentTarget.value)}
-          />
+        <input
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline mb-5"
+          id="stake-amount"
+          type="text"
+          placeholder="RSK wallet address"
+          value={address}
+          onChange={e => setAddress(e.currentTarget.value)}
+        />
 
-          <Text tagName="p" ellipsize className="mt-6 mb-3 text-sm">
-            My SOV:{' '}
+        <div className="mt-6" />
+
+        {Number(balance.value) > 0 && (
+          <Text tagName="p" ellipsize className="mb-3 text-sm">
+            Staked SOV:{' '}
             {Number(fromWei(balance.value)).toLocaleString(undefined, {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
             })}
           </Text>
-
-          {/*<Text tagName="p" ellipsize className="mt-2 mb-3 text-sm">*/}
-          {/*  Delegated to: {delegated ? delegates.value : 'Yourself'}*/}
-          {/*</Text>*/}
-
-          {/*{!delegated && (*/}
-          <Text tagName="p" ellipsize className="mt-2 mb-3 text-sm">
-            Voting Power: {kFormatter(fromWei(votes.value))}
+        )}
+        {balance.vestingContract === genesisAddress &&
+          balance.teamVestingContract === genesisAddress && (
+            <Text tagName="p" ellipsize className="mb-3 text-sm">
+              Vested SOV:{' '}
+              {Number(0).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 4,
+              })}
+            </Text>
+          )}
+        {balance.vestingContract !== genesisAddress && (
+          <Text tagName="p" ellipsize className="mb-3 text-sm">
+            Vested SOV:{' '}
+            {Number(fromWei(balance.vestedValue)).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })}
           </Text>
-          {/*)}*/}
+        )}
+        {balance.teamVestingContract !== genesisAddress && (
+          <Text tagName="p" ellipsize className="mb-3 text-sm">
+            Vested SOV (Team):{' '}
+            {Number(fromWei(balance.teamVestedValue)).toLocaleString(
+              undefined,
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 4,
+              },
+            )}
+          </Text>
+        )}
+        {/*<Text tagName="p" ellipsize className="mt-2 mb-3 text-sm">*/}
+        {/*  Delegated to: {delegated ? delegates.value : 'Yourself'}*/}
+        {/*</Text>*/}
 
-          <div className="text-right mt-3">
+        {/*{!delegated && (*/}
+        <Text tagName="p" ellipsize className="mt-5 mb-3 text-sm">
+          Voting Power: {kFormatter(fromWei(votes.value))}
+        </Text>
+        {/*)}*/}
+
+        <div className="text-right mt-3">
+          {balance.vestingContract !== genesisAddress && (
             <button
-              type="submit"
               className={`rounded-md bg-gold bg-opacity-10 focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out border px-5 py-2 text-md text-gold border-gold ${
                 (!address ||
                   loading ||
@@ -118,11 +149,40 @@ export function DelegationDialog() {
                 !Rsk3.utils.isAddress((address || '').toLowerCase()) ||
                 balance.vestingContract === genesisAddress
               }
+              onClick={() => handleSubmit(false)}
             >
               Delegate
+              {balance.teamVestingContract !== genesisAddress
+                ? ' (Vested)'
+                : ''}
             </button>
-          </div>
-        </form>
+          )}
+
+          {balance.teamVestingContract !== genesisAddress && (
+            <button
+              type="submit"
+              className={`ml-3 rounded-md bg-gold bg-opacity-10 focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out border px-5 py-2 text-md text-gold border-gold ${
+                (!address ||
+                  loading ||
+                  !Rsk3.utils.isAddress((address || '').toLowerCase()) ||
+                  balance.teamVestingContract === genesisAddress) &&
+                'opacity-50 cursor-not-allowed'
+              }`}
+              disabled={
+                !address ||
+                loading ||
+                !Rsk3.utils.isAddress((address || '').toLowerCase()) ||
+                balance.teamVestingContract === genesisAddress
+              }
+              onClick={() => handleSubmit(true)}
+            >
+              Delegate
+              {balance.vestingContract !== genesisAddress
+                ? ' (Team Vested)'
+                : ''}
+            </button>
+          )}
+        </div>
       </div>
     </Dialog>
   );
