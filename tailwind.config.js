@@ -70,6 +70,10 @@ module.exports = {
       black: 'black',
       turquoise: '#4ECDC4',
       red: '#CD4E4E',
+      theme: {
+        white: '#E9EAE9',
+        blue: '#2274A5',
+      }
     },
     extend: {
       minHeight: {

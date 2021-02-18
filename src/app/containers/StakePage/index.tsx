@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { bignumber } from 'mathjs';
+import { Header } from 'app/components/Header';
 import moment from 'moment';
 
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
@@ -35,23 +36,23 @@ import {
   staking_stake,
   staking_withdraw,
 } from '../BlockChainProvider/requests/staking';
+import { Modal } from '../../components/Modal';
 import { StakeForm } from './components/StakeForm';
 import { PageSkeleton } from '../../components/PageSkeleton';
-import { useIsConnected } from '../../hooks/useIsConnected';
 import { WithdrawForm } from './components/WithdrawForm';
+import { useIsConnected } from '../../hooks/useIsConnected';
 import { IncreaseStakeForm } from './components/IncreaseStakeForm';
+import { StakingDateSelector } from '../../components/StakingDateSelector';
 import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
 // import {
 //   governance_proposalCount,
 //   governance_propose,
 // } from '../BlockChainProvider/requests/governance';
-import { StakingDateSelector } from '../../components/StakingDateSelector';
-import { Header } from 'app/components/Header';
+import { Icon, Button } from '@blueprintjs/core';
+import { Popover2 } from '@blueprintjs/popover2';
 import styled from 'styled-components/macro';
 import logoSvg from 'assets/images/sovryn-icon.svg';
 import { media } from '../../../styles/media';
-import { Icon, Button } from '@blueprintjs/core';
-import { Popover2 } from '@blueprintjs/popover2';
 interface Props {}
 
 const now = new Date();
@@ -71,36 +72,7 @@ export function StakePage(props: Props) {
         <div className="bg-gray-700 tracking-normal">
           <div className="container">
             <h2 className="text-white pt-8 pb-5 pl-10">Staking/Vesting</h2>
-
-            <div className="flex flex-col pb-8 md:flex-row md:space-x-4">
-              <div className="flex flex-row flex-no-wrap justify-between bg-gray-light text-white p-3 w-full md:w-1/2 mb-3 md:mb-0">
-                <div>
-                  <div className={`text-white text-xl`}>-----</div>
-                  <div className="text-gray-600 text-sm">You staked</div>
-                </div>
-                <div className="flex flex-col items-end justify-center w-1/2 border-1 border-red-300">
-                  <div className="mt-5 w-full">
-                    <VoteProgress value={0} max={100} color="green" />
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-row flex-no-wrap justify-between bg-gray-900 text-white p-3 w-full md:w-1/2 mb-3 md:mb-0">
-                <div>
-                  <div className={`text-white text-xl`}>-----</div>
-                  <div className="text-gray-600 text-sm">Your votes</div>
-                </div>
-              </div>
-            </div>
-            <div className="flex space-x-4">
-              <div className="bg-gray-light shadow p-3 w-full">
-                <h4 className="font-bold">Staking</h4>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="container">
-          <div className="flex flex-row space-x-4">
-            <div className="w-full bg-gray-light rounded-b shadow p-3">
+            <div className="w-full bg-gray-light text-center rounded-b shadow p-3">
               <i>Please connect with your wallet to use staking.</i>
             </div>
           </div>
@@ -119,7 +91,6 @@ function InnerStakePage(props: Props) {
   const stakePage = useSelector(selectStakePage);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const dispatch = useDispatch();
-
   const account = useAccount();
   const balanceOf = useStaking_balanceOf(account);
   const WEIGHT_FACTOR = useStaking_WEIGHT_FACTOR();
@@ -128,7 +99,6 @@ function InnerStakePage(props: Props) {
   const getStakes = useStaking_getStakes(account);
 
   const sovBalanceOf = useSoV_balanceOf(account);
-  console.log(sovBalanceOf);
 
   const totalStakedBalance = useSoV_balanceOf(getContract('staking').address);
   const s = useStaking_currentBalance(account);
@@ -144,7 +114,7 @@ function InnerStakePage(props: Props) {
 
   const [until, setUntil] = useState<number>(0 as any);
   const [prevTimestamp, setPrevTimestamp] = useState<number>(undefined as any);
-  const [stakeForm, setStakeForm] = useState(true);
+  const [stakeForm, setStakeForm] = useState(false);
   const [extendForm, setExtendForm] = useState(false);
   const [withdrawForm, setWithdrawForm] = useState(false);
   const [increaseForm, setIncreaseForm] = useState(false);
@@ -156,6 +126,8 @@ function InnerStakePage(props: Props) {
     lockDate,
     Math.round(now.getTime() / 1e3),
   );
+
+  console.log(getStakes);
 
   interface Stakes {
     stakes: any[] | any;
@@ -397,7 +369,29 @@ function InnerStakePage(props: Props) {
             <div className="xl:flex items-stretch justify-around mt-2">
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Total staked SOV</p>
-                <p className="text-4-5xl mt-2 mb-6">1,000,000 SOV</p>
+                <p className="text-4-5xl mt-2 mb-6">
+                  {numberFromWei(balanceOf.value).toLocaleString()} SOV
+                </p>
+                <Modal
+                  show={stakeForm}
+                  content={
+                    <>
+                      <StakeForm
+                        handleSubmit={handleStakeSubmit}
+                        amount={amount}
+                        timestamp={timestamp}
+                        onChangeAmount={e => setAmount(e)}
+                        onChangeTimestamp={e => setTimestamp(e)}
+                        sovBalanceOf={sovBalanceOf}
+                        isValid={validateStakeForm()}
+                        kickoff={kickoffTs}
+                        stakes={getStakes.value['dates']}
+                        votePower={votingPower}
+                        onCloseModal={() => setStakeForm(!stakeForm)}
+                      />
+                    </>
+                  }
+                />
                 <button
                   type="button"
                   className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light py-3 px-3 border transition-colors duration-300 ease-in-out border-gold rounded-xl"
@@ -461,7 +455,9 @@ function InnerStakePage(props: Props) {
 
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Combined Voting Power </p>
-                <p className="text-4-5xl mt-2 mb-6">21,000,000 ≈ 13%</p>
+                <p className="text-4-5xl mt-2 mb-6">
+                  {numberFromWei(voteBalance.value).toLocaleString()}
+                </p>
                 <button
                   type="button"
                   className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light py-3 px-3 border transition-colors duration-300 ease-in-out border-gold rounded-xl"
@@ -501,7 +497,7 @@ function InnerStakePage(props: Props) {
                       <th className="text-left hidden lg:table-cell">
                         Unlock Date
                       </th>
-                      <th className="text-left hidden md:table-cell max-w-16 min-w-16">
+                      <th className="text-left hidden md:table-cell max-w-15 min-w-15">
                         Actions
                       </th>
                     </tr>
@@ -549,7 +545,7 @@ function InnerStakePage(props: Props) {
                           -10 days
                         </p>
                       </td>
-                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-16 min-w-16">
+                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
                         <Link
                           to={{}}
                           className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
@@ -612,7 +608,7 @@ function InnerStakePage(props: Props) {
                           -10 days
                         </p>
                       </td>
-                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-16 min-w-16">
+                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
                         <Link
                           to={{}}
                           className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
@@ -660,7 +656,7 @@ function InnerStakePage(props: Props) {
                       <th className="text-left hidden lg:table-cell">
                         Unlock Date
                       </th>
-                      <th className="text-left hidden md:table-cell max-w-16 min-w-16">
+                      <th className="text-left hidden md:table-cell max-w-15 min-w-15">
                         Actions
                       </th>
                     </tr>
@@ -708,7 +704,7 @@ function InnerStakePage(props: Props) {
                           -10 days
                         </p>
                       </td>
-                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-16 min-w-16">
+                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
                         <Link
                           to={{}}
                           className="cursor-not-allowed hover:cursor-not-allowed opacity-50 text-gold hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
@@ -759,7 +755,7 @@ function InnerStakePage(props: Props) {
                           -10 days
                         </p>
                       </td>
-                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-16 min-w-16 ">
+                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15 ">
                         <Link
                           to={{}}
                           className="cursor-not-allowed hover:cursor-not-allowed opacity-50 text-gold hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
@@ -1384,24 +1380,6 @@ function InnerStakePage(props: Props) {
                             />
                           </>
                         )}
-                      </>
-                    )}
-
-                    {(balanceOf.value === '0' || stakeForm === true) && (
-                      <>
-                        <h2>New Stake</h2>
-                        <StakeForm
-                          handleSubmit={handleStakeSubmit}
-                          amount={amount}
-                          timestamp={timestamp}
-                          onChangeAmount={e => setAmount(e)}
-                          onChangeTimestamp={e => setTimestamp(e)}
-                          sovBalanceOf={sovBalanceOf}
-                          isValid={validateStakeForm()}
-                          kickoff={kickoffTs}
-                          stakes={getStakes.value['dates']}
-                          votePower={votingPower}
-                        />
                       </>
                     )}
                   </>
