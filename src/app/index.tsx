@@ -32,7 +32,7 @@ export function App() {
 
         {background && (
           <Route
-            path="/proposals/:id"
+            path="/proposals/:id/:contractName?"
             children={<CustomDialog show={true} />}
           />
         )}

@@ -1,7 +1,8 @@
 import { EventData } from 'web3-eth-contract';
-import { Proposal, ProposalCreatedEvent } from 'types/Proposal';
+import { ProposalCreatedEvent } from 'types/Proposal';
 import { network } from '../containers/BlockChainProvider/network';
 import { useCallback, useEffect, useState } from 'react';
+import { MergedProposal } from './useProposalList';
 
 interface StateStatus {
   event: EventData;
@@ -9,11 +10,11 @@ interface StateStatus {
   loading: boolean;
 }
 
-export function useGetProposalCreateEvent(proposal: Proposal) {
+export function useGetProposalCreateEvent(proposal: MergedProposal) {
   const getEvent = useCallback(async () => {
     setState(prevState => ({ ...prevState, loading: true }));
     const events = await network.getPastEvents(
-      'governorAdmin',
+      proposal.contractName,
       'ProposalCreated',
       { id: proposal.id },
       proposal.startBlock - 1,

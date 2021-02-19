@@ -31,6 +31,7 @@ export interface INetworkToContract {
   sovToken: IContract;
   staking: IContract;
   governorAdmin: IContract;
+  governorOwner: IContract;
   vestingRegistry: IContract;
 }
 
