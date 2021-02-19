@@ -127,88 +127,112 @@ function InnerStakePage(props: Props) {
     Math.round(now.getTime() / 1e3),
   );
 
-  console.log(getStakes);
+  let dates = getStakes.value['dates'];
+  let stakes = getStakes.value['stakes'];
+  let stakesArray = [];
+  if (dates && stakes) {
+    stakesArray = dates.map((v, index) => [stakes[index], v]);
+  }
 
   interface Stakes {
     stakes: any[] | any;
-    dates: any[] | any;
   }
 
-  const StakesOverview: React.FC<Stakes> = ({ stakes, dates }) => {
-    return stakes && dates ? (
-      <div className="flex items-center">
-        <div className="mr-4">
-          {stakes.map((item, i: string) => {
-            return (
-              <div className="mb-10 mt-6" key={i}>
-                Stake amount: <b>{numberFromWei(item).toLocaleString()}</b>
-              </div>
-            );
-          })}
-        </div>
-        <div className="mr-4">
-          {dates.map((item, i: string) => {
-            return (
-              <div className="flex items-center" key={i}>
-                <div className="mb-4 mr-4">
-                  End date:{' '}
-                  <b>
-                    {moment(new Date(parseInt(item) * 1e3)).format(
-                      'DD.MM.YYYY',
-                    )}
-                  </b>
+  const StakesOverview: React.FC<Stakes> = ({ stakes }) => {
+    return stakes ? (
+      <>
+        {stakes.map((item, i: string) => {
+          return (
+            <tr key={i}>
+              <td>
+                <div className="username flex items-center">
+                  <div>
+                    <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
+                  </div>
+                  <div className="text-sm font-normal hidden xl:block">SOV</div>
                 </div>
-                <div className="flex items-center mr-4 mb-4">
-                  <button
-                    type="button"
-                    className="mr-4 bg-green-500 text-white px-4 py-2 rounded mb-2"
-                    onClick={() => {
-                      setPrevTimestamp(item);
-                      setTimestamp(item);
-                      setStakeForm(false);
-                      setExtendForm(true);
-                      setIncreaseForm(false);
-                      setWithdrawForm(false);
-                    }}
-                  >
-                    Extend
-                  </button>
-                  <button
-                    type="button"
-                    className="mr-4 bg-green-500 text-white px-4 py-2 rounded mb-2"
-                    onClick={() => {
-                      setTimestamp(item);
-                      setUntil(item);
-                      setAmount('');
-                      setStakeForm(false);
-                      setExtendForm(false);
-                      setIncreaseForm(false);
-                      setWithdrawForm(true);
-                    }}
-                  >
-                    Withdraw
-                  </button>
-                  <button
-                    type="button"
-                    className="mr-4 bg-green-500 text-white px-4 py-2 rounded mb-2"
-                    onClick={() => {
-                      setTimestamp(item);
-                      setAmount('');
-                      setUntil(item);
-                      setStakeForm(false);
-                      setExtendForm(false);
-                      setIncreaseForm(true);
-                      setWithdrawForm(false);
-                    }}
-                  >
-                    Increase
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+              </td>
+              <td className="text-left font-normal">
+                {numberFromWei(item[0]).toLocaleString()} SOV
+                <br />≈ 75,000.00 USD
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                100,000,000
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                {moment(new Date(parseInt(item[1]) * 1e3)).format(
+                  'DD/MM/YYYY - h:mm:ss a',
+                )}
+                <br />
+                <Link
+                  to={{}}
+                  className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                >
+                  0x413…89054
+                </Link>
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                4 weeks
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                <p>
+                  {moment(new Date(parseInt(item[1]) * 1e3)).format(
+                    'DD/MM/YYYY',
+                  )}
+                  <br />
+                  -10 days
+                </p>
+              </td>
+              <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
+                <button
+                  type="button"
+                  className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                  onClick={() => {
+                    setTimestamp(item[1]);
+                    setAmount('');
+                    setUntil(item[1]);
+                    setStakeForm(false);
+                    setExtendForm(false);
+                    setIncreaseForm(true);
+                    setWithdrawForm(false);
+                  }}
+                >
+                  Increase
+                </button>
+                <button
+                  type="button"
+                  className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                  onClick={() => {
+                    setPrevTimestamp(item[1]);
+                    setTimestamp(item[1]);
+                    setStakeForm(false);
+                    setExtendForm(true);
+                    setIncreaseForm(false);
+                    setWithdrawForm(false);
+                  }}
+                >
+                  Extend
+                </button>
+                <button
+                  type="button"
+                  className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                  onClick={() => {
+                    setTimestamp(item[1]);
+                    setUntil(item[1]);
+                    setAmount('');
+                    setStakeForm(false);
+                    setExtendForm(false);
+                    setIncreaseForm(false);
+                    setWithdrawForm(true);
+                  }}
+                >
+                  Unstake
+                </button>
+              </td>
+            </tr>
+          );
+        })}
+      </>
     ) : (
       <div>Loading</div>
     );
@@ -240,6 +264,7 @@ function InnerStakePage(props: Props) {
   const validateStakeForm = useCallback(() => {
     if (loading) return false;
     const num = Number(amount);
+
     if (!num || isNaN(num) || num <= 0) return false;
     if (!timestamp || timestamp < now.getTime()) return false;
     return num * 1e18 <= Number(sovBalanceOf.value);
@@ -503,132 +528,7 @@ function InnerStakePage(props: Props) {
                     </tr>
                   </thead>
                   <tbody className="mt-5 font-montserrat text-xs">
-                    <tr>
-                      <td>
-                        <div className="username flex items-center">
-                          <div>
-                            <img
-                              src={logoSvg}
-                              className="ml-3 mr-3"
-                              alt="sov"
-                            />
-                          </div>
-                          <div className="text-sm font-normal hidden xl:block">
-                            SOV
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left font-normal">
-                        100,000.00 SOV
-                        <br />≈ 75,000.00 USD
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        100,000,000
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        03/01/21 - 14:05:51
-                        <br />
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                        >
-                          0x413…89054
-                        </Link>
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        4 weeks
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        <p className="opacity-30">
-                          03/01/21 - 14:05:51
-                          <br />
-                          -10 days
-                        </p>
-                      </td>
-                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                        >
-                          Increase
-                        </Link>
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                        >
-                          Extend
-                        </Link>
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                        >
-                          Unstake
-                        </Link>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="username flex items-center">
-                          <div>
-                            <img
-                              src={logoSvg}
-                              className="ml-3 mr-3"
-                              alt="sov"
-                            />
-                          </div>
-                          <div className="text-sm font-normal hidden xl:block">
-                            SOV
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left font-normal">
-                        100,000.00 SOV
-                        <br />≈ 75,000.00 USD
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        100,000,000
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        03/01/21 - 14:05:51
-                        <br />
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                        >
-                          0x413…89054
-                        </Link>
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        36 weeks
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        <p>
-                          03/01/21 - 14:05:51
-                          <br />
-                          -10 days
-                        </p>
-                      </td>
-                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                        >
-                          Increase
-                        </Link>
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                        >
-                          Extend
-                        </Link>
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                        >
-                          Unstake
-                        </Link>
-                      </td>
-                    </tr>
+                    <StakesOverview stakes={stakesArray} />
                   </tbody>
                 </StyledTable>
               </div>
@@ -1310,73 +1210,101 @@ function InnerStakePage(props: Props) {
                         </button>
                         {increaseForm === true && (
                           <>
-                            <h2>Increase</h2>
-                            <IncreaseStakeForm
-                              handleSubmit={handleIncreaseStakeSubmit}
-                              amount={amount}
-                              timestamp={timestamp}
-                              onChangeAmount={e => setAmount(e)}
-                              sovBalanceOf={sovBalanceOf}
-                              isValid={validateIncreaseForm()}
+                            <Modal
+                              show={increaseForm}
+                              content={
+                                <>
+                                  <IncreaseStakeForm
+                                    handleSubmit={handleIncreaseStakeSubmit}
+                                    amount={amount}
+                                    timestamp={timestamp}
+                                    onChangeAmount={e => setAmount(e)}
+                                    sovBalanceOf={sovBalanceOf}
+                                    isValid={validateIncreaseForm()}
+                                    balanceOf={balanceOf}
+                                    votePower={votingPower}
+                                    onCloseModal={() =>
+                                      setIncreaseForm(!increaseForm)
+                                    }
+                                  />
+                                </>
+                              }
                             />
                           </>
                         )}
                         {extendForm === true && (
                           <>
-                            <h2>Extend</h2>
-                            {currentLock && kickoffTs.value !== '0' && (
-                              <form onSubmit={handleExtendTimeSubmit}>
-                                <div className="mb-4">
-                                  <StakingDateSelector
-                                    title="Select new date"
-                                    kickoffTs={Number(kickoffTs.value)}
-                                    startTs={currentLock.getTime()}
-                                    value={timestamp}
-                                    onChange={e => setTimestamp(e)}
-                                    stakes={getStakes.value['dates']}
-                                    prevExtend={prevTimestamp}
-                                  />
-                                </div>
-                                <div className="flex flex-row justify-between items-center space-x-4">
-                                  <button
-                                    type="submit"
-                                    className={`bg-green-500 text-white px-4 py-2 rounded ${
-                                      !validateExtendTimeForm() &&
-                                      'opacity-50 cursor-not-allowed'
-                                    }`}
-                                    disabled={!validateExtendTimeForm()}
-                                  >
-                                    Extend
-                                  </button>
-                                  <div>
-                                    {prevTimestamp && (
-                                      <div className="text-gray-5 mb-4 text-xs">
-                                        Previous until:
-                                        <br />
-                                        <span className="font-bold">
-                                          {moment(
-                                            new Date(prevTimestamp * 1e3),
-                                          ).format('DD.MM.YYYY')}
-                                        </span>
+                            <Modal
+                              show={extendForm}
+                              content={
+                                <>
+                                  {currentLock && kickoffTs.value !== '0' && (
+                                    <form onSubmit={handleExtendTimeSubmit}>
+                                      <div className="mb-4">
+                                        <StakingDateSelector
+                                          title="Select new date"
+                                          kickoffTs={Number(kickoffTs.value)}
+                                          startTs={currentLock.getTime()}
+                                          value={timestamp}
+                                          onChange={e => setTimestamp(e)}
+                                          stakes={getStakes.value['dates']}
+                                          prevExtend={prevTimestamp}
+                                        />
                                       </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </form>
-                            )}
+                                      <div className="flex flex-row justify-between items-center space-x-4">
+                                        <button
+                                          type="submit"
+                                          className={`bg-green-500 text-white px-4 py-2 rounded ${
+                                            !validateExtendTimeForm() &&
+                                            'opacity-50 cursor-not-allowed'
+                                          }`}
+                                          disabled={!validateExtendTimeForm()}
+                                        >
+                                          Extend
+                                        </button>
+                                        <div>
+                                          {prevTimestamp && (
+                                            <div className="text-gray-5 mb-4 text-xs">
+                                              Previous until:
+                                              <br />
+                                              <span className="font-bold">
+                                                {moment(
+                                                  new Date(prevTimestamp * 1e3),
+                                                ).format('DD.MM.YYYY')}
+                                              </span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </form>
+                                  )}
+                                </>
+                              }
+                            />
                           </>
                         )}
 
                         {withdrawForm === true && (
                           <>
-                            <h2>Withdraw</h2>
-                            <WithdrawForm
-                              handleSubmit={handleWithdrawSubmit}
-                              amount={withdrawAmount}
-                              until={timestamp}
-                              onChangeAmount={e => setWithdrawAmount(e)}
-                              balanceOf={balanceOf}
-                              isValid={validateWithdrawForm()}
+                            <Modal
+                              show={withdrawForm}
+                              content={
+                                <>
+                                  <WithdrawForm
+                                    handleSubmit={handleWithdrawSubmit}
+                                    amount={withdrawAmount}
+                                    until={timestamp}
+                                    onChangeAmount={e => setWithdrawAmount(e)}
+                                    sovBalanceOf={sovBalanceOf}
+                                    balanceOf={balanceOf}
+                                    votePower={votingPower}
+                                    isValid={validateWithdrawForm()}
+                                    onCloseModal={() =>
+                                      setWithdrawForm(!withdrawForm)
+                                    }
+                                  />
+                                </>
+                              }
                             />
                           </>
                         )}
@@ -1385,19 +1313,6 @@ function InnerStakePage(props: Props) {
                   </>
                 )}
               </div>
-            </div>
-          </div>
-
-          <br />
-          <div className="container hidden">
-            <div className="w-full bg-gray-light rounded shadow p-3 pb-5">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                List of staking
-              </label>
-              <StakesOverview
-                dates={getStakes.value['dates']}
-                stakes={getStakes.value['stakes']}
-              />
             </div>
           </div>
         </div>

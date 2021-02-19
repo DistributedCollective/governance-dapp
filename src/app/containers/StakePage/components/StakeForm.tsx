@@ -22,7 +22,7 @@ export function StakeForm(props: Props) {
     <>
       <h3 className="text-center mb-10 leading-10 text-3xl">Stake SOV</h3>
       <form onSubmit={props.handleSubmit}>
-        <div className="mb-9 px-9 tracking-normal">
+        <div className="mb-9 md:px-9 tracking-normal">
           <label
             className="leading-4 block text-theme-white text-md font-medium mb-2"
             htmlFor="amount"
@@ -216,7 +216,7 @@ export function StakeForm(props: Props) {
               id="vouting-power"
               type="text"
               placeholder="0"
-              value={numberFromWei(props.votePower)}
+              defaultValue={numberFromWei(props.votePower)}
             />
           </div>
           <p className="block text-theme-white text-md font-light mb-2 mt-7">

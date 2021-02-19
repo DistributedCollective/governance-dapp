@@ -127,6 +127,9 @@
     .-mt-0\.25 {
         margin-top: -0.063rem;
     }
+    .max-w-29 {
+        max-width: 29.3rem;
+    }
 
     @media (min-width: 1200px) {
         .max-w-130 {
@@ -158,9 +161,6 @@
         }
         .max-w-15 {
             max-width: 15rem;
-        }
-        .max-w-29 {
-            max-width: 29.3rem;
         }
     }
 }
