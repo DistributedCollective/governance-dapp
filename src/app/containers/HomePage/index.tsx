@@ -13,7 +13,7 @@ import { useProposalList } from '../../hooks/useProposalList';
 export function HomePage() {
   const dispatch = useDispatch();
   const { connected, address } = useSelector(selectBlockChainProvider);
-  const { items, total, loading } = useProposalList(1, 1);
+  const { items, total, loading } = useProposalList(1, 3);
   return (
     <>
       <Helmet>
