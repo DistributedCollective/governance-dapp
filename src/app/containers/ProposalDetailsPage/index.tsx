@@ -20,12 +20,13 @@ import { ProposalHistory } from './components/ProposalHistory';
 import { useGetProposalState } from '../../hooks/useGetProposalState';
 import { Proposal, ProposalState } from '../../../types/Proposal';
 import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
+import { MergedProposal } from '../../hooks/useProposalList';
 
 export function ProposalDetailsPage() {
-  const { id } = useParams<any>();
+  const { id, contractName } = useParams<any>();
   const isConnected = useIsConnected();
   const { syncBlockNumber } = useSelector(selectBlockChainProvider);
-  const [data, setData] = useState<Proposal>(null as any);
+  const [data, setData] = useState<MergedProposal>(null as any);
   const [createdEvent, setCreatedEvent] = useState<any>(null as any);
   const [loading, setLoading] = useState(false);
   const [votesLoading, setVotesLoading] = useState(true);
@@ -43,12 +44,12 @@ export function ProposalDetailsPage() {
   useEffect(() => {
     setLoading(true);
     const get = async () => {
-      const proposal = ((await network.call('governorAdmin', 'proposals', [
+      const proposal = ((await network.call(contractName, 'proposals', [
         id,
       ])) as unknown) as Proposal;
-      setData(proposal);
+      setData({ ...proposal, contractName });
       const events = await network.getPastEvents(
-        'governorAdmin',
+        contractName,
         'ProposalCreated',
         { id: proposal.id },
         proposal.startBlock - 1,
@@ -58,14 +59,14 @@ export function ProposalDetailsPage() {
       setLoading(false);
     };
     get().then().catch();
-  }, [id, syncBlockNumber]);
+  }, [id, syncBlockNumber, contractName]);
 
   useEffect(() => {
     if (data?.id) {
       setVotesLoading(true);
       network
         .getPastEvents(
-          'governorAdmin',
+          data.contractName,
           'VoteCast',
           {
             proposalId: data.id,
@@ -172,6 +173,7 @@ export function ProposalDetailsPage() {
             voutesFor={data.forVotes}
             voutesAgainst={data.againstVotes}
             proposalId={data.id}
+            contractName={data.contractName}
           />
         )}
 
@@ -245,7 +247,10 @@ export function ProposalDetailsPage() {
                 sha256:{' '}
                 63817f1519ef0bf4699899acd747ef7a856ddbda1bba7a20ec75eb9da89650b7
               </p> */}
-              <ProposalActions proposalId={data?.id} />
+              <ProposalActions
+                proposalId={data?.id}
+                contractName={data?.contractName}
+              />
             </div>
           </div>
           <div className="xl:w-1/4 w-full px-6 pr-0">

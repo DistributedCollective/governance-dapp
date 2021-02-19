@@ -1,47 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 import { actions } from 'app/containers/BlockChainProvider/slice';
 import { Footer } from '../../components/Footer/Loadable';
-import { network } from '../BlockChainProvider/network';
-import { Proposal } from '../../../types/Proposal';
 import { ProposalRow } from '../ProposalRow/Loadable';
-import { governance_proposalCount } from '../BlockChainProvider/requests/governance';
 import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
 import { Header } from 'app/components/Header';
+import { useProposalList } from '../../hooks/useProposalList';
 
 export function HomePage() {
-  const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState<Proposal[]>([]);
-  const [total, setTotal] = useState<number>(0);
   const dispatch = useDispatch();
   const { connected, address } = useSelector(selectBlockChainProvider);
-  useEffect(() => {
-    setLoading(true);
-
-    const get = async () => {
-      const proposalCount = await governance_proposalCount();
-      let to = 0;
-      if (proposalCount > 3) {
-        to = proposalCount - 3;
-      }
-      const items: Proposal[] = [];
-      for (let index = proposalCount; index > to; index--) {
-        const item = ((await network.call('governorAdmin', 'proposals', [
-          index,
-        ])) as unknown) as Proposal;
-        items.push(item);
-      }
-      setItems(items);
-      setLoading(false);
-      setTotal(proposalCount);
-    };
-
-    get().then().catch();
-  }, []);
-
+  const { items, total, loading } = useProposalList(1, 3);
   return (
     <>
       <Helmet>
@@ -130,7 +102,10 @@ export function HomePage() {
                         </tr>
                       )}
                       {items.map(item => (
-                        <ProposalRow key={item.id} proposal={item} />
+                        <ProposalRow
+                          key={item.id + item.contractName}
+                          proposal={item}
+                        />
                       ))}
                     </tbody>
                   </StyledTable>

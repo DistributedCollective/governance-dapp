@@ -1,40 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { Footer } from '../../components/Footer/Loadable';
-import { network } from '../BlockChainProvider/network';
-import { Proposal } from '../../../types/Proposal';
 import { ProposalRow } from '../ProposalRow/Loadable';
-import { governance_proposalCount } from '../BlockChainProvider/requests/governance';
 import { Header } from 'app/components/Header';
+import { useProposalList } from '../../hooks/useProposalList';
 
 export function ProposalsPage() {
-  const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState<Proposal[]>([]);
-  const [total, setTotal] = useState<number>(0);
-  useEffect(() => {
-    setLoading(true);
-
-    const get = async () => {
-      const proposalCount = await governance_proposalCount();
-      let to = 0;
-      if (proposalCount > 25) {
-        to = proposalCount - 25;
-      }
-      const items: Proposal[] = [];
-      for (let index = proposalCount; index > to; index--) {
-        const item = ((await network.call('governorAdmin', 'proposals', [
-          index,
-        ])) as unknown) as Proposal;
-        items.push(item);
-      }
-      setItems(items);
-      setLoading(false);
-      setTotal(proposalCount);
-    };
-    get().then().catch();
-  }, []);
+  const { items, loading, total } = useProposalList(1, 25);
   return (
     <>
       <Helmet>
@@ -109,7 +83,10 @@ export function ProposalsPage() {
                       </tr>
                     )}
                     {items.map(item => (
-                      <ProposalRow key={item.id} proposal={item} />
+                      <ProposalRow
+                        key={item.id + item.contractName}
+                        proposal={item}
+                      />
                     ))}
                   </tbody>
                 </StyledTable>
