@@ -14,7 +14,7 @@ import { Provider } from 'react-redux';
 import * as serviceWorker from 'serviceWorker';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/select/lib/css/blueprint-select.css';
-import 'styles/tailwind.output.css';
+import 'styles/tailwind.css';
 
 // Import root app
 import { App } from 'app';

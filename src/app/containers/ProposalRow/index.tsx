@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Proposal, ProposalState } from 'types/Proposal';
+import { ProposalState } from 'types/Proposal';
 import { Link, useLocation } from 'react-router-dom';
 import Linkify from 'react-linkify';
 import styled from 'styled-components/macro';
@@ -14,9 +14,10 @@ import { useGetProposalState } from '../../hooks/useGetProposalState';
 import { ProposalStatusBadge } from '../../components/ProposalStatusBadge';
 import { ProposalRowStateBadge } from '../../components/ProposalRowStateBadge';
 import { dateByBlocks } from '../../../utils/helpers';
+import { MergedProposal } from '../../hooks/useProposalList';
 
 interface Props {
-  proposal: Proposal;
+  proposal: MergedProposal;
 }
 
 const StyledBar = styled.div`
@@ -145,7 +146,7 @@ export function ProposalRow({ proposal }: Props) {
             <td className="text-center">
               <Link
                 to={{
-                  pathname: `/proposals/${proposal.id}`,
+                  pathname: `/proposals/${proposal.id}/${proposal.contractName}`,
                   state: { background: location },
                 }}
                 className="text-gold hover:text-gold hover:underline font-thin font-montserrat tracking-normal"
@@ -162,11 +163,7 @@ export function ProposalRow({ proposal }: Props) {
               </Linkify>
             </td>
             <td className="text-center hidden xl:table-cell tracking-normal truncate">
-              {dateByBlocks(
-                proposal.startTime,
-                proposal.startBlock,
-                proposal.startBlock,
-              )}
+              #{proposal.startBlock}
             </td>
             <td className="text-center hidden xl:table-cell">
               <ProposalRowStateBadge state={state} />
@@ -181,7 +178,7 @@ export function ProposalRow({ proposal }: Props) {
             <td className="text-center">
               <Link
                 to={{
-                  pathname: `/proposals/${proposal.id}`,
+                  pathname: `/proposals/${proposal.id}/${proposal.contractName}`,
                   state: { background: location },
                 }}
                 className="text-gold hover:text-gold hover:underline font-thin font-montserrat tracking-normal"

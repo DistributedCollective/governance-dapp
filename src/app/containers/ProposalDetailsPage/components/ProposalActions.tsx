@@ -5,10 +5,12 @@ import { useContractCall } from '../../../hooks/useContractCall';
 import { blockExplorers } from '../../BlockChainProvider/classifiers';
 import { RowSkeleton } from '../../../components/PageSkeleton';
 import { selectBlockChainProvider } from '../../BlockChainProvider/selectors';
+import { ContractName } from '../../BlockChainProvider/types';
 // import { functionsText } from '../../HomePage/functionsText';
 
 interface Props {
   proposalId: number;
+  contractName: ContractName;
 }
 
 interface ActionsResponse {
@@ -27,7 +29,7 @@ interface FormattedAction {
 
 export function ProposalActions(props: Props) {
   const { loading, value: actions } = useContractCall(
-    'governorAdmin',
+    props.contractName || 'governorAdmin',
     'getActions',
     props.proposalId || '0',
   );

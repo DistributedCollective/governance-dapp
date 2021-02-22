@@ -5,9 +5,11 @@ import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
 import { useContractCall } from '../../../hooks/useContractCall';
 import { numberFromWei, kFormatter } from 'utils/helpers';
+import { ContractName } from '../../BlockChainProvider/types';
 
 interface Props {
   proposalId: number;
+  contractName: ContractName;
   voutesAgainst: number;
   voutesFor: number;
 }
@@ -17,7 +19,7 @@ export function VoteCaster(props: Props) {
   const account = useAccount();
 
   const receipt = useContractCall(
-    'governorAdmin',
+    props.contractName || 'governorAdmin',
     'getReceipt',
     props.proposalId,
     account,
@@ -30,7 +32,7 @@ export function VoteCaster(props: Props) {
     async (support: boolean) => {
       setLoading(true);
       const tx = await network.send(
-        'governorAdmin',
+        props.contractName || 'governorAdmin',
         'castVote',
         [props.proposalId, support, { from: account }],
         { type: 'vote' },
@@ -38,7 +40,7 @@ export function VoteCaster(props: Props) {
       setTxHash(tx);
       setLoading(false);
     },
-    [account, props.proposalId],
+    [account, props.proposalId, props.contractName],
   );
 
   if (!isConnected || receipt.loading) {
