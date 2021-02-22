@@ -42,7 +42,7 @@ import { PageSkeleton } from '../../components/PageSkeleton';
 import { WithdrawForm } from './components/WithdrawForm';
 import { useIsConnected } from '../../hooks/useIsConnected';
 import { IncreaseStakeForm } from './components/IncreaseStakeForm';
-import { StakingDateSelector } from '../../components/StakingDateSelector';
+import { ExtendStakeForm } from './components/ExtendStakeForm';
 import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
 // import {
 //   governance_proposalCount,
@@ -97,7 +97,6 @@ function InnerStakePage(props: Props) {
   const voteBalance = useStaking_getCurrentVotes(account);
   const kickoffTs = useStaking_kickoffTs();
   const getStakes = useStaking_getStakes(account);
-
   const sovBalanceOf = useSoV_balanceOf(account);
 
   const totalStakedBalance = useSoV_balanceOf(getContract('staking').address);
@@ -126,7 +125,6 @@ function InnerStakePage(props: Props) {
     lockDate,
     Math.round(now.getTime() / 1e3),
   );
-
   let dates = getStakes.value['dates'];
   let stakes = getStakes.value['stakes'];
   let stakesArray = [];
@@ -153,7 +151,7 @@ function InnerStakePage(props: Props) {
                 </div>
               </td>
               <td className="text-left font-normal">
-                {numberFromWei(item[0]).toLocaleString()} SOV
+                {numberFromWei(item[0])} SOV
                 <br />≈ 75,000.00 USD
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
@@ -180,7 +178,11 @@ function InnerStakePage(props: Props) {
                     'DD/MM/YYYY',
                   )}
                   <br />
-                  -10 days
+                  {moment().diff(
+                    moment(new Date(parseInt(item[1]) * 1e3)),
+                    'days',
+                  )}{' '}
+                  days
                 </p>
               </td>
               <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
@@ -189,7 +191,7 @@ function InnerStakePage(props: Props) {
                   className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
                   onClick={() => {
                     setTimestamp(item[1]);
-                    setAmount('');
+                    setAmount(item[0]);
                     setUntil(item[1]);
                     setStakeForm(false);
                     setExtendForm(false);
@@ -205,6 +207,7 @@ function InnerStakePage(props: Props) {
                   onClick={() => {
                     setPrevTimestamp(item[1]);
                     setTimestamp(item[1]);
+                    setAmount(item[0]);
                     setStakeForm(false);
                     setExtendForm(true);
                     setIncreaseForm(false);
@@ -217,9 +220,10 @@ function InnerStakePage(props: Props) {
                   type="button"
                   className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
                   onClick={() => {
+                    setAmount(item[0]);
+                    setWithdrawAmount('');
                     setTimestamp(item[1]);
                     setUntil(item[1]);
-                    setAmount('');
                     setStakeForm(false);
                     setExtendForm(false);
                     setIncreaseForm(false);
@@ -1209,104 +1213,77 @@ function InnerStakePage(props: Props) {
                           New Stake
                         </button>
                         {increaseForm === true && (
-                          <>
-                            <Modal
-                              show={increaseForm}
-                              content={
-                                <>
-                                  <IncreaseStakeForm
-                                    handleSubmit={handleIncreaseStakeSubmit}
-                                    amount={amount}
-                                    timestamp={timestamp}
-                                    onChangeAmount={e => setAmount(e)}
-                                    sovBalanceOf={sovBalanceOf}
-                                    isValid={validateIncreaseForm()}
-                                    balanceOf={balanceOf}
-                                    votePower={votingPower}
-                                    onCloseModal={() =>
-                                      setIncreaseForm(!increaseForm)
-                                    }
-                                  />
-                                </>
-                              }
-                            />
-                          </>
+                          <Modal
+                            show={increaseForm}
+                            content={
+                              <>
+                                <IncreaseStakeForm
+                                  handleSubmit={handleIncreaseStakeSubmit}
+                                  amount={amount}
+                                  timestamp={timestamp}
+                                  onChangeAmount={e => setAmount(e)}
+                                  sovBalanceOf={sovBalanceOf}
+                                  isValid={validateIncreaseForm()}
+                                  balanceOf={balanceOf}
+                                  votePower={votingPower}
+                                  onCloseModal={() =>
+                                    setIncreaseForm(!increaseForm)
+                                  }
+                                />
+                              </>
+                            }
+                          />
                         )}
                         {extendForm === true && (
-                          <>
-                            <Modal
-                              show={extendForm}
-                              content={
-                                <>
-                                  {currentLock && kickoffTs.value !== '0' && (
-                                    <form onSubmit={handleExtendTimeSubmit}>
-                                      <div className="mb-4">
-                                        <StakingDateSelector
-                                          title="Select new date"
-                                          kickoffTs={Number(kickoffTs.value)}
-                                          startTs={currentLock.getTime()}
-                                          value={timestamp}
-                                          onChange={e => setTimestamp(e)}
-                                          stakes={getStakes.value['dates']}
-                                          prevExtend={prevTimestamp}
-                                        />
-                                      </div>
-                                      <div className="flex flex-row justify-between items-center space-x-4">
-                                        <button
-                                          type="submit"
-                                          className={`bg-green-500 text-white px-4 py-2 rounded ${
-                                            !validateExtendTimeForm() &&
-                                            'opacity-50 cursor-not-allowed'
-                                          }`}
-                                          disabled={!validateExtendTimeForm()}
-                                        >
-                                          Extend
-                                        </button>
-                                        <div>
-                                          {prevTimestamp && (
-                                            <div className="text-gray-5 mb-4 text-xs">
-                                              Previous until:
-                                              <br />
-                                              <span className="font-bold">
-                                                {moment(
-                                                  new Date(prevTimestamp * 1e3),
-                                                ).format('DD.MM.YYYY')}
-                                              </span>
-                                            </div>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </form>
-                                  )}
-                                </>
-                              }
-                            />
-                          </>
-                        )}
-
-                        {withdrawForm === true && (
-                          <>
-                            <Modal
-                              show={withdrawForm}
-                              content={
-                                <>
-                                  <WithdrawForm
-                                    handleSubmit={handleWithdrawSubmit}
-                                    amount={withdrawAmount}
-                                    until={timestamp}
-                                    onChangeAmount={e => setWithdrawAmount(e)}
+                          <Modal
+                            show={extendForm}
+                            content={
+                              <>
+                                {currentLock && kickoffTs.value !== '0' && (
+                                  <ExtendStakeForm
+                                    handleSubmit={handleExtendTimeSubmit}
+                                    amount={amount}
+                                    timestamp={timestamp}
+                                    onChangeTimestamp={e => setTimestamp(e)}
                                     sovBalanceOf={sovBalanceOf}
+                                    kickoff={kickoffTs}
+                                    isValid={validateExtendTimeForm()}
+                                    stakes={getStakes.value['dates']}
                                     balanceOf={balanceOf}
                                     votePower={votingPower}
-                                    isValid={validateWithdrawForm()}
+                                    prevExtend={prevTimestamp}
+                                    currentLock={currentLock}
                                     onCloseModal={() =>
-                                      setWithdrawForm(!withdrawForm)
+                                      setExtendForm(!extendForm)
                                     }
                                   />
-                                </>
-                              }
-                            />
-                          </>
+                                )}
+                              </>
+                            }
+                          />
+                        )}
+                        {withdrawForm === true && (
+                          <Modal
+                            show={withdrawForm}
+                            content={
+                              <>
+                                <WithdrawForm
+                                  handleSubmit={handleWithdrawSubmit}
+                                  withdrawAmount={withdrawAmount}
+                                  amount={amount}
+                                  until={timestamp}
+                                  onChangeAmount={e => setWithdrawAmount(e)}
+                                  sovBalanceOf={sovBalanceOf}
+                                  balanceOf={balanceOf}
+                                  votePower={votingPower}
+                                  isValid={validateWithdrawForm()}
+                                  onCloseModal={() =>
+                                    setWithdrawForm(!withdrawForm)
+                                  }
+                                />
+                              </>
+                            }
+                          />
                         )}
                       </>
                     )}

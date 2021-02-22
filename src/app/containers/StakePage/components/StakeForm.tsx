@@ -35,6 +35,7 @@ export function StakeForm(props: Props) {
               id="amount"
               type="text"
               value={props.amount}
+              placeholder="Enter amount"
               onChange={e => props.onChangeAmount(handleNumberInput(e))}
             />
             <span className="text-black text-md font-semibold absolute top-3 right-5 leading-4">
@@ -92,118 +93,14 @@ export function StakeForm(props: Props) {
             </div>
           </div>
 
-          <label className="block mt-8 text-theme-white text-md font-medium mb-2">
-            Select Year:
-          </label>
+          <StakingDateSelector
+            title="Select new date"
+            kickoffTs={Number(props.kickoff.value)}
+            value={props.timestamp}
+            onClick={value => props.onChangeTimestamp(value)}
+            stakes={props.stakes}
+          />
 
-          <div className="flex">
-            <button
-              type="button"
-              className="leading-7 mr-6 rounded border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter"
-            >
-              2021
-            </button>
-            <button
-              type="button"
-              className="leading-7 mr-6 rounded border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter"
-            >
-              2022
-            </button>
-            <button
-              type="button"
-              className="leading-7 rounded border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter"
-            >
-              2023
-            </button>
-          </div>
-          <div className="flex mt-5">
-            <div className="calendar month flex w-full pl-1">
-              <div className="w-1/6">
-                <div className="mb-1 font-light text-sm text-center text-gray-300">
-                  Jan
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  25
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-              </div>
-              <div className="w-1/6">
-                <div className="mb-1 font-light text-sm text-center text-gray-300">
-                  Feb
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  25
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-              </div>
-              <div className="w-1/6">
-                <div className="mb-1 font-light text-sm text-center text-gray-300">
-                  Mar
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  25
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-              </div>
-              <div className="w-1/6">
-                <div className="mb-1 font-light text-sm text-center text-gray-300">
-                  Apr
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  25
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-              </div>
-              <div className="w-1/6">
-                <div className="mb-1 font-light text-sm text-center text-gray-300">
-                  May
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  25
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-              </div>
-              <div className="w-1/6">
-                <div className="mb-1 font-light text-sm text-center text-gray-300">
-                  Jun
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  25
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-                <div className="flex items-center justify-center -ml-0.25 -mt-0.25 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter">
-                  -
-                </div>
-              </div>
-            </div>
-          </div>
           <label
             className="block text-theme-white text-md font-medium mb-2 mt-8"
             htmlFor="vouting-power"
@@ -240,16 +137,6 @@ export function StakeForm(props: Props) {
               </>
             )}
           </div>
-        </div>
-
-        <div className="mb-4 px-6 mb-12 hidden">
-          <StakingDateSelector
-            value={props.timestamp}
-            onChange={value => props.onChangeTimestamp(value)}
-            kickoffTs={Number(props.kickoff.value)}
-            title="Stake until date"
-            stakes={props.stakes}
-          />
         </div>
         <div className="grid grid-rows-1 grid-flow-col gap-4">
           <button
