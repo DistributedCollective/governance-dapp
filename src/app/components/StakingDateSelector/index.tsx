@@ -45,15 +45,18 @@ export function StakingDateSelector(props: Props) {
     .map(yearDate => moment(yearDate.date).format('MMM'))
     .filter((month, index, arr) => arr.indexOf(month) === index);
 
-  const getDatesByYear = year => {
-    var theBigDay = new Date();
-    theBigDay.setFullYear(year);
-    return setCurrenYearDates(
-      filteredDates.filter(
-        item => new Date(item.date).getFullYear() === theBigDay.getFullYear(),
-      ),
-    );
-  };
+  const getDatesByYear = useCallback(
+    year => {
+      let theBigDay = new Date();
+      theBigDay.setFullYear(year);
+      return setCurrenYearDates(
+        filteredDates.filter(
+          item => new Date(item.date).getFullYear() === theBigDay.getFullYear(),
+        ),
+      );
+    },
+    [filteredDates],
+  );
 
   useEffect(() => {
     if (props.kickoffTs) {
@@ -120,30 +123,39 @@ export function StakingDateSelector(props: Props) {
     );
   }, [dateWithoutStake, props.value]);
 
-  const [selected, setSelected] = useState<DateItem | undefined>(getSelected());
-  console.log(selected);
+  const [, setSelected] = useState<DateItem | undefined>(getSelected());
+
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedDay, setSelectedDay] = useState('');
 
   useEffect(() => {
     setSelected(getSelected());
   }, [getSelected, props.value, dateWithoutStake]);
 
-  function SampleNextArrow(props) {
+  useEffect(() => {
+    setSelectedYear(moment((props.prevExtend as any) * 1e3).format('YYYY'));
+    setSelectedMonth(moment((props.prevExtend as any) * 1e3).format('MMM'));
+    setSelectedDay(moment((props.prevExtend as any) * 1e3).format('D'));
+  }, [props.prevExtend]);
+
+  const SampleNextArrow = props => {
     const { className, style, onClick } = props;
     return (
       <div className={className} style={{ ...style }} onClick={onClick}>
         <Icon icon="chevron-right" iconSize={25} color="white" />
       </div>
     );
-  }
+  };
 
-  function SamplePrevArrow(props) {
+  const SamplePrevArrow = props => {
     const { className, style, onClick } = props;
     return (
       <div className={className} style={{ ...style }} onClick={onClick}>
         <Icon icon="chevron-left" iconSize={25} color="white" />
       </div>
     );
-  }
+  };
 
   const settingsSliderYear = {
     dots: false,
@@ -165,6 +177,12 @@ export function StakingDateSelector(props: Props) {
     prevArrow: <SamplePrevArrow />,
   };
 
+  useEffect(() => {
+    if (props.prevExtend) {
+      getDatesByYear(selectedYear);
+    }
+  }, [props.prevExtend, getDatesByYear, selectedYear]);
+
   // useEffect(() => {
   //   if (props.autoselect && !props.value && dateWithoutStake.length) {
   //     props.onChange(dateWithoutStake[0].key);
@@ -183,8 +201,13 @@ export function StakingDateSelector(props: Props) {
             <div className="mr-6" key={i}>
               <button
                 type="button"
-                onClick={() => getDatesByYear(year)}
-                className="leading-7 rounded border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter"
+                onClick={() => {
+                  getDatesByYear(year);
+                  setSelectedYear(year);
+                }}
+                className={`leading-7 rounded border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
+                  selectedYear === year && 'bg-opacity-30 bg-theme-blue'
+                }`}
               >
                 {year}
               </button>
@@ -204,10 +227,18 @@ export function StakingDateSelector(props: Props) {
                       return (
                         <div
                           key={i}
-                          onClick={() => onItemSelect(item)}
-                          className="flex items-center justify-center mr-1 mb-1 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter"
+                          onClick={() => {
+                            onItemSelect(item);
+                            setSelectedDay(moment(item.date).format('D'));
+                            setSelectedMonth(moment(item.date).format('MMM'));
+                          }}
+                          className={`flex items-center justify-center mr-1 mb-1 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
+                            selectedDay === moment(item.date).format('D') &&
+                            selectedMonth === moment(item.date).format('MMM') &&
+                            'bg-opacity-30 bg-theme-blue'
+                          }`}
                         >
-                          {new Date(item.date).getDate()}
+                          {moment(item.date).format('D')}
                         </div>
                       );
                     } else {
