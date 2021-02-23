@@ -131,13 +131,12 @@ function InnerStakePage(props: Props) {
   if (dates && stakes) {
     stakesArray = dates.map((v, index) => [stakes[index], v]);
   }
-
   interface Stakes {
     stakes: any[] | any;
   }
 
   const StakesOverview: React.FC<Stakes> = ({ stakes }) => {
-    return stakes ? (
+    return stakes.length ? (
       <>
         {stakes.map((item, i: string) => {
           return (
@@ -238,7 +237,11 @@ function InnerStakePage(props: Props) {
         })}
       </>
     ) : (
-      <div>Loading</div>
+      <tr>
+        <td colSpan={7} className="text-center font-normal">
+          No stakes yet
+        </td>
+      </tr>
     );
   };
 
@@ -487,20 +490,12 @@ function InnerStakePage(props: Props) {
                 <p className="text-4-5xl mt-2 mb-6">
                   {numberFromWei(voteBalance.value).toLocaleString()}
                 </p>
-                <button
-                  type="button"
-                  className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light py-3 px-3 border transition-colors duration-300 ease-in-out border-gold rounded-xl"
-                  onClick={() => {
-                    setTimestamp(0);
-                    setAmount('');
-                    setStakeForm(!stakeForm);
-                    setExtendForm(false);
-                    setIncreaseForm(false);
-                    setWithdrawForm(false);
-                  }}
+                <Link
+                  to={'/'}
+                  className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light py-3 px-3 border transition-colors duration-300 ease-in-out border-gold rounded-xl hover:no-underline no-underline inline-block"
                 >
                   View Governance
-                </button>
+                </Link>
               </div>
             </div>
 
@@ -738,8 +733,153 @@ function InnerStakePage(props: Props) {
                             </Link>
                           </div>
                           <Popover2
-                            popoverClassName="bg-transparent rounded-2xl overflow-hidden no-border focus:no-outline no-shadow ml-6 -mt-6"
+                            popoverClassName="bg-transparent rounded-2xl overflow-hidden no-border focus:no-border no-outline active:no-outline focus:no-outline no-shadow ml-6 -mt-6"
                             placement="right-start"
+                            interactionKind="click"
+                            transitionDuration={100}
+                            minimal={true}
+                            content={
+                              <div className="bg-gray-900 rounded-2xl p-8 text-xs">
+                                <div className="mb-5">
+                                  03/01/21 - 14:05:51
+                                  <br />
+                                  <Link
+                                    to={{}}
+                                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                                  >
+                                    0x413…89054
+                                  </Link>
+                                </div>
+                                <div className="mb-5">
+                                  03/01/21 - 14:05:51
+                                  <br />
+                                  <Link
+                                    to={{}}
+                                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                                  >
+                                    0x413…89054
+                                  </Link>
+                                </div>
+                                <div>
+                                  03/01/21 - 14:05:51
+                                  <br />
+                                  <Link
+                                    to={{}}
+                                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                                  >
+                                    0x413…89054
+                                  </Link>
+                                </div>
+                              </div>
+                            }
+                            renderTarget={({ isOpen, ref, ...props }) => (
+                              <Button
+                                {...props}
+                                outlined={false}
+                                minimal={true}
+                                active={isOpen}
+                                className="ml-8 cursor-pointer"
+                                elementRef={ref as any}
+                              >
+                                <Icon
+                                  className="ml-8 cursor-pointer"
+                                  icon={isOpen ? 'minus' : 'plus'}
+                                  iconSize={25}
+                                  color="white"
+                                />
+                              </Button>
+                            )}
+                          />
+                          <div className="bg-gray-900 rounded-2xl p-8 absolute -right-16 top-0 hidden">
+                            <div className="mb-5">
+                              03/01/21 - 14:05:51
+                              <br />
+                              <Link
+                                to={{}}
+                                className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                              >
+                                0x413…89054
+                              </Link>
+                            </div>
+                            <div className="mb-5">
+                              03/01/21 - 14:05:51
+                              <br />
+                              <Link
+                                to={{}}
+                                className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                              >
+                                0x413…89054
+                              </Link>
+                            </div>
+                            <div>
+                              03/01/21 - 14:05:51
+                              <br />
+                              <Link
+                                to={{}}
+                                className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                              >
+                                0x413…89054
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="text-left hidden lg:table-cell font-normal">
+                        4 weeks
+                      </td>
+                      <td className="text-left hidden lg:table-cell font-normal">
+                        <p>03/01/21 - 14:05:51</p>
+                      </td>
+                      <td className="text-left font-normal">
+                        03/01/21 - 14:05:51
+                        <br />
+                        <Link
+                          to={{}}
+                          className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                        >
+                          0x413…89054
+                        </Link>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div className="username flex items-center">
+                          <div>
+                            <img
+                              src={logoSvg}
+                              className="ml-3 mr-3"
+                              alt="sov"
+                            />
+                          </div>
+                          <div className="text-sm font-normal hidden xl:block">
+                            SOV
+                          </div>
+                        </div>
+                      </td>
+                      <td className="text-left hidden lg:table-cell font-normal">
+                        1000.00 SOV
+                        <br />≈ 1000.00 USD
+                      </td>
+                      <td className="text-left font-normal">≈ 1000.00 USD</td>
+                      <td className="text-left hidden lg:table-cell font-normal">
+                        100,000
+                      </td>
+                      <td className="text-left hidden lg:table-cell font-normal relative">
+                        <div className="flex items-center">
+                          <div>
+                            03/01/21 - 14:05:51
+                            <br />
+                            <Link
+                              to={{}}
+                              className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                            >
+                              0x413…89054
+                            </Link>
+                          </div>
+                          <Popover2
+                            popoverClassName="bg-transparent rounded-2xl overflow-hidden no-border focus:no-border no-outline active:no-outline focus:no-outline no-shadow ml-6 -mt-6"
+                            placement="right-start"
+                            minimal={true}
                             interactionKind="click"
                             transitionDuration={100}
                             content={
@@ -881,153 +1021,11 @@ function InnerStakePage(props: Props) {
                             </Link>
                           </div>
                           <Popover2
-                            popoverClassName="bg-transparent rounded-2xl overflow-hidden no-border focus:no-outline no-shadow ml-6 -mt-6"
+                            popoverClassName="bg-transparent rounded-2xl overflow-hidden no-border focus:no-border no-outline active:no-outline focus:no-outline no-shadow ml-6 -mt-6"
                             placement="right-start"
                             interactionKind="click"
                             transitionDuration={100}
-                            content={
-                              <div className="bg-gray-900 rounded-2xl p-8 text-xs">
-                                <div className="mb-5">
-                                  03/01/21 - 14:05:51
-                                  <br />
-                                  <Link
-                                    to={{}}
-                                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                                  >
-                                    0x413…89054
-                                  </Link>
-                                </div>
-                                <div className="mb-5">
-                                  03/01/21 - 14:05:51
-                                  <br />
-                                  <Link
-                                    to={{}}
-                                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                                  >
-                                    0x413…89054
-                                  </Link>
-                                </div>
-                                <div>
-                                  03/01/21 - 14:05:51
-                                  <br />
-                                  <Link
-                                    to={{}}
-                                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                                  >
-                                    0x413…89054
-                                  </Link>
-                                </div>
-                              </div>
-                            }
-                            renderTarget={({ isOpen, ref, ...props }) => (
-                              <Button
-                                {...props}
-                                outlined={false}
-                                minimal={true}
-                                active={isOpen}
-                                className="ml-8 cursor-pointer"
-                                elementRef={ref as any}
-                              >
-                                <Icon
-                                  className="ml-8 cursor-pointer"
-                                  icon={isOpen ? 'minus' : 'plus'}
-                                  iconSize={25}
-                                  color="white"
-                                />
-                              </Button>
-                            )}
-                          />
-                          <div className="bg-gray-900 rounded-2xl p-8 absolute -right-16 top-0 hidden">
-                            <div className="mb-5">
-                              03/01/21 - 14:05:51
-                              <br />
-                              <Link
-                                to={{}}
-                                className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                              >
-                                0x413…89054
-                              </Link>
-                            </div>
-                            <div className="mb-5">
-                              03/01/21 - 14:05:51
-                              <br />
-                              <Link
-                                to={{}}
-                                className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                              >
-                                0x413…89054
-                              </Link>
-                            </div>
-                            <div>
-                              03/01/21 - 14:05:51
-                              <br />
-                              <Link
-                                to={{}}
-                                className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                              >
-                                0x413…89054
-                              </Link>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        4 weeks
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        <p>03/01/21 - 14:05:51</p>
-                      </td>
-                      <td className="text-left font-normal">
-                        03/01/21 - 14:05:51
-                        <br />
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                        >
-                          0x413…89054
-                        </Link>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="username flex items-center">
-                          <div>
-                            <img
-                              src={logoSvg}
-                              className="ml-3 mr-3"
-                              alt="sov"
-                            />
-                          </div>
-                          <div className="text-sm font-normal hidden xl:block">
-                            SOV
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        1000.00 SOV
-                        <br />≈ 1000.00 USD
-                      </td>
-                      <td className="text-left font-normal">≈ 1000.00 USD</td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        100,000
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal relative">
-                        <div className="flex items-center">
-                          <div>
-                            03/01/21 - 14:05:51
-                            <br />
-                            <Link
-                              to={{}}
-                              className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                            >
-                              0x413…89054
-                            </Link>
-                          </div>
-                          <Popover2
-                            popoverClassName="bg-transparent rounded-2xl overflow-hidden no-border focus:no-outline no-shadow ml-6 -mt-6"
-                            placement="right-start"
-                            interactionKind="click"
-                            transitionDuration={100}
+                            minimal={true}
                             content={
                               <div className="bg-gray-900 rounded-2xl p-8 text-xs">
                                 <div className="mb-5">

@@ -183,13 +183,6 @@ export function StakingDateSelector(props: Props) {
     }
   }, [props.prevExtend, getDatesByYear, selectedYear]);
 
-  // useEffect(() => {
-  //   if (props.autoselect && !props.value && dateWithoutStake.length) {
-  //     props.onChange(dateWithoutStake[0].key);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [props.autoselect, props.value, dateWithoutStake]);
-
   return (
     <>
       <label className="block mt-8 text-theme-white text-md font-medium mb-2">
