@@ -217,7 +217,7 @@ function InnerStakePage(props: Props) {
                 </button>
                 <button
                   type="button"
-                  className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                  className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
                   onClick={() => {
                     setAmount(item[0]);
                     setWithdrawAmount('');
