@@ -157,10 +157,10 @@
 
     @media (min-width: 1700px) {
         .min-w-15 {
-            min-width: 15rem;
+            min-width: 16.6rem;
         }
         .max-w-15 {
-            max-width: 15rem;
+            max-width: 16.6rem;
         }
     }
 }

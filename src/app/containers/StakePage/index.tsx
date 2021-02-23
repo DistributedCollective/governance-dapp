@@ -29,6 +29,9 @@ import { useStaking_computeWeightByDate } from '../../hooks/staking/useStaking_c
 import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
 import { useStaking_currentBalance } from '../../hooks/staking/useStaking_currentBalance';
 import { useStaking_WEIGHT_FACTOR } from '../../hooks/staking/useStaking_WEIGHT_FACTOR';
+import { useVesting_getVesting } from '../../hooks/vesting-registry/useVesting_getVesting';
+import { useVesting_getTeamVesting } from '../../hooks/vesting-registry/useVesting_getTeamVesting';
+import { genesisAddress } from 'utils/helpers';
 import {
   staking_allowance,
   staking_approve,
@@ -98,6 +101,8 @@ function InnerStakePage(props: Props) {
   const kickoffTs = useStaking_kickoffTs();
   const getStakes = useStaking_getStakes(account);
   const sovBalanceOf = useSoV_balanceOf(account);
+  const vesting = useVesting_getVesting(account);
+  const vestingTeam = useVesting_getTeamVesting(account);
 
   const totalStakedBalance = useSoV_balanceOf(getContract('staking').address);
   const s = useStaking_currentBalance(account);
@@ -154,9 +159,6 @@ function InnerStakePage(props: Props) {
                 <br />≈ 75,000.00 USD
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
-                100,000,000
-              </td>
-              <td className="text-left hidden lg:table-cell font-normal">
                 {moment(new Date(parseInt(item[1]) * 1e3)).format(
                   'DD/MM/YYYY - h:mm:ss a',
                 )}
@@ -185,52 +187,54 @@ function InnerStakePage(props: Props) {
                 </p>
               </td>
               <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
-                <button
-                  type="button"
-                  className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                  onClick={() => {
-                    setTimestamp(item[1]);
-                    setAmount(item[0]);
-                    setUntil(item[1]);
-                    setStakeForm(false);
-                    setExtendForm(false);
-                    setIncreaseForm(true);
-                    setWithdrawForm(false);
-                  }}
-                >
-                  Increase
-                </button>
-                <button
-                  type="button"
-                  className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                  onClick={() => {
-                    setPrevTimestamp(item[1]);
-                    setTimestamp(item[1]);
-                    setAmount(item[0]);
-                    setStakeForm(false);
-                    setExtendForm(true);
-                    setIncreaseForm(false);
-                    setWithdrawForm(false);
-                  }}
-                >
-                  Extend
-                </button>
-                <button
-                  type="button"
-                  className="text-gold hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                  onClick={() => {
-                    setAmount(item[0]);
-                    setWithdrawAmount('');
-                    setTimestamp(item[1]);
-                    setUntil(item[1]);
-                    setStakeForm(false);
-                    setExtendForm(false);
-                    setIncreaseForm(false);
-                    setWithdrawForm(true);
-                  }}
-                >
-                  Unstake
-                </button>
+                <div className="flex flex-nowrap">
+                  <button
+                    type="button"
+                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                    onClick={() => {
+                      setTimestamp(item[1]);
+                      setAmount(item[0]);
+                      setUntil(item[1]);
+                      setStakeForm(false);
+                      setExtendForm(false);
+                      setIncreaseForm(true);
+                      setWithdrawForm(false);
+                    }}
+                  >
+                    Increase
+                  </button>
+                  <button
+                    type="button"
+                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                    onClick={() => {
+                      setPrevTimestamp(item[1]);
+                      setTimestamp(item[1]);
+                      setAmount(item[0]);
+                      setStakeForm(false);
+                      setExtendForm(true);
+                      setIncreaseForm(false);
+                      setWithdrawForm(false);
+                    }}
+                  >
+                    Extend
+                  </button>
+                  <button
+                    type="button"
+                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                    onClick={() => {
+                      setAmount(item[0]);
+                      setWithdrawAmount('');
+                      setTimestamp(item[1]);
+                      setUntil(item[1]);
+                      setStakeForm(false);
+                      setExtendForm(false);
+                      setIncreaseForm(false);
+                      setWithdrawForm(true);
+                    }}
+                  >
+                    Unstake
+                  </button>
+                </div>
               </td>
             </tr>
           );
@@ -238,7 +242,7 @@ function InnerStakePage(props: Props) {
       </>
     ) : (
       <tr>
-        <td colSpan={7} className="text-center font-normal">
+        <td colSpan={6} className="text-center font-normal">
           No stakes yet
         </td>
       </tr>
@@ -510,9 +514,6 @@ function InnerStakePage(props: Props) {
                       <th className="text-left">Asset</th>
                       <th className="text-left">Locked Amount</th>
                       <th className="text-left hidden lg:table-cell">
-                        Voting Power
-                      </th>
-                      <th className="text-left hidden lg:table-cell">
                         Staking Date
                       </th>
                       <th className="text-left hidden lg:table-cell">
@@ -544,9 +545,6 @@ function InnerStakePage(props: Props) {
                       <th className="text-left">Asset</th>
                       <th className="text-left">Locked Amount</th>
                       <th className="text-left hidden lg:table-cell">
-                        Voting Power
-                      </th>
-                      <th className="text-left hidden lg:table-cell">
                         Staking Date
                       </th>
                       <th className="text-left hidden lg:table-cell">
@@ -561,108 +559,62 @@ function InnerStakePage(props: Props) {
                     </tr>
                   </thead>
                   <tbody className="mt-5 font-montserrat text-xs">
-                    <tr>
-                      <td>
-                        <div className="username flex items-center">
-                          <div>
-                            <img
-                              src={logoSvg}
-                              className="ml-3 mr-3"
-                              alt="sov"
-                            />
+                    {vesting.value && vestingTeam.value !== genesisAddress ? (
+                      <tr>
+                        <td>
+                          <div className="username flex items-center">
+                            <div>
+                              <img
+                                src={logoSvg}
+                                className="ml-3 mr-3"
+                                alt="sov"
+                              />
+                            </div>
+                            <div className="text-sm font-normal hidden xl:block">
+                              SOV
+                            </div>
                           </div>
-                          <div className="text-sm font-normal hidden xl:block">
-                            SOV
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left font-normal">
-                        100,000.00 SOV
-                        <br />≈ 75,000.00 USD
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        100,000,000
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        03/01/21 - 14:05:51
-                        <br />
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                        >
-                          0x413…89054
-                        </Link>
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        4 weeks
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        <p className="opacity-30">
+                        </td>
+                        <td className="text-left font-normal">
+                          100,000.00 SOV
+                          <br />≈ 75,000.00 USD
+                        </td>
+                        <td className="text-left hidden lg:table-cell font-normal">
                           03/01/21 - 14:05:51
                           <br />
-                          -10 days
-                        </p>
-                      </td>
-                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
-                        <Link
-                          to={{}}
-                          className="cursor-not-allowed hover:cursor-not-allowed opacity-50 text-gold hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                        >
-                          Unstake
-                        </Link>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="username flex items-center">
-                          <div>
-                            <img
-                              src={logoSvg}
-                              className="ml-3 mr-3"
-                              alt="sov"
-                            />
-                          </div>
-                          <div className="text-sm font-normal hidden xl:block">
-                            SOV
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left font-normal">
-                        100,000.00 SOV
-                        <br />≈ 75,000.00 USD
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        100,000,000
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        03/01/21 - 14:05:51
-                        <br />
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                        >
-                          0x413…89054
-                        </Link>
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        36 weeks
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        <p>
-                          03/01/21 - 14:05:51
-                          <br />
-                          -10 days
-                        </p>
-                      </td>
-                      <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15 ">
-                        <Link
-                          to={{}}
-                          className="cursor-not-allowed hover:cursor-not-allowed opacity-50 text-gold hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                        >
-                          Unstake
-                        </Link>
-                      </td>
-                    </tr>
+                          <Link
+                            to={{}}
+                            className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                          >
+                            0x413…89054
+                          </Link>
+                        </td>
+                        <td className="text-left hidden lg:table-cell font-normal">
+                          4 weeks
+                        </td>
+                        <td className="text-left hidden lg:table-cell font-normal">
+                          <p className="opacity-30">
+                            03/01/21 - 14:05:51
+                            <br />
+                            -10 days
+                          </p>
+                        </td>
+                        <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
+                          <Link
+                            to={{}}
+                            className="cursor-not-allowed hover:cursor-not-allowed opacity-50 text-gold hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                          >
+                            Unstake
+                          </Link>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="text-center font-normal">
+                          No vests yet
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </StyledTable>
               </div>
