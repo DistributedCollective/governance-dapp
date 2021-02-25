@@ -50,6 +50,7 @@ export function IncreaseStakeForm(props: Props) {
               className="appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-14 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
               id="amountAdd"
               type="text"
+              placeholder="Enter amount"
               value={props.amount}
               onChange={e => props.onChangeAmount(handleNumberInput(e))}
             />

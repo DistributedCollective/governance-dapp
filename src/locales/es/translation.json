@@ -128,7 +128,9 @@
     "stats": "Data",
     "faqs": "FAQ",
     "help": "Help",
-    "referral": "Referral"
+    "referral": "Referral",
+    "vote": "Vote",
+    "stake": "Stake"
   },
   "trandingPositionSelector": {
     "long": "En Largo",
