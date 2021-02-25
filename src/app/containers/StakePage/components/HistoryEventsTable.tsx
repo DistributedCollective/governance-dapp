@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { LinkToExplorer } from '../../../components/LinkToExplorer';
 import { numberFromWei } from 'utils/helpers';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
@@ -60,12 +60,10 @@ export function HistoryEventsTable() {
                         new Date(parseInt(item.returnValues.lockedUntil) * 1e3),
                       ).format('DD/MM/YYYY - h:mm:ss a')}
                       <br />
-                      <Link
-                        to={{}}
+                      <LinkToExplorer
+                        txHash={item.transactionHash}
                         className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                      >
-                        0x413…89054
-                      </Link>
+                      />
                     </div>
                   </div>
                 </td>
