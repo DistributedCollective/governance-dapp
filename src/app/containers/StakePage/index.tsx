@@ -11,7 +11,7 @@ import { Helmet } from 'react-helmet-async';
 import { bignumber } from 'mathjs';
 import { Header } from 'app/components/Header';
 import moment from 'moment';
-
+// import VestingABI froms '../BlockChainProvider/abi/Vesting.json';
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import { reducer, sliceKey } from './slice';
 import { selectStakePage } from './selectors';
@@ -104,8 +104,22 @@ function InnerStakePage(props: Props) {
   const sovBalanceOf = useSoV_balanceOf(account);
   const vesting = useVesting_getVesting(account);
   const vestingTeam = useVesting_getTeamVesting(account);
-  // const balanceOfVest = useStaking_balanceOf(vesting.value);
+  const balanceOfVest = useStaking_balanceOf(vesting.value);
   // const balanceOfVestTeam = useStaking_balanceOf(vestingTeam.value);
+  // const voteBalanceVesting = useStaking_getCurrentVotes(vesting.value);
+  // const voteBalanceVestingTeam = useStaking_getCurrentVotes(vestingTeam.value);
+  const getStakesVesting = useStaking_getStakes(vesting.value);
+  const getStakesVestingTeam = useStaking_getStakes(vestingTeam.value);
+
+  // console.log('getStakes', getStakes);
+  // console.log('vesting', vesting);
+  // console.log('vestingTeam', vestingTeam);
+  // console.log('balanceOfVest', balanceOfVest);
+  // console.log('balanceOfVestTeam', balanceOfVestTeam);
+  // console.log('voteBalanceVesting', voteBalanceVesting);
+  // console.log('voteBalanceVestingTeam', voteBalanceVestingTeam);
+  // console.log('getStakesVesting', getStakesVesting);
+  // console.log('getStakesVestingTeam', getStakesVestingTeam);
 
   const totalStakedBalance = useSoV_balanceOf(getContract('staking').address);
   const s = useStaking_currentBalance(account);
@@ -141,9 +155,193 @@ function InnerStakePage(props: Props) {
   if (dates && stakes) {
     stakesArray = dates.map((v, index) => [stakes[index], v]);
   }
+
+  let datesVesting = getStakesVesting.value['dates'];
+  let stakesVesting = getStakesVesting.value['stakes'];
+  let stakesArrayVesting = [];
+  if (datesVesting && stakesVesting) {
+    stakesArrayVesting = datesVesting.map((v, index) => [
+      stakesVesting[index],
+      v,
+    ]);
+  }
+
+  let datesVestingTeam = getStakesVestingTeam.value['dates'];
+  let stakesVestingTeam = getStakesVestingTeam.value['stakes'];
+  let stakesArrayVestingTeam = [];
+  if (datesVestingTeam && stakesVestingTeam) {
+    stakesArrayVestingTeam = datesVestingTeam.map((v, index) => [
+      stakesVestingTeam[index],
+      v,
+    ]);
+  }
   interface Stakes {
     stakes: any[] | any;
   }
+  interface Vesting {
+    vesting?: any[] | any;
+    vestingTeam?: any[] | any;
+  }
+
+  const VestingOverview: React.FC<Vesting> = ({ vesting, vestingTeam }) => {
+    return vesting.length || vestingTeam.length ? (
+      <>
+        {vesting &&
+          vesting.map((item, i: string) => {
+            return (
+              <tr key={i}>
+                <td>
+                  <div className="username flex items-center">
+                    <div>
+                      <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
+                    </div>
+                    <div className="text-sm font-normal hidden xl:block">
+                      CSOV
+                    </div>
+                  </div>
+                </td>
+                <td className="text-left font-normal">
+                  {numberFromWei(item[0])} CSOV
+                </td>
+                <td className="text-left hidden lg:table-cell font-normal">
+                  {moment(new Date(parseInt(item[1]) * 1e3)).format(
+                    'DD/MM/YYYY - h:mm:ss a',
+                  )}
+                  <br />
+                  <Link
+                    to={{}}
+                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                  >
+                    0x413…89054
+                  </Link>
+                </td>
+                <td className="text-left hidden lg:table-cell font-normal">
+                  4 weeks
+                </td>
+                <td className="text-left hidden lg:table-cell font-normal">
+                  <p>
+                    {moment(new Date(parseInt(item[1]) * 1e3)).format(
+                      'DD/MM/YYYY',
+                    )}
+                    <br />
+                    {moment().diff(
+                      moment(new Date(parseInt(item[1]) * 1e3)),
+                      'days',
+                    )}{' '}
+                    days
+                  </p>
+                </td>
+                <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
+                  <div className="flex flex-nowrap justify-end">
+                    <button
+                      type="button"
+                      disabled
+                      className="opacity-30 text-gold tracking-normal hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                      onClick={() => {
+                        setAmount(item[0]);
+                        setWithdrawAmount('');
+                        setTimestamp(item[1]);
+                        setUntil(item[1]);
+                        setStakeForm(false);
+                        setExtendForm(false);
+                        setIncreaseForm(false);
+                        setWithdrawForm(true);
+                      }}
+                    >
+                      Unstake
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        {vestingTeam && (
+          <tr>
+            <td colSpan={6} className="text-center font-normal">
+              Veastin Team
+            </td>
+          </tr>
+        )}
+        {vestingTeam &&
+          vestingTeam.map((item, i: string) => {
+            return (
+              <tr key={i}>
+                <td>
+                  <div className="username flex items-center">
+                    <div>
+                      <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
+                    </div>
+                    <div className="text-sm font-normal hidden xl:block">
+                      CSOV
+                    </div>
+                  </div>
+                </td>
+                <td className="text-left font-normal">
+                  {numberFromWei(item[0])} CSOV
+                </td>
+                <td className="text-left hidden lg:table-cell font-normal">
+                  {moment(new Date(parseInt(item[1]) * 1e3)).format(
+                    'DD/MM/YYYY - h:mm:ss a',
+                  )}
+                  <br />
+                  <Link
+                    to={{}}
+                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                  >
+                    0x413…89054
+                  </Link>
+                </td>
+                <td className="text-left hidden lg:table-cell font-normal">
+                  4 weeks
+                </td>
+                <td className="text-left hidden lg:table-cell font-normal">
+                  <p>
+                    {moment(new Date(parseInt(item[1]) * 1e3)).format(
+                      'DD/MM/YYYY',
+                    )}
+                    <br />
+                    {moment().diff(
+                      moment(new Date(parseInt(item[1]) * 1e3)),
+                      'days',
+                    )}{' '}
+                    days
+                  </p>
+                </td>
+                <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
+                  <div className="flex flex-nowrap justify-end">
+                    <button
+                      type="button"
+                      className="opacity-30 text-gold tracking-normal hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                      onClick={() => {
+                        setAmount(item[0]);
+                        setWithdrawAmount('');
+                        setTimestamp(item[1]);
+                        setUntil(item[1]);
+                        setStakeForm(false);
+                        setExtendForm(false);
+                        setIncreaseForm(false);
+                        setWithdrawForm(true);
+                      }}
+                    >
+                      Unstake
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+      </>
+    ) : (
+      <tr>
+        <td
+          colSpan={6}
+          className={`text-center font-normal ${vesting.loading && 'skeleton'}`}
+        >
+          No vests yet
+        </td>
+      </tr>
+    );
+  };
 
   const StakesOverview: React.FC<Stakes> = ({ stakes }) => {
     return stakes.length ? (
@@ -249,7 +447,9 @@ function InnerStakePage(props: Props) {
       <tr>
         <td
           colSpan={6}
-          className={`text-center font-normal ${loading && 'skeleton'}`}
+          className={`text-center font-normal ${
+            getStakes.loading && 'skeleton'
+          }`}
         >
           No stakes yet
         </td>
@@ -329,6 +529,30 @@ function InnerStakePage(props: Props) {
     },
     [weiAmount, sovBalanceOf.value, account, timestamp],
   );
+
+  // const [vestingTimeDuration, setVestingTimeDuration] = useState<any>();
+
+  // useEffect(() => {
+  //   async function getVestTimeDuration() {
+  //     try {
+  //       const response = await network.callCustomContract(
+  //         vesting.value,
+  //         VestingABI,
+  //         'duration',
+  //         [],
+  //       );
+  //       setVestingTimeDuration(response);
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   }
+  //   getVestTimeDuration();
+  // }, [account, vesting.value]);
+
+  // console.log(
+  //   'vestingTimeDuration',
+  //   Math.floor(vestingTimeDuration / (3600 * 24)),
+  // );
 
   const handleIncreaseStakeSubmit = useCallback(
     async e => {
@@ -415,6 +639,12 @@ function InnerStakePage(props: Props) {
                 <p className="text-lg -mt-1">Total staked SOV</p>
                 <p className="text-4-5xl mt-2 mb-6">
                   {numberFromWei(balanceOf.value).toLocaleString()} SOV
+                  {balanceOfVest.value !== '0' && (
+                    <>
+                      <br />
+                      {numberFromWei(balanceOfVest.value).toLocaleString()} CSOV
+                    </>
+                  )}
                 </p>
                 <Modal
                   show={stakeForm}
@@ -436,20 +666,22 @@ function InnerStakePage(props: Props) {
                     </>
                   }
                 />
-                <button
-                  type="button"
-                  className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light py-3 px-3 border transition-colors duration-300 ease-in-out border-gold rounded-xl"
-                  onClick={() => {
-                    setTimestamp(0);
-                    setAmount('');
-                    setStakeForm(!stakeForm);
-                    setExtendForm(false);
-                    setIncreaseForm(false);
-                    setWithdrawForm(false);
-                  }}
-                >
-                  Add New Stake
-                </button>
+                {balanceOf.value !== '0' && (
+                  <button
+                    type="button"
+                    className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light py-3 px-3 border transition-colors duration-300 ease-in-out border-gold rounded-xl"
+                    onClick={() => {
+                      setTimestamp(0);
+                      setAmount('');
+                      setStakeForm(!stakeForm);
+                      setExtendForm(false);
+                      setIncreaseForm(false);
+                      setWithdrawForm(false);
+                    }}
+                  >
+                    Add New Stake
+                  </button>
+                )}
               </div>
 
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 text-sm mb-5 xl:mb-0">
@@ -515,7 +747,7 @@ function InnerStakePage(props: Props) {
               Current Stakes
             </p>
             <div className="bg-gray-light rounded-b shadow">
-              <div className="rounded-lg border sovryn-table pt-1 pb-0 pr-5 pl-5 mb-5 ">
+              <div className="rounded-lg border sovryn-table pt-1 pb-0 pr-5 pl-5 mb-5 max-h-96 overflow-y-auto">
                 <StyledTable className="w-full">
                   <thead>
                     <tr>
@@ -546,7 +778,7 @@ function InnerStakePage(props: Props) {
               Current Vests
             </p>
             <div className="bg-gray-light rounded-b shadow">
-              <div className="rounded-lg border sovryn-table pt-1 pb-0 pr-5 pl-5 mb-5 ">
+              <div className="rounded-lg border sovryn-table pt-1 pb-0 pr-5 pl-5 mb-5 max-h-96 overflow-y-auto">
                 <StyledTable className="w-full">
                   <thead>
                     <tr>
@@ -570,54 +802,10 @@ function InnerStakePage(props: Props) {
                     {!loading &&
                     vesting.value &&
                     vestingTeam.value !== genesisAddress ? (
-                      <tr>
-                        <td>
-                          <div className="username flex items-center">
-                            <div>
-                              <img
-                                src={logoSvg}
-                                className="ml-3 mr-3"
-                                alt="sov"
-                              />
-                            </div>
-                            <div className="text-sm font-normal hidden xl:block">
-                              SOV
-                            </div>
-                          </div>
-                        </td>
-                        <td className="text-left font-normal">
-                          100,000.00 SOV
-                          <br />≈ 75,000.00 USD
-                        </td>
-                        <td className="text-left hidden lg:table-cell font-normal">
-                          03/01/21 - 14:05:51
-                          <br />
-                          <Link
-                            to={{}}
-                            className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                          >
-                            0x413…89054
-                          </Link>
-                        </td>
-                        <td className="text-left hidden lg:table-cell font-normal">
-                          4 weeks
-                        </td>
-                        <td className="text-left hidden lg:table-cell font-normal">
-                          <p className="opacity-30">
-                            03/01/21 - 14:05:51
-                            <br />
-                            -10 days
-                          </p>
-                        </td>
-                        <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
-                          <Link
-                            to={{}}
-                            className="cursor-not-allowed hover:cursor-not-allowed opacity-50 text-gold hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-3 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                          >
-                            Unstake
-                          </Link>
-                        </td>
-                      </tr>
+                      <VestingOverview
+                        vesting={stakesArrayVesting}
+                        vestingTeam={stakesArrayVestingTeam}
+                      />
                     ) : (
                       <tr>
                         <td
@@ -638,8 +826,8 @@ function InnerStakePage(props: Props) {
             <p className="font-normal text-lg ml-6 mb-1 mt-16">
               Staking History
             </p>
-            <div className="bg-gray-light rounded-b shadow">
-              <div className="rounded-lg border border-transparent sovryn-table pt-1 pb-3 pr-5 pl-5 mb-5 ">
+            <div className="bg-gray-light rounded-b shadow max-h-96 overflow-y-auto mb-10">
+              <div className="rounded-lg border sovryn-table pt-1 pb-0 pr-5 pl-5 mb-5 max-h-96 overflow-y-auto">
                 <StyledTable className="w-full">
                   <thead>
                     <tr>
