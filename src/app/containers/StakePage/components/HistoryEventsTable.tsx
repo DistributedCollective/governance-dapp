@@ -55,13 +55,11 @@ export function HistoryEventsTable() {
     getHistoryEvent();
   }, [account, vestingTeam.value, vesting.value]);
 
-  // console.log('eventsHistory', eventsHistory);
-
   return eventsHistory || eventsHistoryVesting || eventsHistoryVestingTeam ? (
     <>
       {eventsHistory &&
-        eventsHistory.length > 0 &&
         !loading &&
+        eventsHistory.length > 0 &&
         eventsHistory.map((item, i: string) => {
           return (
             <>
@@ -246,8 +244,8 @@ export function HistoryEventsTable() {
           );
         })}
       {eventsHistoryVesting &&
-        eventsHistoryVesting.length > 0 &&
         !loading &&
+        eventsHistoryVesting.length > 0 &&
         eventsHistoryVesting.map((item, i: string) => {
           return (
             <>
@@ -288,8 +286,8 @@ export function HistoryEventsTable() {
           );
         })}
       {eventsHistoryVestingTeam &&
-        eventsHistoryVestingTeam.length > 0 &&
         !loading &&
+        eventsHistoryVestingTeam.length > 0 &&
         eventsHistoryVestingTeam.map((item, i: string) => {
           return (
             <>
@@ -329,6 +327,11 @@ export function HistoryEventsTable() {
             </>
           );
         })}
+      {loading && (
+        <>
+          <td colSpan={4} className="skeleton"></td>
+        </>
+      )}
     </>
   ) : (
     <tr>

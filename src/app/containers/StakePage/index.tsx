@@ -827,7 +827,7 @@ function InnerStakePage(props: Props) {
               Staking History
             </p>
             <div className="bg-gray-light rounded-b shadow max-h-96 overflow-y-auto mb-10">
-              <div className="rounded-lg border sovryn-table pt-1 pb-0 pr-5 pl-5 mb-5 max-h-96 overflow-y-auto">
+              <div className="rounded-lg border sovryn-table pt-1 pb-0 pr-5 pl-5 max-h-96 overflow-y-auto">
                 <StyledTable className="w-full">
                   <thead>
                     <tr>
