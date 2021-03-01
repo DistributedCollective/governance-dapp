@@ -31,7 +31,7 @@ export function ProposalDetailsPage() {
   const [loading, setLoading] = useState(false);
   const [votesLoading, setVotesLoading] = useState(true);
   const [votes, setVotes] = useState<
-    { support: boolean; voter: string; votes: number }[]
+    { support: boolean; voter: string; votes: number; txs: string }[]
   >([]);
   const votesForProgressPercents =
     (numberFromWei(data?.forVotes || 0) /
@@ -76,10 +76,11 @@ export function ProposalDetailsPage() {
         )
         .then(events => {
           setVotes(
-            events.map(({ returnValues }) => ({
+            events.map(({ returnValues, transactionHash }) => ({
               support: returnValues.support,
               voter: returnValues.voter,
               votes: returnValues.votes,
+              txs: transactionHash,
             })),
           );
           setVotesLoading(false);
@@ -269,14 +270,14 @@ export function ProposalDetailsPage() {
 }
 
 interface TableProps {
-  items: Array<{ support: boolean; voter: string; votes: number }>;
+  items: Array<{ support: boolean; voter: string; votes: number; txs: string }>;
   loading: boolean;
   showSupporters: boolean;
 }
 
 function VotingTable(props: TableProps) {
   const [items, setItems] = useState<
-    { support: boolean; voter: string; votes: number }[]
+    { support: boolean; voter: string; votes: number; txs: string }[]
   >([]);
 
   useEffect(() => {
@@ -302,6 +303,7 @@ function VotingTable(props: TableProps) {
                 key={index}
                 voter={item.voter}
                 votes={numberFromWei(item.votes)}
+                txs={item.txs}
                 loading={props.loading}
               />
             ))}
@@ -324,10 +326,12 @@ function VotingTable(props: TableProps) {
 function VotingRow({
   voter,
   votes,
+  txs,
   loading,
 }: {
   voter?: string;
   votes?: number;
+  txs?: string;
   loading?: boolean;
 }) {
   const { chainId } = useSelector(selectBlockChainProvider);
@@ -366,7 +370,7 @@ function VotingRow({
     <tr>
       <td>
         <a
-          href={`${url}/address/${voter}`}
+          href={`${url}/address/${voter?.toLocaleLowerCase()}`}
           target="_blank"
           rel="noreferrer"
           className="text-white transition no-underline p-0 m-0 duration-300 bordered-list-item hover:text-gold hover:no-underline"
@@ -376,12 +380,12 @@ function VotingRow({
       </td>
       <td className="hidden md:table-cell">
         <a
-          href={`${url}/address/${voter}`}
+          href={`${url}/tx/${txs?.toLocaleLowerCase()}`}
           target="_blank"
           rel="noreferrer"
           className="text-white transition no-underline p-0 m-0 duration-300 bordered-list-item hover:text-gold hover:no-underline"
         >
-          {prettyTx(voter as string)}
+          {prettyTx(txs as string)}
         </a>
       </td>
       <td>{kFormatter(votes)}</td>
