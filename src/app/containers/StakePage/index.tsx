@@ -8,30 +8,27 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { bignumber } from 'mathjs';
 import { Header } from 'app/components/Header';
 import moment from 'moment';
-// import VestingABI froms '../BlockChainProvider/abi/Vesting.json';
+import { bignumber } from 'mathjs';
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
-import { reducer, sliceKey } from './slice';
-import { selectStakePage } from './selectors';
 import { stakePageSaga } from './saga';
+import { selectStakePage } from './selectors';
+import { reducer, sliceKey } from './slice';
 import { Footer } from '../../components/Footer/Loadable';
-import { VoteProgress } from '../../components/VoteProgress';
-import { useAccount } from '../../hooks/useAccount';
-import { useStaking_getStakes } from '../../hooks/staking/useStaking_getStakes';
 import { network } from '../BlockChainProvider/network';
-import { getContract, numberFromWei } from '../../../utils/helpers';
+import { useAccount } from '../../hooks/useAccount';
 import { useWeiAmount } from '../../hooks/useWeiAmount';
+import { numberFromWei } from '../../../utils/helpers';
 import { useSoV_balanceOf } from '../../hooks/sov/useSoV_balanceOf';
+import { useStaking_getStakes } from '../../hooks/staking/useStaking_getStakes';
+import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
+import { useVesting_getVesting } from '../../hooks/vesting-registry/useVesting_getVesting';
+import { useStaking_WEIGHT_FACTOR } from '../../hooks/staking/useStaking_WEIGHT_FACTOR';
+import { useStaking_currentBalance } from '../../hooks/staking/useStaking_currentBalance';
+import { useVesting_getTeamVesting } from '../../hooks/vesting-registry/useVesting_getTeamVesting';
 import { useStaking_getCurrentVotes } from '../../hooks/staking/useStaking_getCurrentVotes';
 import { useStaking_computeWeightByDate } from '../../hooks/staking/useStaking_computeWeightByDate';
-import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
-import { useStaking_currentBalance } from '../../hooks/staking/useStaking_currentBalance';
-import { useStaking_WEIGHT_FACTOR } from '../../hooks/staking/useStaking_WEIGHT_FACTOR';
-import { useVesting_getVesting } from '../../hooks/vesting-registry/useVesting_getVesting';
-import { useVesting_getTeamVesting } from '../../hooks/vesting-registry/useVesting_getTeamVesting';
-import { genesisAddress } from 'utils/helpers';
 import {
   staking_allowance,
   staking_approve,
@@ -41,11 +38,11 @@ import {
 } from '../BlockChainProvider/requests/staking';
 import { Modal } from '../../components/Modal';
 import { StakeForm } from './components/StakeForm';
-import { PageSkeleton } from '../../components/PageSkeleton';
 import { WithdrawForm } from './components/WithdrawForm';
 import { useIsConnected } from '../../hooks/useIsConnected';
-import { IncreaseStakeForm } from './components/IncreaseStakeForm';
+import { useContractCall } from '../../hooks/useContractCall';
 import { ExtendStakeForm } from './components/ExtendStakeForm';
+import { IncreaseStakeForm } from './components/IncreaseStakeForm';
 import { HistoryEventsTable } from './components/HistoryEventsTable';
 import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
 // import {
@@ -105,23 +102,11 @@ function InnerStakePage(props: Props) {
   const vesting = useVesting_getVesting(account);
   const vestingTeam = useVesting_getTeamVesting(account);
   const balanceOfVest = useStaking_balanceOf(vesting.value);
-  // const balanceOfVestTeam = useStaking_balanceOf(vestingTeam.value);
-  // const voteBalanceVesting = useStaking_getCurrentVotes(vesting.value);
-  // const voteBalanceVestingTeam = useStaking_getCurrentVotes(vestingTeam.value);
+
   const getStakesVesting = useStaking_getStakes(vesting.value);
   const getStakesVestingTeam = useStaking_getStakes(vestingTeam.value);
 
-  // console.log('getStakes', getStakes);
-  // console.log('vesting', vesting);
-  // console.log('vestingTeam', vestingTeam);
-  // console.log('balanceOfVest', balanceOfVest);
-  // console.log('balanceOfVestTeam', balanceOfVestTeam);
-  // console.log('voteBalanceVesting', voteBalanceVesting);
-  // console.log('voteBalanceVestingTeam', voteBalanceVestingTeam);
-  // console.log('getStakesVesting', getStakesVesting);
-  // console.log('getStakesVestingTeam', getStakesVestingTeam);
-
-  const totalStakedBalance = useSoV_balanceOf(getContract('staking').address);
+  const durationWeeks = useContractCall('vestingRegistry', 'FOUR_WEEKS');
   const s = useStaking_currentBalance(account);
 
   const [amount, setAmount] = useState('');
@@ -147,7 +132,6 @@ function InnerStakePage(props: Props) {
     lockDate,
     Math.round(now.getTime() / 1e3),
   );
-  // const [eventsHistory, setEventsHistory] = useState<any>();
 
   let dates = getStakes.value['dates'];
   let stakes = getStakes.value['stakes'];
@@ -179,15 +163,15 @@ function InnerStakePage(props: Props) {
     stakes: any[] | any;
   }
   interface Vesting {
-    vesting?: any[] | any;
-    vestingTeam?: any[] | any;
+    vest?: any[] | any;
+    vestTeam?: any[] | any;
   }
 
-  const VestingOverview: React.FC<Vesting> = ({ vesting, vestingTeam }) => {
-    return vesting.length || vestingTeam.length ? (
+  const VestingOverview: React.FC<Vesting> = ({ vest, vestTeam }) => {
+    return vest.length || vestTeam.length ? (
       <>
-        {vesting &&
-          vesting.map((item, i: string) => {
+        {vest &&
+          vest.map((item, i: string) => {
             return (
               <tr key={i}>
                 <td>
@@ -207,16 +191,12 @@ function InnerStakePage(props: Props) {
                   {moment(new Date(parseInt(item[1]) * 1e3)).format(
                     'DD/MM/YYYY - h:mm:ss a',
                   )}
-                  <br />
-                  <Link
-                    to={{}}
-                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                  >
-                    0x413…89054
-                  </Link>
                 </td>
                 <td className="text-left hidden lg:table-cell font-normal">
-                  4 weeks
+                  {moment(
+                    new Date(parseInt(durationWeeks.value as any)),
+                  ).format('d')}{' '}
+                  weeks
                 </td>
                 <td className="text-left hidden lg:table-cell font-normal">
                   <p>
@@ -255,15 +235,15 @@ function InnerStakePage(props: Props) {
               </tr>
             );
           })}
-        {vestingTeam && (
+        {vestTeam && (
           <tr>
             <td colSpan={6} className="text-center font-normal">
               Veastin Team
             </td>
           </tr>
         )}
-        {vestingTeam &&
-          vestingTeam.map((item, i: string) => {
+        {vestTeam &&
+          vestTeam.map((item, i: string) => {
             return (
               <tr key={i}>
                 <td>
@@ -283,16 +263,12 @@ function InnerStakePage(props: Props) {
                   {moment(new Date(parseInt(item[1]) * 1e3)).format(
                     'DD/MM/YYYY - h:mm:ss a',
                   )}
-                  <br />
-                  <Link
-                    to={{}}
-                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                  >
-                    0x413…89054
-                  </Link>
                 </td>
                 <td className="text-left hidden lg:table-cell font-normal">
-                  4 weeks
+                  {moment(
+                    new Date(parseInt(durationWeeks.value as any)),
+                  ).format('d')}{' '}
+                  weeks
                 </td>
                 <td className="text-left hidden lg:table-cell font-normal">
                   <p>
@@ -335,7 +311,9 @@ function InnerStakePage(props: Props) {
       <tr>
         <td
           colSpan={6}
-          className={`text-center font-normal ${vesting.loading && 'skeleton'}`}
+          className={`text-center font-normal ${
+            (vesting.loading || vestingTeam.loading) && 'skeleton'
+          }`}
         >
           No vests yet
         </td>
@@ -359,19 +337,11 @@ function InnerStakePage(props: Props) {
               </td>
               <td className="text-left font-normal">
                 {numberFromWei(item[0])} SOV
-                <br />≈ 75,000.00 USD
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 {moment(new Date(parseInt(item[1]) * 1e3)).format(
                   'DD/MM/YYYY - h:mm:ss a',
                 )}
-                <br />
-                <Link
-                  to={{}}
-                  className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                >
-                  0x413…89054
-                </Link>
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 4 weeks
@@ -529,30 +499,6 @@ function InnerStakePage(props: Props) {
     },
     [weiAmount, sovBalanceOf.value, account, timestamp],
   );
-
-  // const [vestingTimeDuration, setVestingTimeDuration] = useState<any>();
-
-  // useEffect(() => {
-  //   async function getVestTimeDuration() {
-  //     try {
-  //       const response = await network.callCustomContract(
-  //         vesting.value,
-  //         VestingABI,
-  //         'duration',
-  //         [],
-  //       );
-  //       setVestingTimeDuration(response);
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //   }
-  //   getVestTimeDuration();
-  // }, [account, vesting.value]);
-
-  // console.log(
-  //   'vestingTimeDuration',
-  //   Math.floor(vestingTimeDuration / (3600 * 24)),
-  // );
 
   const handleIncreaseStakeSubmit = useCallback(
     async e => {
@@ -799,25 +745,10 @@ function InnerStakePage(props: Props) {
                     </tr>
                   </thead>
                   <tbody className="mt-5 font-montserrat text-xs">
-                    {!loading &&
-                    vesting.value &&
-                    vestingTeam.value !== genesisAddress ? (
-                      <VestingOverview
-                        vesting={stakesArrayVesting}
-                        vestingTeam={stakesArrayVestingTeam}
-                      />
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan={6}
-                          className={`text-center font-normal ${
-                            loading && 'skeleton'
-                          }`}
-                        >
-                          No vests yet
-                        </td>
-                      </tr>
-                    )}
+                    <VestingOverview
+                      vest={stakesArrayVesting}
+                      vestTeam={stakesArrayVestingTeam}
+                    />
                   </tbody>
                 </StyledTable>
               </div>
@@ -849,163 +780,80 @@ function InnerStakePage(props: Props) {
                 </StyledTable>
               </div>
             </div>
-
-            <div className="text-center mb-5 hidden">
-              <Link
-                to="/leaderboard"
-                className="inline-block text-center px-3 py-2 text-lg font-light hover:text-gold hover:no-underline"
-              >
-                View Leaderboard
-              </Link>
-            </div>
-
-            <div className="flex flex-col pb-8 md:flex-row md:space-x-4 hidden">
-              <div className="flex flex-row flex-no-wrap justify-between bg-gray-900 text-white p-3 w-full md:w-1/2 mb-3 md:mb-0">
-                <div>
-                  <div
-                    className={`text-white text-xl ${
-                      balanceOf.loading && 'skeleton'
-                    }`}
-                  >
-                    {numberFromWei(balanceOf.value).toLocaleString()}
-                  </div>
-                  <div className="text-gray-600 text-sm">You staked</div>
-                </div>
-                <div className="flex flex-col items-end justify-center w-1/2 border-1 border-red-300">
-                  <div className="mt-5 w-full">
-                    <VoteProgress
-                      value={numberFromWei(balanceOf.value)}
-                      max={numberFromWei(totalStakedBalance.value)}
-                      color="green"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-row flex-no-wrap justify-between bg-gray-900 text-white p-3 w-full md:w-1/2 mb-3 md:mb-0">
-                <div>
-                  <div
-                    className={`text-white text-xl ${
-                      voteBalance.loading && 'skeleton'
-                    }`}
-                  >
-                    {numberFromWei(voteBalance.value).toLocaleString()}
-                  </div>
-                  <div className="text-gray-600 text-sm">Your votes</div>
-                </div>
-              </div>
-            </div>
-            <div className="flex space-x-4 hidden">
-              <div className="bg-gray-light rounded-t shadow p-3 w-full">
-                <h4 className="font-bold">Staking</h4>
-              </div>
-            </div>
           </div>
-          <div className="container hidden">
-            <div className="flex flex-row space-x-4">
-              <div className="w-full bg-gray-light rounded-b shadow p-3">
-                {balanceOf.loading ? (
-                  <>
-                    <PageSkeleton />
-                  </>
-                ) : (
-                  <>
-                    {balanceOf.value !== '0' && (
+          <>
+            {balanceOf.value !== '0' && (
+              <>
+                {increaseForm === true && (
+                  <Modal
+                    show={increaseForm}
+                    content={
                       <>
-                        <button
-                          type="button"
-                          className={`bg-gray-500 text-white px-4 py-2 mb-4 rounded mr-2
-                          ${stakeForm && 'bg-green-500'}`}
-                          onClick={() => {
-                            setTimestamp(0);
-                            setAmount('');
-                            setStakeForm(!stakeForm);
-                            setExtendForm(false);
-                            setIncreaseForm(false);
-                            setWithdrawForm(false);
-                          }}
-                        >
-                          New Stake
-                        </button>
-                        {increaseForm === true && (
-                          <Modal
-                            show={increaseForm}
-                            content={
-                              <>
-                                <IncreaseStakeForm
-                                  handleSubmit={handleIncreaseStakeSubmit}
-                                  amount={amount}
-                                  timestamp={timestamp}
-                                  onChangeAmount={e => setAmount(e)}
-                                  sovBalanceOf={sovBalanceOf}
-                                  isValid={validateIncreaseForm()}
-                                  balanceOf={balanceOf}
-                                  votePower={votingPower}
-                                  onCloseModal={() =>
-                                    setIncreaseForm(!increaseForm)
-                                  }
-                                />
-                              </>
-                            }
-                          />
-                        )}
-                        {extendForm === true && (
-                          <Modal
-                            show={extendForm}
-                            content={
-                              <>
-                                {currentLock && kickoffTs.value !== '0' && (
-                                  <ExtendStakeForm
-                                    handleSubmit={handleExtendTimeSubmit}
-                                    amount={amount}
-                                    timestamp={timestamp}
-                                    onChangeTimestamp={e => setTimestamp(e)}
-                                    sovBalanceOf={sovBalanceOf}
-                                    kickoff={kickoffTs}
-                                    isValid={validateExtendTimeForm()}
-                                    stakes={getStakes.value['dates']}
-                                    balanceOf={balanceOf}
-                                    votePower={votingPower}
-                                    prevExtend={prevTimestamp}
-                                    currentLock={currentLock}
-                                    onCloseModal={() =>
-                                      setExtendForm(!extendForm)
-                                    }
-                                  />
-                                )}
-                              </>
-                            }
-                          />
-                        )}
-                        {withdrawForm === true && (
-                          <Modal
-                            show={withdrawForm}
-                            content={
-                              <>
-                                <WithdrawForm
-                                  handleSubmit={handleWithdrawSubmit}
-                                  withdrawAmount={withdrawAmount}
-                                  amount={amount}
-                                  until={timestamp}
-                                  onChangeAmount={e => setWithdrawAmount(e)}
-                                  sovBalanceOf={sovBalanceOf}
-                                  balanceOf={balanceOf}
-                                  votePower={votingPower}
-                                  isValid={validateWithdrawForm()}
-                                  onCloseModal={() =>
-                                    setWithdrawForm(!withdrawForm)
-                                  }
-                                />
-                              </>
-                            }
+                        <IncreaseStakeForm
+                          handleSubmit={handleIncreaseStakeSubmit}
+                          amount={amount}
+                          timestamp={timestamp}
+                          onChangeAmount={e => setAmount(e)}
+                          sovBalanceOf={sovBalanceOf}
+                          isValid={validateIncreaseForm()}
+                          balanceOf={balanceOf}
+                          votePower={votingPower}
+                          onCloseModal={() => setIncreaseForm(!increaseForm)}
+                        />
+                      </>
+                    }
+                  />
+                )}
+                {extendForm === true && (
+                  <Modal
+                    show={extendForm}
+                    content={
+                      <>
+                        {currentLock && kickoffTs.value !== '0' && (
+                          <ExtendStakeForm
+                            handleSubmit={handleExtendTimeSubmit}
+                            amount={amount}
+                            timestamp={timestamp}
+                            onChangeTimestamp={e => setTimestamp(e)}
+                            sovBalanceOf={sovBalanceOf}
+                            kickoff={kickoffTs}
+                            isValid={validateExtendTimeForm()}
+                            stakes={getStakes.value['dates']}
+                            balanceOf={balanceOf}
+                            votePower={votingPower}
+                            prevExtend={prevTimestamp}
+                            currentLock={currentLock}
+                            onCloseModal={() => setExtendForm(!extendForm)}
                           />
                         )}
                       </>
-                    )}
-                  </>
+                    }
+                  />
                 )}
-              </div>
-            </div>
-          </div>
+                {withdrawForm === true && (
+                  <Modal
+                    show={withdrawForm}
+                    content={
+                      <>
+                        <WithdrawForm
+                          handleSubmit={handleWithdrawSubmit}
+                          withdrawAmount={withdrawAmount}
+                          amount={amount}
+                          until={timestamp}
+                          onChangeAmount={e => setWithdrawAmount(e)}
+                          sovBalanceOf={sovBalanceOf}
+                          balanceOf={balanceOf}
+                          votePower={votingPower}
+                          isValid={validateWithdrawForm()}
+                          onCloseModal={() => setWithdrawForm(!withdrawForm)}
+                        />
+                      </>
+                    }
+                  />
+                )}
+              </>
+            )}
+          </>
         </div>
       </main>
       <Footer />

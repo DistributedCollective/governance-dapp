@@ -246,10 +246,10 @@ export function HistoryEventsTable() {
       {eventsHistoryVesting &&
         !loading &&
         eventsHistoryVesting.length > 0 &&
-        eventsHistoryVesting.map((item, i: string) => {
+        eventsHistoryVesting.map((item, j: string) => {
           return (
             <>
-              <tr key={i}>
+              <tr key={j}>
                 <td>
                   <div className="username flex items-center">
                     <div>
@@ -288,10 +288,10 @@ export function HistoryEventsTable() {
       {eventsHistoryVestingTeam &&
         !loading &&
         eventsHistoryVestingTeam.length > 0 &&
-        eventsHistoryVestingTeam.map((item, i: string) => {
+        eventsHistoryVestingTeam.map((item, k: string) => {
           return (
             <>
-              <tr key={i}>
+              <tr key={k}>
                 <td>
                   <div className="username flex items-center">
                     <div>
@@ -329,7 +329,9 @@ export function HistoryEventsTable() {
         })}
       {loading && (
         <>
-          <td colSpan={4} className="skeleton"></td>
+          <tr>
+            <td colSpan={4} className="skeleton"></td>
+          </tr>
         </>
       )}
     </>
