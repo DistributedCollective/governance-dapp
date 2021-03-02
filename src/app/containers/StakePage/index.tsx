@@ -26,7 +26,6 @@ import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
 import { useVesting_getVesting } from '../../hooks/vesting-registry/useVesting_getVesting';
 import { useStaking_WEIGHT_FACTOR } from '../../hooks/staking/useStaking_WEIGHT_FACTOR';
 import { useStaking_currentBalance } from '../../hooks/staking/useStaking_currentBalance';
-import { useVesting_getTeamVesting } from '../../hooks/vesting-registry/useVesting_getTeamVesting';
 import { useStaking_getCurrentVotes } from '../../hooks/staking/useStaking_getCurrentVotes';
 import { useStaking_computeWeightByDate } from '../../hooks/staking/useStaking_computeWeightByDate';
 import {
@@ -40,11 +39,12 @@ import { Modal } from '../../components/Modal';
 import { StakeForm } from './components/StakeForm';
 import { WithdrawForm } from './components/WithdrawForm';
 import { useIsConnected } from '../../hooks/useIsConnected';
-import { useContractCall } from '../../hooks/useContractCall';
 import { ExtendStakeForm } from './components/ExtendStakeForm';
 import { IncreaseStakeForm } from './components/IncreaseStakeForm';
 import { HistoryEventsTable } from './components/HistoryEventsTable';
 import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
+import { VestingTable } from './components/VestingTable';
+import { VestingTeamTable } from './components/VestingTeamTable';
 // import {
 //   governance_proposalCount,
 //   governance_propose,
@@ -100,13 +100,8 @@ function InnerStakePage(props: Props) {
   const getStakes = useStaking_getStakes(account);
   const sovBalanceOf = useSoV_balanceOf(account);
   const vesting = useVesting_getVesting(account);
-  const vestingTeam = useVesting_getTeamVesting(account);
+  // const vestingTeam = useVesting_getTeamVesting(account);
   const balanceOfVest = useStaking_balanceOf(vesting.value);
-
-  const getStakesVesting = useStaking_getStakes(vesting.value);
-  const getStakesVestingTeam = useStaking_getStakes(vestingTeam.value);
-
-  const durationWeeks = useContractCall('vestingRegistry', 'FOUR_WEEKS');
   const s = useStaking_currentBalance(account);
 
   const [amount, setAmount] = useState('');
@@ -140,186 +135,9 @@ function InnerStakePage(props: Props) {
     stakesArray = dates.map((v, index) => [stakes[index], v]);
   }
 
-  let datesVesting = getStakesVesting.value['dates'];
-  let stakesVesting = getStakesVesting.value['stakes'];
-  let stakesArrayVesting = [];
-  if (datesVesting && stakesVesting) {
-    stakesArrayVesting = datesVesting.map((v, index) => [
-      stakesVesting[index],
-      v,
-    ]);
-  }
-
-  let datesVestingTeam = getStakesVestingTeam.value['dates'];
-  let stakesVestingTeam = getStakesVestingTeam.value['stakes'];
-  let stakesArrayVestingTeam = [];
-  if (datesVestingTeam && stakesVestingTeam) {
-    stakesArrayVestingTeam = datesVestingTeam.map((v, index) => [
-      stakesVestingTeam[index],
-      v,
-    ]);
-  }
   interface Stakes {
     stakes: any[] | any;
   }
-  interface Vesting {
-    vest?: any[] | any;
-    vestTeam?: any[] | any;
-  }
-
-  const VestingOverview: React.FC<Vesting> = ({ vest, vestTeam }) => {
-    return vest.length || vestTeam.length ? (
-      <>
-        {vest &&
-          vest.map((item, i: string) => {
-            return (
-              <tr key={i}>
-                <td>
-                  <div className="username flex items-center">
-                    <div>
-                      <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
-                    </div>
-                    <div className="text-sm font-normal hidden xl:block">
-                      CSOV
-                    </div>
-                  </div>
-                </td>
-                <td className="text-left font-normal">
-                  {numberFromWei(item[0])} CSOV
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  {moment(new Date(parseInt(item[1]) * 1e3)).format(
-                    'DD/MM/YYYY - h:mm:ss a',
-                  )}
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  {moment(
-                    new Date(parseInt(durationWeeks.value as any)),
-                  ).format('d')}{' '}
-                  weeks
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  <p>
-                    {moment(new Date(parseInt(item[1]) * 1e3)).format(
-                      'DD/MM/YYYY',
-                    )}
-                    <br />
-                    {moment().diff(
-                      moment(new Date(parseInt(item[1]) * 1e3)),
-                      'days',
-                    )}{' '}
-                    days
-                  </p>
-                </td>
-                <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
-                  <div className="flex flex-nowrap justify-end">
-                    <button
-                      type="button"
-                      disabled
-                      className="opacity-30 text-gold tracking-normal hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                      onClick={() => {
-                        setAmount(item[0]);
-                        setWithdrawAmount('');
-                        setTimestamp(item[1]);
-                        setUntil(item[1]);
-                        setStakeForm(false);
-                        setExtendForm(false);
-                        setIncreaseForm(false);
-                        setWithdrawForm(true);
-                      }}
-                    >
-                      Unstake
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        {vestTeam && (
-          <tr>
-            <td colSpan={6} className="text-center font-normal">
-              Veastin Team
-            </td>
-          </tr>
-        )}
-        {vestTeam &&
-          vestTeam.map((item, i: string) => {
-            return (
-              <tr key={i}>
-                <td>
-                  <div className="username flex items-center">
-                    <div>
-                      <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
-                    </div>
-                    <div className="text-sm font-normal hidden xl:block">
-                      CSOV
-                    </div>
-                  </div>
-                </td>
-                <td className="text-left font-normal">
-                  {numberFromWei(item[0])} CSOV
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  {moment(new Date(parseInt(item[1]) * 1e3)).format(
-                    'DD/MM/YYYY - h:mm:ss a',
-                  )}
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  {moment(
-                    new Date(parseInt(durationWeeks.value as any)),
-                  ).format('d')}{' '}
-                  weeks
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  <p>
-                    {moment(new Date(parseInt(item[1]) * 1e3)).format(
-                      'DD/MM/YYYY',
-                    )}
-                    <br />
-                    {moment().diff(
-                      moment(new Date(parseInt(item[1]) * 1e3)),
-                      'days',
-                    )}{' '}
-                    days
-                  </p>
-                </td>
-                <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
-                  <div className="flex flex-nowrap justify-end">
-                    <button
-                      type="button"
-                      className="opacity-30 text-gold tracking-normal hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                      onClick={() => {
-                        setAmount(item[0]);
-                        setWithdrawAmount('');
-                        setTimestamp(item[1]);
-                        setUntil(item[1]);
-                        setStakeForm(false);
-                        setExtendForm(false);
-                        setIncreaseForm(false);
-                        setWithdrawForm(true);
-                      }}
-                    >
-                      Unstake
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-      </>
-    ) : (
-      <tr>
-        <td
-          colSpan={6}
-          className={`text-center font-normal ${
-            (vesting.loading || vestingTeam.loading) && 'skeleton'
-          }`}
-        >
-          No vests yet
-        </td>
-      </tr>
-    );
-  };
 
   const StakesOverview: React.FC<Stakes> = ({ stakes }) => {
     return stakes.length ? (
@@ -745,10 +563,8 @@ function InnerStakePage(props: Props) {
                     </tr>
                   </thead>
                   <tbody className="mt-5 font-montserrat text-xs">
-                    <VestingOverview
-                      vest={stakesArrayVesting}
-                      vestTeam={stakesArrayVestingTeam}
-                    />
+                    <VestingTable />
+                    <VestingTeamTable />
                   </tbody>
                 </StyledTable>
               </div>
@@ -896,18 +712,19 @@ const StyledTable = styled.table`
       &:nth-child(odd) {
         td {
           background-color: #282828;
+        }
+      }
+      td {
+        &:first-child {
+          border-radius: 6px 0 0 6px;
+        }
 
-          &:first-child {
-            border-radius: 6px 0 0 6px;
-          }
+        &:last-child {
+          border-radius: 0 6px 6px 0;
+        }
 
-          &:last-child {
-            border-radius: 0 6px 6px 0;
-          }
-
-          &:only-child {
-            border-radius: 6px;
-          }
+        &:only-child {
+          border-radius: 6px;
         }
       }
     }

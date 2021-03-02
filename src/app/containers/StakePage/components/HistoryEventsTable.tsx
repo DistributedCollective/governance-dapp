@@ -96,253 +96,105 @@ export function HistoryEventsTable() {
                   {numberFromWei(item.returnValues.totalStaked)} SOV
                 </td>
               </tr>
-              {/*<tr>
-                <td>
-                  <div className="username flex items-center">
-                    <div>
-                      <img
-                        src={logoSvg}
-                        className="ml-3 mr-3"
-                        alt="sov"
-                      />
-                    </div>
-                    <div className="text-sm font-normal hidden xl:block">
-                      SOV
-                    </div>
-                  </div>
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  1000.00 SOV
-                  <br />≈ 1000.00 USD
-                </td>
-                <td className="text-left font-normal">≈ 1000.00 USD</td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  100,000
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal relative">
-                  <div className="flex items-center">
-                    <div>
-                      03/01/21 - 14:05:51
-                      <br />
-                      <Link
-                        to={{}}
-                        className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                      >
-                        0x413…89054
-                      </Link>
-                    </div>
-                    <Popover2
-                      popoverClassName="bg-transparent rounded-2xl overflow-hidden no-border focus:no-border no-outline active:no-outline focus:no-outline no-shadow ml-6 -mt-6"
-                      placement="right-start"
-                      interactionKind="click"
-                      transitionDuration={100}
-                      minimal={true}
-                      content={
-                        <div className="bg-gray-900 rounded-2xl p-8 text-xs">
-                          <div className="mb-5">
-                            03/01/21 - 14:05:51
-                            <br />
-                            <Link
-                              to={{}}
-                              className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                            >
-                              0x413…89054
-                            </Link>
-                          </div>
-                          <div className="mb-5">
-                            03/01/21 - 14:05:51
-                            <br />
-                            <Link
-                              to={{}}
-                              className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                            >
-                              0x413…89054
-                            </Link>
-                          </div>
-                          <div>
-                            03/01/21 - 14:05:51
-                            <br />
-                            <Link
-                              to={{}}
-                              className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                            >
-                              0x413…89054
-                            </Link>
-                          </div>
-                        </div>
-                      }
-                      renderTarget={({ isOpen, ref, ...props }) => (
-                        <Button
-                          {...props}
-                          outlined={false}
-                          minimal={true}
-                          active={isOpen}
-                          className="ml-8 cursor-pointer"
-                          elementRef={ref as any}
-                        >
-                          <Icon
-                            className="ml-8 cursor-pointer"
-                            icon={isOpen ? 'minus' : 'plus'}
-                            iconSize={25}
-                            color="white"
-                          />
-                        </Button>
-                      )}
-                    />
-                    <div className="bg-gray-900 rounded-2xl p-8 absolute -right-16 top-0 hidden">
-                      <div className="mb-5">
-                        03/01/21 - 14:05:51
-                        <br />
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                        >
-                          0x413…89054
-                        </Link>
-                      </div>
-                      <div className="mb-5">
-                        03/01/21 - 14:05:51
-                        <br />
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                        >
-                          0x413…89054
-                        </Link>
-                      </div>
-                      <div>
-                        03/01/21 - 14:05:51
-                        <br />
-                        <Link
-                          to={{}}
-                          className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                        >
-                          0x413…89054
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  4 weeks
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  <p>03/01/21 - 14:05:51</p>
-                </td>
-                <td className="text-left font-normal">
-                  03/01/21 - 14:05:51
-                  <br />
-                  <Link
-                    to={{}}
-                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                  >
-                    0x413…89054
-                  </Link>
-                </td>
-              </tr>*/}
             </>
           );
         })}
       {eventsHistoryVesting &&
         !loading &&
         eventsHistoryVesting.length > 0 &&
-        eventsHistoryVesting.map((item, j: string) => {
+        eventsHistoryVesting.map(item => {
           return (
-            <>
-              <tr key={j}>
-                <td>
-                  <div className="username flex items-center">
-                    <div>
-                      <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
-                    </div>
-                    <div className="text-sm font-normal hidden xl:block">
-                      CSOV
-                    </div>
+            <tr key={item.id}>
+              <td>
+                <div className="username flex items-center">
+                  <div>
+                    <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
                   </div>
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  {numberFromWei(item.returnValues.amount)} CSOV
-                  <br />
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal relative">
-                  <div className="flex items-center">
-                    <div>
-                      {moment(
-                        new Date(parseInt(item.returnValues.lockedUntil) * 1e3),
-                      ).format('DD/MM/YYYY - h:mm:ss a')}
-                      <br />
-                      <LinkToExplorer
-                        txHash={item.transactionHash}
-                        className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                      />
-                    </div>
+                  <div className="text-sm font-normal hidden xl:block">
+                    CSOV
                   </div>
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  {numberFromWei(item.returnValues.totalStaked)} CSOV
-                </td>
-              </tr>
-            </>
+                </div>
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                {numberFromWei(item.returnValues.amount)} CSOV
+                <br />
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal relative">
+                <div className="flex items-center">
+                  <div>
+                    {moment(
+                      new Date(parseInt(item.returnValues.lockedUntil) * 1e3),
+                    ).format('DD/MM/YYYY - h:mm:ss a')}
+                    <br />
+                    <LinkToExplorer
+                      txHash={item.transactionHash}
+                      className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                    />
+                  </div>
+                </div>
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                {numberFromWei(item.returnValues.totalStaked)} CSOV
+              </td>
+            </tr>
           );
         })}
       {eventsHistoryVestingTeam &&
         !loading &&
         eventsHistoryVestingTeam.length > 0 &&
-        eventsHistoryVestingTeam.map((item, k: string) => {
+        eventsHistoryVestingTeam.map(item => {
           return (
-            <>
-              <tr key={k}>
-                <td>
-                  <div className="username flex items-center">
-                    <div>
-                      <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
-                    </div>
-                    <div className="text-sm font-normal hidden xl:block">
-                      CSOV
-                    </div>
+            <tr key={item.id}>
+              <td>
+                <div className="username flex items-center">
+                  <div>
+                    <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
                   </div>
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  {numberFromWei(item.returnValues.amount)} CSOV
-                  <br />
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal relative">
-                  <div className="flex items-center">
-                    <div>
-                      {moment(
-                        new Date(parseInt(item.returnValues.lockedUntil) * 1e3),
-                      ).format('DD/MM/YYYY - h:mm:ss a')}
-                      <br />
-                      <LinkToExplorer
-                        txHash={item.transactionHash}
-                        className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                      />
-                    </div>
+                  <div className="text-sm font-normal hidden xl:block">
+                    CSOV
                   </div>
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  {numberFromWei(item.returnValues.totalStaked)} CSOV
-                </td>
-              </tr>
-            </>
+                </div>
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                {numberFromWei(item.returnValues.amount)} CSOV
+                <br />
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal relative">
+                <div className="flex items-center">
+                  <div>
+                    {moment(
+                      new Date(parseInt(item.returnValues.lockedUntil) * 1e3),
+                    ).format('DD/MM/YYYY - h:mm:ss a')}
+                    <br />
+                    <LinkToExplorer
+                      txHash={item.transactionHash}
+                      className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                    />
+                  </div>
+                </div>
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                {numberFromWei(item.returnValues.totalStaked)} CSOV
+              </td>
+            </tr>
           );
         })}
       {loading && (
-        <>
-          <tr>
-            <td colSpan={4} className="skeleton"></td>
-          </tr>
-        </>
+        <tr>
+          <td colSpan={4} className="skeleton"></td>
+        </tr>
       )}
     </>
   ) : (
-    <tr>
-      <td
-        colSpan={4}
-        className={`text-center font-normal ${loading && 'skeleton'}`}
-      >
-        No history yet
-      </td>
-    </tr>
+    <>
+      <tr>
+        <td
+          colSpan={4}
+          className={`text-center font-normal ${loading && 'skeleton'}`}
+        >
+          No history yet
+        </td>
+      </tr>
+    </>
   );
 }
