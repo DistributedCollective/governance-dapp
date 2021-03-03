@@ -127,13 +127,15 @@ function InnerStakePage(props: Props) {
     lockDate,
     Math.round(now.getTime() / 1e3),
   );
+  const [stakesArray, setStakesArray] = useState([]);
 
-  let dates = getStakes.value['dates'];
-  let stakes = getStakes.value['stakes'];
-  let stakesArray = [];
-  if (dates && stakes) {
-    stakesArray = dates.map((v, index) => [stakes[index], v]);
-  }
+  useEffect(() => {
+    let dates = getStakes.value['dates'];
+    let stakes = getStakes.value['stakes'];
+    if (dates && stakes) {
+      setStakesArray(dates.map((v, index) => [stakes[index], v]));
+    }
+  }, [account, getStakes.value]);
 
   interface Stakes {
     stakes: any[] | any;

@@ -53,7 +53,7 @@ export function VestingTable() {
       }
     }
     getVestsList();
-  }, [vesting.value]);
+  }, [vesting.value, account]);
   return vesting.value !== genesisAddress && !vestLoading ? (
     <>
       <tr>

@@ -53,7 +53,7 @@ export function VestingTeamTable() {
       }
     }
     getVestsTeamList();
-  }, [vestingTeam.value]);
+  }, [vestingTeam.value, account]);
 
   return (
     <>
@@ -102,16 +102,6 @@ export function VestingTeamTable() {
                 Unstake
               </button>
             </div>
-          </td>
-        </tr>
-      )}
-      {teamLoading && (
-        <tr>
-          <td
-            colSpan={6}
-            className={`text-center font-normal ${teamLoading && 'skeleton'}`}
-          >
-            No vests yet
           </td>
         </tr>
       )}

@@ -62,41 +62,37 @@ export function HistoryEventsTable() {
         eventsHistory.length > 0 &&
         eventsHistory.map((item, i: string) => {
           return (
-            <>
-              <tr key={i}>
-                <td>
-                  <div className="username flex items-center">
-                    <div>
-                      <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
-                    </div>
-                    <div className="text-sm font-normal hidden xl:block">
-                      SOV
-                    </div>
+            <tr key={i}>
+              <td>
+                <div className="username flex items-center">
+                  <div>
+                    <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
                   </div>
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  {numberFromWei(item.returnValues.amount)} SOV
-                  <br />
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal relative">
-                  <div className="flex items-center">
-                    <div>
-                      {moment(
-                        new Date(parseInt(item.returnValues.lockedUntil) * 1e3),
-                      ).format('DD/MM/YYYY - h:mm:ss a')}
-                      <br />
-                      <LinkToExplorer
-                        txHash={item.transactionHash}
-                        className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                      />
-                    </div>
+                  <div className="text-sm font-normal hidden xl:block">SOV</div>
+                </div>
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                {numberFromWei(item.returnValues.amount)} SOV
+                <br />
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal relative">
+                <div className="flex items-center">
+                  <div>
+                    {moment(
+                      new Date(parseInt(item.returnValues.lockedUntil) * 1e3),
+                    ).format('DD/MM/YYYY - h:mm:ss a')}
+                    <br />
+                    <LinkToExplorer
+                      txHash={item.transactionHash}
+                      className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                    />
                   </div>
-                </td>
-                <td className="text-left hidden lg:table-cell font-normal">
-                  {numberFromWei(item.returnValues.totalStaked)} SOV
-                </td>
-              </tr>
-            </>
+                </div>
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                {numberFromWei(item.returnValues.totalStaked)} SOV
+              </td>
+            </tr>
           );
         })}
       {eventsHistoryVesting &&
