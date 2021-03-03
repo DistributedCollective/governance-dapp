@@ -101,8 +101,6 @@ export function ProposalDetailsPage() {
               loading && 'skeleton'
             }`}
           >
-            {String(data?.id).padStart(3, '0')}
-            <br />
             <Linkify properties={{ target: '_blank' }}>
               {createdEvent?.returnValues?.description || 'No description'}
             </Linkify>
@@ -262,6 +260,13 @@ export function ProposalDetailsPage() {
             >
               Verify on Github
             </a> */}
+            <p
+              className={`text-gold text-sm tracking-normal leading-3 pt-3 ${
+                loading && 'skeleton'
+              }`}
+            >
+              Proposal id: {String(data?.id).padStart(3, '0')}
+            </p>
           </div>
         </div>
       </div>
