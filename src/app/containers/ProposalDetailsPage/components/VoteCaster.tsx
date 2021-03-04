@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { EventData } from 'web3-eth-contract';
 import { useIsConnected } from '../../../hooks/useIsConnected';
 import { LinkToExplorer } from '../../../components/LinkToExplorer';
 import { network } from '../../BlockChainProvider/network';
@@ -6,12 +7,15 @@ import { useAccount } from '../../../hooks/useAccount';
 import { useContractCall } from '../../../hooks/useContractCall';
 import { numberFromWei, kFormatter } from 'utils/helpers';
 import { ContractName } from '../../BlockChainProvider/types';
-import { useStaking_getCurrentVotes } from '../../../hooks/staking/useStaking_getCurrentVotes';
+import { Proposal } from 'types/Proposal';
+import { useStaking_getPriorWeightedStake } from '../../../hooks/staking/useStaking_getPriorWeightedStake';
 
 interface Props {
   proposalId: number;
   contractName: ContractName;
+  createdEvent: EventData;
   voutesAgainst: number;
+  proposal: Proposal;
   voutesFor: number;
 }
 
@@ -26,7 +30,12 @@ export function VoteCaster(props: Props) {
     account,
   );
 
-  const votesCurrent = useStaking_getCurrentVotes(account);
+  const votesCurrent = useStaking_getPriorWeightedStake(
+    account,
+    props.createdEvent.blockNumber,
+    Number(props.proposal.startTime),
+  );
+
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState('');
 
