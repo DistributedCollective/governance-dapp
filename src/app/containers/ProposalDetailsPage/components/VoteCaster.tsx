@@ -6,12 +6,14 @@ import { useAccount } from '../../../hooks/useAccount';
 import { useContractCall } from '../../../hooks/useContractCall';
 import { numberFromWei, kFormatter } from 'utils/helpers';
 import { ContractName } from '../../BlockChainProvider/types';
-import { useStaking_getCurrentVotes } from '../../../hooks/staking/useStaking_getCurrentVotes';
+import { Proposal } from 'types/Proposal';
+import { useStaking_getPriorVotes } from '../../../hooks/staking/useStaking_getPriorVotes';
 
 interface Props {
   proposalId: number;
   contractName: ContractName;
   voutesAgainst: number;
+  proposal: Proposal;
   voutesFor: number;
 }
 
@@ -26,7 +28,12 @@ export function VoteCaster(props: Props) {
     account,
   );
 
-  const votesCurrent = useStaking_getCurrentVotes(account);
+  const votesCurrent = useStaking_getPriorVotes(
+    account,
+    props.proposal.startBlock,
+    Number(props.proposal.startTime),
+  );
+
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState('');
 
