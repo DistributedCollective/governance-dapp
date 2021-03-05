@@ -172,7 +172,6 @@ export function ProposalDetailsPage() {
             voutesFor={data.forVotes}
             voutesAgainst={data.againstVotes}
             proposalId={data.id}
-            createdEvent={createdEvent}
             proposal={data}
             contractName={data.contractName}
           />
