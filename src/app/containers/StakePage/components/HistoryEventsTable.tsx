@@ -73,7 +73,6 @@ export function HistoryEventsTable() {
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 {numberFromWei(item.returnValues.amount)} SOV
-                <br />
               </td>
               <td className="text-left hidden lg:table-cell font-normal relative">
                 <div className="flex items-center">

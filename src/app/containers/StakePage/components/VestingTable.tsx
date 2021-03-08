@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { numberFromWei } from 'utils/helpers';
-import { network } from '../../BlockChainProvider/network';
-import { useAccount } from '../../../hooks/useAccount';
+import { useDispatch } from 'react-redux';
+import { numberFromWei, genesisAddress } from 'utils/helpers';
 import logoSvg from 'assets/images/sovryn-icon.svg';
 import moment from 'moment';
-import { useVesting_getVesting } from '../../../hooks/vesting-registry/useVesting_getVesting';
-import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
 import VestingABI from '../../BlockChainProvider/abi/Vesting.json';
-import { genesisAddress } from 'utils/helpers';
+import { network } from '../../BlockChainProvider/network';
+import { useAccount } from '../../../hooks/useAccount';
+import { actions } from 'app/containers/BlockChainProvider/slice';
+import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
+import { useVesting_getVesting } from '../../../hooks/vesting-registry/useVesting_getVesting';
+import { useStaking_getCurrentVotes } from '../../../hooks/staking/useStaking_getCurrentVotes';
 
 export function VestingTable() {
   const account = useAccount();
@@ -17,6 +19,8 @@ export function VestingTable() {
   const [stakingPeriod, setStakingPeriod] = useState('');
   const [unlockDate, setUnlockDate] = useState('');
   const [vestLoading, setVestLoading] = useState(false);
+  const dispatch = useDispatch();
+  const votingPower = useStaking_getCurrentVotes(vesting.value);
 
   useEffect(() => {
     setVestLoading(true);
@@ -74,6 +78,9 @@ export function VestingTable() {
           )}
         </td>
         <td className="text-left hidden lg:table-cell font-normal">
+          {numberFromWei(votingPower.value).toLocaleString()}
+        </td>
+        <td className="text-left hidden lg:table-cell font-normal">
           {moment(new Date(parseInt(stakingPeriod))).format('d')} weeks
         </td>
         <td className="text-left hidden lg:table-cell font-normal">
@@ -90,6 +97,15 @@ export function VestingTable() {
         <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
           <div className="flex flex-nowrap justify-end">
             <button
+              className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+              onClick={() => {
+                dispatch(actions.vestingType('genesis'));
+                dispatch(actions.toggleDelagationDialog(true));
+              }}
+            >
+              Delegate
+            </button>
+            <button
               type="button"
               disabled
               className="opacity-30 text-gold tracking-normal hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
@@ -104,7 +120,7 @@ export function VestingTable() {
   ) : (
     <tr>
       <td
-        colSpan={6}
+        colSpan={7}
         className={`text-center font-normal ${vestLoading && 'skeleton'}`}
       >
         No vests yet

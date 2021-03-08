@@ -280,3 +280,6 @@
 .slick-dots li.slick-active button{
     background: theme('colors.theme.blue')
 }
+.assets {
+    min-width: 115px;
+}

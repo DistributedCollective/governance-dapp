@@ -15,6 +15,7 @@ export interface BlockChainProviderState {
   transactions: Transactions;
   showTransactions: boolean;
   showDelegationDialog: boolean;
+  vestingType: string;
 }
 
 export type NetworkName = keyof IContractNetworks;

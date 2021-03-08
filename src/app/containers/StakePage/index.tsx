@@ -23,7 +23,6 @@ import { numberFromWei } from '../../../utils/helpers';
 import { useSoV_balanceOf } from '../../hooks/sov/useSoV_balanceOf';
 import { useStaking_getStakes } from '../../hooks/staking/useStaking_getStakes';
 import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
-import { useVesting_getVesting } from '../../hooks/vesting-registry/useVesting_getVesting';
 import { useStaking_WEIGHT_FACTOR } from '../../hooks/staking/useStaking_WEIGHT_FACTOR';
 import { useStaking_currentBalance } from '../../hooks/staking/useStaking_currentBalance';
 import { useStaking_getCurrentVotes } from '../../hooks/staking/useStaking_getCurrentVotes';
@@ -99,27 +98,20 @@ function InnerStakePage(props: Props) {
   const kickoffTs = useStaking_kickoffTs();
   const getStakes = useStaking_getStakes(account);
   const sovBalanceOf = useSoV_balanceOf(account);
-  const vesting = useVesting_getVesting(account);
-  // const vestingTeam = useVesting_getTeamVesting(account);
-  const balanceOfVest = useStaking_balanceOf(vesting.value);
   const s = useStaking_currentBalance(account);
-
   const [amount, setAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [timestamp, setTimestamp] = useState<number>(0 as any);
   const [loading, setLoading] = useState(false);
   const [currentLock, setCurrentLock] = useState<Date>(null as any);
-
   const weiAmount = useWeiAmount(amount);
   const weiWithdrawAmount = useWeiAmount(withdrawAmount);
-
   const [until, setUntil] = useState<number>(0 as any);
   const [prevTimestamp, setPrevTimestamp] = useState<number>(undefined as any);
   const [stakeForm, setStakeForm] = useState(false);
   const [extendForm, setExtendForm] = useState(false);
   const [withdrawForm, setWithdrawForm] = useState(false);
   const [increaseForm, setIncreaseForm] = useState(false);
-
   const [weight, setWeight] = useState('');
   const [lockDate, setLockDate] = useState<number>(0 as any);
   const [votingPower, setVotingPower] = useState<number>(0 as any);
@@ -403,14 +395,12 @@ function InnerStakePage(props: Props) {
             <div className="xl:flex items-stretch justify-around mt-2">
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Total staked SOV</p>
-                <p className="text-4-5xl mt-2 mb-6">
+                <p
+                  className={`text-4-5xl mt-2 mb-6 ${
+                    balanceOf.loading && 'skeleton'
+                  }`}
+                >
                   {numberFromWei(balanceOf.value).toLocaleString()} SOV
-                  {balanceOfVest.value !== '0' && (
-                    <>
-                      <br />
-                      {numberFromWei(balanceOfVest.value).toLocaleString()} CSOV
-                    </>
-                  )}
                 </p>
                 <Modal
                   show={stakeForm}
@@ -452,7 +442,7 @@ function InnerStakePage(props: Props) {
 
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 text-sm mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Total earned fees Available</p>
-                <p className="text-4-5xl mt-2 mb-6">≈ 1000.00 USD</p>
+                <p className="text-4-5xl mt-2 mb-6">≈ 0.00 USD</p>
                 <div className="flex justify-between items-center mb-1 mt-1 leading-6">
                   <div className="w-1/5">iDoC</div>
                   <div className="w-1/2 ml-6">10.000 ≈ 10.00 USD</div>
@@ -497,7 +487,11 @@ function InnerStakePage(props: Props) {
 
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Combined Voting Power </p>
-                <p className="text-4-5xl mt-2 mb-6">
+                <p
+                  className={`text-4-5xl mt-2 mb-6 ${
+                    voteBalance.loading && 'skeleton'
+                  }`}
+                >
                   {numberFromWei(voteBalance.value).toLocaleString()}
                 </p>
                 <Link
@@ -517,7 +511,7 @@ function InnerStakePage(props: Props) {
                 <StyledTable className="w-full">
                   <thead>
                     <tr>
-                      <th className="text-left">Asset</th>
+                      <th className="text-left assets">Asset</th>
                       <th className="text-left">Locked Amount</th>
                       <th className="text-left hidden lg:table-cell">
                         Staking Date
@@ -548,10 +542,13 @@ function InnerStakePage(props: Props) {
                 <StyledTable className="w-full">
                   <thead>
                     <tr>
-                      <th className="text-left">Asset</th>
+                      <th className="text-left assets">Asset</th>
                       <th className="text-left">Locked Amount</th>
                       <th className="text-left hidden lg:table-cell">
                         Staking Date
+                      </th>
+                      <th className="text-left hidden lg:table-cell">
+                        Vouting Power
                       </th>
                       <th className="text-left hidden lg:table-cell">
                         Staking Period
@@ -580,7 +577,7 @@ function InnerStakePage(props: Props) {
                 <StyledTable className="w-full">
                   <thead>
                     <tr>
-                      <th className="text-left">Asset</th>
+                      <th className="text-left assets">Asset</th>
                       <th className="text-left hidden lg:table-cell">
                         Staked Amount
                       </th>

@@ -1,23 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { numberFromWei } from 'utils/helpers';
-import { network } from '../../BlockChainProvider/network';
-import { useAccount } from '../../../hooks/useAccount';
+import { useDispatch } from 'react-redux';
+import { numberFromWei, genesisAddress } from 'utils/helpers';
 import logoSvg from 'assets/images/sovryn-icon.svg';
 import moment from 'moment';
-import { useVesting_getTeamVesting } from '../../../hooks/vesting-registry/useVesting_getTeamVesting';
-import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
 import VestingABI from '../../BlockChainProvider/abi/Vesting.json';
-import { genesisAddress } from 'utils/helpers';
+import { network } from '../../BlockChainProvider/network';
+import { useAccount } from '../../../hooks/useAccount';
+import { actions } from 'app/containers/BlockChainProvider/slice';
+import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
+import { useVesting_getTeamVesting } from '../../../hooks/vesting-registry/useVesting_getTeamVesting';
+import { useStaking_getCurrentVotes } from '../../../hooks/staking/useStaking_getCurrentVotes';
 
 export function VestingTeamTable() {
   const account = useAccount();
   const vestingTeam = useVesting_getTeamVesting(account);
   const lockedAmountTeam = useStaking_balanceOf(vestingTeam.value as string);
-
   const [teamLoading, setTeamLoading] = useState(false);
   const [stakingPeriodTeamStart, setStakingPeriodTeamStart] = useState('');
   const [stakingTeamPeriod, setStakingTeamPeriod] = useState('');
   const [unlockTeamDate, setUnlockTeamDate] = useState('');
+  const dispatch = useDispatch();
+  const votingPower = useStaking_getCurrentVotes(vestingTeam.value);
+  console.log('vestingTeam.value', vestingTeam.value);
+  console.log('teamLoading', teamLoading);
 
   useEffect(() => {
     setTeamLoading(true);
@@ -76,6 +81,9 @@ export function VestingTeamTable() {
             )}
           </td>
           <td className="text-left hidden lg:table-cell font-normal">
+            {numberFromWei(votingPower.value).toLocaleString()}
+          </td>
+          <td className="text-left hidden lg:table-cell font-normal">
             {moment(new Date(parseInt(stakingTeamPeriod))).format('d')} weeks
           </td>
           <td className="text-left hidden lg:table-cell font-normal">
@@ -93,6 +101,15 @@ export function VestingTeamTable() {
           </td>
           <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
             <div className="flex flex-nowrap justify-end">
+              <button
+                className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                onClick={() => {
+                  dispatch(actions.vestingType('team'));
+                  dispatch(actions.toggleDelagationDialog(true));
+                }}
+              >
+                Delegate
+              </button>
               <button
                 type="button"
                 disabled

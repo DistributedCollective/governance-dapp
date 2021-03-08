@@ -113,30 +113,12 @@ export function StakeForm(props: Props) {
               id="vouting-power"
               type="text"
               placeholder="0"
-              defaultValue={numberFromWei(props.votePower)}
+              value={numberFromWei(props.votePower)}
             />
           </div>
           <p className="block text-theme-white text-md font-light mb-2 mt-7">
             Tx Fee: 0.0006 rBTC
           </p>
-          <div className="text-gray-700 text-xs mt-3 hidden">
-            Balance:{' '}
-            <span
-              className={`text-gray-900 ${
-                props.sovBalanceOf.loading && 'skeleton'
-              }`}
-            >
-              {numberFromWei(props.sovBalanceOf.value).toLocaleString()}
-            </span>{' '}
-            SoV
-            {Number(props.votePower) > 0 && (
-              <>
-                <br />
-                Will be added to your vote: +{' '}
-                {numberFromWei(props.votePower).toLocaleString()}
-              </>
-            )}
-          </div>
         </div>
         <div className="grid grid-rows-1 grid-flow-col gap-4">
           <button
