@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Dialog, Text, Icon } from '@blueprintjs/core';
+import { Dialog, Text } from '@blueprintjs/core';
 import Rsk3 from '@rsksmart/rsk3';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectBlockChainProvider } from '../../containers/BlockChainProvider/selectors';
+import arrowDown from 'assets/images/arrow-down.svg';
 import { actions } from '../../containers/BlockChainProvider/slice';
 import { useAccount } from '../../hooks/useAccount';
 import { fromWei, genesisAddress, kFormatter } from '../../../utils/helpers';
@@ -74,12 +75,7 @@ export function VestingDelegationDialog() {
           />
         </div>
         <div className="text-center">
-          <Icon
-            icon="arrow-down"
-            iconSize={35}
-            color="white"
-            className="mt-5 mb-6"
-          />
+          <img className="mt-8 mb-8 mx-auto" src={arrowDown} alt="arrow" />
         </div>
         <label
           className="leading-5 block text-theme-white text-md font-medium mb-2"
