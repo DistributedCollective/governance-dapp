@@ -26,31 +26,22 @@ export function VestingTable() {
     setVestLoading(true);
     async function getVestsList() {
       try {
-        if (vesting.value) {
-          const stakingPeriodStart = await network.callCustomContract(
-            vesting.value as any,
-            VestingABI,
-            'startDate',
-            [],
-          );
-          const stakingPeriod = await network.callCustomContract(
-            vesting.value as any,
-            VestingABI,
-            'duration',
-            [],
-          );
-          const unlockDate = await network.callCustomContract(
-            vesting.value as any,
-            VestingABI,
-            'endDate',
-            [],
-          );
-
-          setStakingPeriodStart(stakingPeriodStart);
-          setStakingPeriod(stakingPeriod);
-          setUnlockDate(unlockDate);
-          setVestLoading(false);
-        }
+        await network
+          .callCustomContract(vesting.value as any, VestingABI, 'startDate', [])
+          .then(res => {
+            return setStakingPeriodStart(res);
+          });
+        await network
+          .callCustomContract(vesting.value as any, VestingABI, 'duration', [])
+          .then(res => {
+            return setStakingPeriod(res);
+          });
+        await network
+          .callCustomContract(vesting.value as any, VestingABI, 'endDate', [])
+          .then(res => {
+            return setUnlockDate(res);
+          });
+        setVestLoading(false);
       } catch (e) {
         console.error(e);
         setVestLoading(false);
@@ -69,10 +60,16 @@ export function VestingTable() {
             <div className="text-sm font-normal hidden xl:block">CSOV</div>
           </div>
         </td>
-        <td className="text-left font-normal">
+        <td
+          className={`text-left font-normal
+          ${!lockedAmount.value && 'skeleton'}`}
+        >
           {numberFromWei(lockedAmount.value)} CSOV
         </td>
-        <td className="text-left hidden lg:table-cell font-normal">
+        <td
+          className={`text-left hidden lg:table-cell font-normal
+          ${!stakingPeriodStart && 'skeleton'}`}
+        >
           {moment(new Date(parseInt(stakingPeriodStart) * 1e3)).format(
             'DD/MM/YYYY - h:mm:ss a',
           )}
@@ -80,10 +77,16 @@ export function VestingTable() {
         <td className="text-left hidden lg:table-cell font-normal">
           {numberFromWei(votingPower.value).toLocaleString()}
         </td>
-        <td className="text-left hidden lg:table-cell font-normal">
+        <td
+          className={`text-left hidden lg:table-cell font-normal
+          ${!stakingPeriod && 'skeleton'}`}
+        >
           {moment(new Date(parseInt(stakingPeriod))).format('d')} weeks
         </td>
-        <td className="text-left hidden lg:table-cell font-normal">
+        <td
+          className={`text-left hidden lg:table-cell font-normal
+          ${!unlockDate && 'skeleton'}`}
+        >
           <p>
             {moment(new Date(parseInt(unlockDate) * 1e3)).format('DD/MM/YYYY')}
             <br />

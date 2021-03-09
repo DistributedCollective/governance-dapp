@@ -8,67 +8,67 @@ import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
 import { actions } from 'app/containers/BlockChainProvider/slice';
 import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
-import { useVesting_getTeamVesting } from '../../../hooks/vesting-registry/useVesting_getTeamVesting';
+import { useVesting_getOriginVesting } from '../../../hooks/vesting-registry/useVesting_getOriginVesting';
 import { useStaking_getCurrentVotes } from '../../../hooks/staking/useStaking_getCurrentVotes';
 
-export function VestingTeamTable() {
+export function VestingOriginTable() {
   const account = useAccount();
-  const vestingTeam = useVesting_getTeamVesting(account);
-  const lockedAmountTeam = useStaking_balanceOf(vestingTeam.value);
-  const [teamLoading, setTeamLoading] = useState(false);
-  const [stakingPeriodTeamStart, setStakingPeriodTeamStart] = useState('');
-  const [stakingTeamPeriod, setStakingTeamPeriod] = useState('');
-  const [unlockTeamDate, setUnlockTeamDate] = useState('');
+  const vestingOrigin = useVesting_getOriginVesting(account);
+  const lockedAmountOrigin = useStaking_balanceOf(vestingOrigin.value);
+  const [teamLoading, setOriginLoading] = useState(false);
+  const [stakingPeriodOriginStart, setStakingPeriodOriginStart] = useState('');
+  const [stakingOriginPeriod, setStakingOriginPeriod] = useState('');
+  const [unlockOriginDate, setUnlockOriginDate] = useState('');
   const dispatch = useDispatch();
-  const votingPower = useStaking_getCurrentVotes(vestingTeam.value);
+  const votingPower = useStaking_getCurrentVotes(vestingOrigin.value);
 
   useEffect(() => {
-    setTeamLoading(true);
-    async function getVestsTeamList() {
+    setOriginLoading(true);
+    async function getVestsOriginList() {
       try {
         await network
           .callCustomContract(
-            vestingTeam.value as any,
+            vestingOrigin.value as any,
             VestingABI,
             'startDate',
             [],
           )
           .then(res => {
-            return setStakingPeriodTeamStart(res);
+            return setStakingPeriodOriginStart(res);
           });
         await network
           .callCustomContract(
-            vestingTeam.value as any,
+            vestingOrigin.value as any,
             VestingABI,
             'duration',
             [],
           )
           .then(res => {
-            return setStakingTeamPeriod(res);
+            return setStakingOriginPeriod(res);
           });
         await network
           .callCustomContract(
-            vestingTeam.value as any,
+            vestingOrigin.value as any,
             VestingABI,
             'endDate',
             [],
           )
           .then(res => {
-            return setUnlockTeamDate(res);
+            return setUnlockOriginDate(res);
           });
 
-        setTeamLoading(false);
+        setOriginLoading(false);
       } catch (e) {
         console.error(e);
-        setTeamLoading(false);
+        setOriginLoading(false);
       }
     }
-    getVestsTeamList();
-  }, [vestingTeam.value, account]);
+    getVestsOriginList();
+  }, [vestingOrigin.value, account]);
 
   return (
     <>
-      {vestingTeam.value !== genesisAddress && !teamLoading && (
+      {vestingOrigin.value !== genesisAddress && !teamLoading && (
         <tr>
           <td>
             <div className="username flex items-center">
@@ -80,15 +80,15 @@ export function VestingTeamTable() {
           </td>
           <td
             className={`text-left font-normal
-            ${!lockedAmountTeam.value && 'skeleton'}`}
+            ${!lockedAmountOrigin.value && 'skeleton'}`}
           >
-            {numberFromWei(lockedAmountTeam.value)} CSOV
+            {numberFromWei(lockedAmountOrigin.value)} CSOV
           </td>
           <td
             className={`text-left hidden lg:table-cell font-normal
-            ${!stakingPeriodTeamStart && 'skeleton'}`}
+            ${!stakingPeriodOriginStart && 'skeleton'}`}
           >
-            {moment(new Date(parseInt(stakingPeriodTeamStart) * 1e3)).format(
+            {moment(new Date(parseInt(stakingPeriodOriginStart) * 1e3)).format(
               'DD/MM/YYYY - h:mm:ss a',
             )}
           </td>
@@ -97,21 +97,21 @@ export function VestingTeamTable() {
           </td>
           <td
             className={`text-left hidden lg:table-cell font-normal
-            ${!stakingTeamPeriod && 'skeleton'}`}
+            ${!stakingOriginPeriod && 'skeleton'}`}
           >
-            {moment(new Date(parseInt(stakingTeamPeriod))).format('d')} weeks
+            {moment(new Date(parseInt(stakingOriginPeriod))).format('d')} weeks
           </td>
           <td
             className={`text-left hidden lg:table-cell font-normal
-            ${!unlockTeamDate && 'skeleton'}`}
+            ${!unlockOriginDate && 'skeleton'}`}
           >
             <p>
-              {moment(new Date(parseInt(unlockTeamDate) * 1e3)).format(
+              {moment(new Date(parseInt(unlockOriginDate) * 1e3)).format(
                 'DD/MM/YYYY',
               )}
               <br />
               {moment().diff(
-                moment(new Date(parseInt(unlockTeamDate) * 1e3)),
+                moment(new Date(parseInt(unlockOriginDate) * 1e3)),
                 'days',
               )}{' '}
               days

@@ -34,6 +34,7 @@ export interface INetworkToContract {
   governorAdmin: IContract;
   governorOwner: IContract;
   vestingRegistry: IContract;
+  vestingRegistry2: IContract;
 }
 
 export interface IContract {

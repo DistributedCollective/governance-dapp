@@ -5,7 +5,7 @@ export function useVesting_getTeamVesting(address: string) {
   return useContractCallWithValue(
     'vestingRegistry',
     'getTeamVesting',
-    '0',
+    genesisAddress,
     address || genesisAddress,
   );
 }

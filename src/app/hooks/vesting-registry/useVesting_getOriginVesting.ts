@@ -1,9 +1,9 @@
 import { useContractCallWithValue } from '../useContractCallWithValue';
 import { genesisAddress } from 'utils/helpers';
 
-export function useVesting_getVesting(address: string) {
+export function useVesting_getOriginVesting(address: string) {
   return useContractCallWithValue(
-    'vestingRegistry',
+    'vestingRegistry2',
     'getVesting',
     genesisAddress,
     address || genesisAddress,

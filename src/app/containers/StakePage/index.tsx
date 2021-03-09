@@ -44,6 +44,7 @@ import { HistoryEventsTable } from './components/HistoryEventsTable';
 import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
 import { VestingTable } from './components/VestingTable';
 import { VestingTeamTable } from './components/VestingTeamTable';
+import { VestingOriginTable } from './components/VestingOriginTable';
 // import {
 //   governance_proposalCount,
 //   governance_propose,
@@ -564,6 +565,7 @@ function InnerStakePage(props: Props) {
                   <tbody className="mt-5 font-montserrat text-xs">
                     <VestingTable />
                     <VestingTeamTable />
+                    <VestingOriginTable />
                   </tbody>
                 </StyledTable>
               </div>
