@@ -441,7 +441,7 @@ function InnerStakePage(props: Props) {
                 )}
               </div>
 
-              <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 text-sm mb-5 xl:mb-0">
+              {/*<div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 text-sm mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Total earned fees Available</p>
                 <p className="text-4-5xl mt-2 mb-6">≈ 0.00 USD</p>
                 <div className="flex justify-between items-center mb-1 mt-1 leading-6">
@@ -484,7 +484,7 @@ function InnerStakePage(props: Props) {
                     Withdraw
                   </Link>
                 </div>
-              </div>
+              </div>*/}
 
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Combined Voting Power </p>
