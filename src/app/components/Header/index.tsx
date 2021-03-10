@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, NavLink, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/macro';
 import logoSvg from 'assets/images/sovryn-logo-white.svg';
@@ -35,6 +35,14 @@ export function Header() {
     {
       to: 'https://sovryn-1.gitbook.io/sovryn/',
       title: t(translations.mainMenu.faqs),
+    },
+    {
+      to: '/',
+      title: t(translations.mainMenu.vote),
+    },
+    {
+      to: '/stake',
+      title: t(translations.mainMenu.stake),
     },
   ];
 
@@ -104,6 +112,23 @@ export function Header() {
               <Link to="/">
                 <StyledLogo src={logoSvg} />
               </Link>
+            </div>
+            <div className="hidden xl:block">
+              <NavLink
+                className="nav-item mr-4 font-light uppercase text-white no-underline hover:no-underline font-montserrat hover:text-gold"
+                to="/"
+                exact
+                activeStyle={{ fontWeight: 'bold' }}
+              >
+                {t(translations.mainMenu.vote)}
+              </NavLink>
+              <NavLink
+                className="nav-item mr-4 font-light uppercase text-white no-underline hover:no-underline font-montserrat hover:text-gold"
+                to="/stake"
+                activeStyle={{ fontWeight: 'bold' }}
+              >
+                {t(translations.mainMenu.stake)}
+              </NavLink>
             </div>
           </div>
           <div className="flex justify-start items-center">
@@ -196,8 +221,8 @@ const StyledLogo = styled.img.attrs(_ => ({
   height: 50px;
   margin: 0 0 0 1rem;
   ${media.xl`
-      width: 284px;
-      height: 48px;
-      margin: 0;
-    `}
+    width: 284px;
+    height: 48px;
+    margin: 0;
+  `}
 `;

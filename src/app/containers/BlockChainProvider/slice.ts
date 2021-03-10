@@ -28,6 +28,7 @@ export const initialState: ContainerState = {
   transactions: {},
   showTransactions: false,
   showDelegationDialog: false,
+  vestingType: '',
 };
 
 const blockChainProviderSlice = createSlice({
@@ -126,6 +127,9 @@ const blockChainProviderSlice = createSlice({
     },
     toggleDelagationDialog(state, { payload }: PayloadAction<boolean>) {
       state.showDelegationDialog = payload;
+    },
+    vestingType(state, { payload }: PayloadAction<string>) {
+      state.vestingType = payload;
     },
   },
 });

@@ -6,6 +6,7 @@ export function useStaking_getStakes(address: string) {
     'staking',
     'getStakes',
     '0',
+    !!address && address !== genesisAddress,
     address || genesisAddress,
   );
 }

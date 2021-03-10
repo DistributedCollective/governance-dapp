@@ -13,7 +13,7 @@ import { selectBlockChainProvider } from './selectors';
 import { blockChainProviderSaga } from './saga';
 import { PageSkeleton } from '../../components/PageSkeleton';
 import { TransactionHistory } from '../TransactionHistory/Loadable';
-import { DelegationDialog } from './components/DelegationDialog';
+import { VestingDelegationDialog } from '../../components/VestingDelegationDialog';
 import { CHAIN_ID } from './classifiers';
 
 interface Props {
@@ -41,7 +41,7 @@ export function BlockChainProvider(props: Props) {
     <>
       <TransactionHistory />
       {blockChainProvider.connected && blockChainProvider.address && (
-        <DelegationDialog />
+        <VestingDelegationDialog />
       )}
       {props.children}
     </>

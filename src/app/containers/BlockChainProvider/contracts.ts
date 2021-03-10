@@ -26,6 +26,10 @@ export const contracts: IContractNetworks = {
       address: '0x80ec7ADd6CC1003BBEa89527ce93722e1DaD5c2a',
       abi: VestingRegistryABI as any,
     },
+    vestingRegistry2: {
+      address: '0x310006E356b0818C3Eaf86a9B2f13013d4691a1c',
+      abi: VestingRegistryABI as any,
+    },
   },
   mainnet: {
     sovToken: {
@@ -46,6 +50,10 @@ export const contracts: IContractNetworks = {
     },
     vestingRegistry: {
       address: '0x80B036ae59B3e38B573837c01BB1DB95515b7E6B',
+      abi: VestingRegistryABI as any,
+    },
+    vestingRegistry2: {
+      address: '0x0a9bDbf5e104a30fb4c99f6812FB85B60Fd8D372',
       abi: VestingRegistryABI as any,
     },
   },

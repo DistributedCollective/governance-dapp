@@ -6,6 +6,7 @@ export function useSoV_balanceOf(address: string) {
     'sovToken',
     'balanceOf',
     '0',
+    !!address && address !== genesisAddress,
     address || genesisAddress,
   );
 }

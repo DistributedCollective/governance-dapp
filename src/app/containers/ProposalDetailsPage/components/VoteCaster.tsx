@@ -24,6 +24,7 @@ export function VoteCaster(props: Props) {
   const receipt = useContractCall(
     props.contractName || 'governorAdmin',
     'getReceipt',
+    undefined,
     props.proposalId,
     account,
   );

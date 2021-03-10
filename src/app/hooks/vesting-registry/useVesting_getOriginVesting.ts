@@ -1,11 +1,11 @@
 import { useContractCallWithValue } from '../useContractCallWithValue';
 import { genesisAddress } from 'utils/helpers';
 
-export function useStaking_getCurrentVotes(address: string) {
+export function useVesting_getOriginVesting(address: string) {
   return useContractCallWithValue(
-    'staking',
-    'getCurrentVotes',
-    '0',
+    'vestingRegistry2',
+    'getVesting',
+    genesisAddress,
     !!address && address !== genesisAddress,
     address || genesisAddress,
   );

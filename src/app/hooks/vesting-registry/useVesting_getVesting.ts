@@ -5,7 +5,8 @@ export function useVesting_getVesting(address: string) {
   return useContractCallWithValue(
     'vestingRegistry',
     'getVesting',
-    '0',
+    genesisAddress,
+    !!address && address !== genesisAddress,
     address || genesisAddress,
   );
 }

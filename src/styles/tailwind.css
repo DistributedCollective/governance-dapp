@@ -94,39 +94,18 @@
         border-left-color: transparent;
     }
 
-    .bordered-list-item:hover {
-        border-left-color: theme('colors.green.500');
-    }
-
     .pulsating-dot {
         position: relative;
         width: 35px;
         height: 35px;
     }
+    :focus,
+    button:focus {
+        outline: none;
+        outline-offset: 0;
+        -moz-outline-radius: 0;
+    }
 
-    .pulsating-dot:after {
-        content: '';
-        border: 3px solid theme('colors.indigo.700');
-        -webkit-border-radius: 30px;
-        height: 25px;
-        width: 25px;
-        position: absolute;
-        left: 5px;
-        top: 5px;
-        -webkit-animation: pulsate 2s ease-out;
-        -webkit-animation-iteration-count: infinite;
-        opacity: 0.0
-    }
-    .pulsating-dot:before {
-        content: '';
-        width: 15px;
-        height: 15px;
-        background-color: theme('colors.indigo.700');
-        border-radius: 50%;
-        position: absolute;
-        top: 10px;
-        left: 10px;
-    }
     @keyframes pulsate {
         0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
         50% {opacity: 1.0;}
@@ -142,6 +121,15 @@
     .p-18 {
         padding: 2rem;
     }
+    .-ml-0\.25 {
+        margin-left: -0.063rem;
+    }
+    .-mt-0\.25 {
+        margin-top: -0.063rem;
+    }
+    .max-w-29 {
+        max-width: 29.3rem;
+    }
 
     @media (min-width: 1200px) {
         .max-w-130 {
@@ -156,7 +144,142 @@
         .p-18 {
             padding: 3.9rem 4.4rem;
         }
-        .leading-12	{line-height: 3rem;}
+        .leading-12	{
+            line-height: 3rem;
+        }
+        .min-w-15 {
+            min-width: 24.5rem;
+        }
+        .max-w-15 {
+            max-width: 24.5rem;
+        }
     }
 
+    @media (min-width: 1700px) {
+        .min-w-15 {
+            min-width: 16.6rem;
+        }
+        .max-w-15 {
+            max-width: 16.6rem;
+        }
+    }
+}
+
+.slick-slider {
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -khtml-user-select: none;
+    -ms-touch-action: pan-y;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+}
+.slick-prev {
+    left: -25px;
+}
+.slick-next {
+    right: -25px;
+}
+.slick-next, .slick-prev {
+    font-size: 0;
+    line-height: 0;
+    position: absolute;
+    top: 50%;
+    display: block;
+    width: 20px;
+    height: 25px;
+    padding: 0;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    cursor: pointer;
+    border: none;
+}
+.sliderMonth .slick-next, .sliderMonth .slick-prev {
+  top: 10px;
+}
+.sliderMonth .slick-list {
+    margin-right: 0.25rem;
+}
+.slick-arrow.slick-disabled svg {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+}
+.slick-next:before, .slick-prev:before {
+    font-family: slick;
+    font-size: 20px;
+    line-height: 1;
+    opacity: .75;
+    color: theme('colors.white');
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.slick-slider .slick-list, .slick-slider .slick-track {
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.slick-list {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+.slick-list, .slick-slider {
+    position: relative;
+    display: block;
+}
+.slick-slider .slick-list, .slick-slider .slick-track {
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.slick-track {
+    position: relative;
+    top: 0;
+    left: 0;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.slick-initialized .slick-slide {
+    display: block;
+}
+.slick-slide {
+    display: none;
+    float: left;
+    height: 100%;
+    min-height: 1px;
+}
+.slick-slide:hover, .slick-slide:focus, .slick-slide:active {
+    border: none;
+    outline: none;
+}
+.slick-dots {
+    display: flex !important;
+    justify-content: center;
+}
+.slick-dots li {
+    margin: 0 2px;
+    list-style: 16px;
+}
+.slick-dots li button {
+    font-size: 0;
+    width: 10px;
+    height: 10px;
+    background: theme('colors.white');
+    border-radius: 100%;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.slick-dots li:not(.slick-active) button:hover {
+    opacity: 0.7;
+}
+.slick-dots li.slick-active button{
+    background: theme('colors.theme.blue')
+}
+.assets {
+    min-width: 115px;
 }

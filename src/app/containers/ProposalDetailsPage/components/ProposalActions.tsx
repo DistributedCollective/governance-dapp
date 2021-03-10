@@ -31,6 +31,7 @@ export function ProposalActions(props: Props) {
   const { loading, value: actions } = useContractCall(
     props.contractName || 'governorAdmin',
     'getActions',
+    undefined,
     props.proposalId || '0',
   );
 

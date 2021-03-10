@@ -1,4 +1,5 @@
 import { useContractCallWithValue } from '../useContractCallWithValue';
+import { genesisAddress } from '../../../utils/helpers';
 
 export function useStaking_getPriorWeightedStake(
   address: string,
@@ -9,6 +10,7 @@ export function useStaking_getPriorWeightedStake(
     'staking',
     'getPriorWeightedStake',
     '0',
+    !!address && address !== genesisAddress,
     address,
     blockNumber,
     timestamp,

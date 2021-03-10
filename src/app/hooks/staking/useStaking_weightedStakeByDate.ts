@@ -1,18 +1,20 @@
 import { useContractCallWithValue } from '../useContractCallWithValue';
 import { genesisAddress } from '../../../utils/helpers';
 
-export function useStaking_getPriorVotes(
+export function useStaking_weightedStakeByDate(
   address: string,
-  blockNumber: number,
   timestamp: number,
+  startDate: number,
+  blockNumber: number,
 ) {
   return useContractCallWithValue(
     'staking',
-    'getPriorVotes',
+    'weightedStakeByDate',
     '0',
     !!address && address !== genesisAddress,
     address,
-    blockNumber,
     timestamp,
+    startDate,
+    blockNumber,
   );
 }

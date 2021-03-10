@@ -5,6 +5,7 @@ export function useStaking_getCurrentStakedUntil(timestamp: number) {
     'staking',
     'getCurrentStakedUntil',
     '0',
+    !!timestamp,
     timestamp,
   );
 }

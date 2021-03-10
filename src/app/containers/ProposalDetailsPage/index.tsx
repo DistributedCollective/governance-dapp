@@ -97,7 +97,7 @@ export function ProposalDetailsPage() {
       <div className="proposap-detail">
         <div className="xl:flex justify-between items-start">
           <h3
-            className={`proposal__title font-semibold break-all w-2/3 mt-2 overflow-hidden max-h-6 leading-12 truncate ${
+            className={`proposal__title font-semibold break-all w-2/3 mt-2 overflow-hidden max-h-24 leading-12 truncate ${
               loading && 'skeleton'
             }`}
           >

@@ -15,6 +15,7 @@ export interface BlockChainProviderState {
   transactions: Transactions;
   showTransactions: boolean;
   showDelegationDialog: boolean;
+  vestingType: string;
 }
 
 export type NetworkName = keyof IContractNetworks;
@@ -33,6 +34,7 @@ export interface INetworkToContract {
   governorAdmin: IContract;
   governorOwner: IContract;
   vestingRegistry: IContract;
+  vestingRegistry2: IContract;
 }
 
 export interface IContract {

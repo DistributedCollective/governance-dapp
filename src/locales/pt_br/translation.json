@@ -151,7 +151,9 @@
     "stats": "Dados",
     "faqs": "FAQs",
     "help": "Ajuda",
-    "referral": "Referral"
+    "referral": "Referral",
+    "vote": "Vote",
+    "stake": "Stake"
   },
   "trandingPositionSelector": {
     "long": "Comprado",

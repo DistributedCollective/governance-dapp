@@ -4,11 +4,11 @@
  *
  */
 import React, { useCallback, useEffect, useState } from 'react';
+import Slider from 'react-slick';
 import moment from 'moment';
-import { Button } from '@blueprintjs/core/lib/esm/components/button/buttons';
+import { Icon } from '@blueprintjs/core';
 import { Text } from '@blueprintjs/core/lib/esm/components/text/text';
 import { MenuItem } from '@blueprintjs/core/lib/esm/components/menu/menuItem';
-import { Select } from '@blueprintjs/select/lib/esm/components/select/select';
 import { ItemRenderer } from '@blueprintjs/select/lib/esm/common/itemRenderer';
 import { ItemPredicate } from '@blueprintjs/select/lib/esm/common/predicate';
 
@@ -19,13 +19,10 @@ interface DateItem {
   label: string;
   date: Date;
 }
-
-const DateSelect = Select.ofType<DateItem>();
-
 interface Props {
   title: string;
   kickoffTs: number;
-  onChange: (value: number) => void;
+  onClick: (value: number) => void;
   value?: number;
   startTs?: number;
   stakes?: undefined;
@@ -34,10 +31,32 @@ interface Props {
 }
 
 export function StakingDateSelector(props: Props) {
-  const onItemSelect = item => props.onChange(item.key);
+  const onItemSelect = (item: { key: number }) => props.onClick(item.key);
   const [dates, setDates] = useState<Date[]>([]);
+  const [currentYearDates, setCurrenYearDates] = useState<any>([]);
   const [filteredDates, setFilteredDates] = useState<DateItem[]>([]);
   const [itemDisabled, setItemDisabled] = useState<any>([]);
+
+  let avaliableYears = filteredDates
+    .map(yearDate => moment(yearDate.date).format('YYYY'))
+    .filter((year, index, arr) => arr.indexOf(year) === index);
+
+  let avaliableMonth = currentYearDates
+    .map(yearDate => moment(yearDate.date).format('MMM'))
+    .filter((month, index, arr) => arr.indexOf(month) === index);
+
+  const getDatesByYear = useCallback(
+    year => {
+      let theBigDay = new Date();
+      theBigDay.setFullYear(year);
+      return setCurrenYearDates(
+        filteredDates.filter(
+          item => new Date(item.date).getFullYear() === theBigDay.getFullYear(),
+        ),
+      );
+    },
+    [filteredDates],
+  );
 
   useEffect(() => {
     if (props.kickoffTs) {
@@ -81,7 +100,7 @@ export function StakingDateSelector(props: Props) {
 
     if (props.stakes) {
       setItemDisabled(
-        (props.stakes as any).map(item => ({
+        (props.stakes as any).map((item: number) => ({
           key: item * 1e3,
           label: moment(new Date(item * 1e3)).format('DD.MM.YYYY'),
           date: new Date(item * 1e3),
@@ -91,7 +110,7 @@ export function StakingDateSelector(props: Props) {
   }, [dates, props.startTs, props.stakes]);
 
   const dateWithoutStake = filteredDates.reduce((unique: any, o: any) => {
-    let isFound = itemDisabled.some(b => {
+    let isFound = itemDisabled.some((b: { key: any }) => {
       return b.key === o.key;
     });
     if (!isFound) unique.push(o);
@@ -99,50 +118,132 @@ export function StakingDateSelector(props: Props) {
   }, []);
 
   const getSelected = useCallback(() => {
-    return dateWithoutStake.find(item => item.key === props.value);
+    return dateWithoutStake.find(
+      (item: { key: number | undefined }) => item.key === props.value,
+    );
   }, [dateWithoutStake, props.value]);
 
-  const [selected, setSelected] = useState<DateItem | undefined>(getSelected());
+  const [, setSelected] = useState<DateItem | undefined>(getSelected());
+
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedDay, setSelectedDay] = useState('');
 
   useEffect(() => {
     setSelected(getSelected());
   }, [getSelected, props.value, dateWithoutStake]);
 
   useEffect(() => {
-    if (props.autoselect && !props.value && dateWithoutStake.length) {
-      props.onChange(dateWithoutStake[0].key);
+    setSelectedYear(moment((props.prevExtend as any) * 1e3).format('YYYY'));
+    setSelectedMonth(moment((props.prevExtend as any) * 1e3).format('MMM'));
+    setSelectedDay(moment((props.prevExtend as any) * 1e3).format('D'));
+  }, [props.prevExtend]);
+
+  const SampleNextArrow = props => {
+    const { className, style, onClick } = props;
+    return (
+      <div className={className} style={{ ...style }} onClick={onClick}>
+        <Icon icon="chevron-right" iconSize={25} color="white" />
+      </div>
+    );
+  };
+
+  const SamplePrevArrow = props => {
+    const { className, style, onClick } = props;
+    return (
+      <div className={className} style={{ ...style }} onClick={onClick}>
+        <Icon icon="chevron-left" iconSize={25} color="white" />
+      </div>
+    );
+  };
+
+  const settingsSliderYear = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
+  };
+
+  const settingsSliderMonth = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 6,
+    slidesToScroll: 6,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
+  };
+
+  useEffect(() => {
+    if (props.prevExtend) {
+      getDatesByYear(selectedYear);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.autoselect, props.value, dateWithoutStake]);
+  }, [props.prevExtend, getDatesByYear, selectedYear]);
 
   return (
     <>
-      <label className="block text-gray-700 text-sm font-bold mb-2">
-        {props.title}
+      <label className="block mt-8 text-theme-white text-md font-medium mb-2">
+        Select Year:
       </label>
-      <DateSelect
-        items={dateWithoutStake}
-        itemRenderer={renderItem}
-        filterable={true}
-        itemPredicate={filterItem}
-        onItemSelect={onItemSelect}
-        itemsEqual={areOptionsEqual}
-        activeItem={selected}
-        noResults={
-          <MenuItem
-            disabled={true}
-            text="No more dates available for staking."
-          />
-        }
-      >
-        <Button
-          icon="calendar"
-          text={
-            <Text ellipsize>{selected ? selected.label : 'Select date'}</Text>
-          }
-          rightIcon="caret-down"
-        />
-      </DateSelect>
+      <Slider {...settingsSliderYear}>
+        {avaliableYears.map((year, i) => {
+          return (
+            <div className="mr-6" key={i}>
+              <button
+                type="button"
+                onClick={() => {
+                  getDatesByYear(year);
+                  setSelectedYear(year);
+                }}
+                className={`leading-7 rounded border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
+                  selectedYear === year && 'bg-opacity-30 bg-theme-blue'
+                }`}
+              >
+                {year}
+              </button>
+            </div>
+          );
+        })}
+      </Slider>
+      <div className="sliderMonth mt-5">
+        <Slider {...settingsSliderMonth}>
+          {avaliableMonth.map((monthName: React.ReactNode, i) => {
+            return (
+              <div className="w-1/6" key={i}>
+                <div className="mb-1 font-light text-sm text-center text-gray-300">
+                  {monthName}
+                  {currentYearDates.map((item, i) => {
+                    if (moment(item.date).format('MMM') === monthName) {
+                      return (
+                        <div
+                          key={i}
+                          onClick={() => {
+                            onItemSelect(item);
+                            setSelectedDay(moment(item.date).format('D'));
+                            setSelectedMonth(moment(item.date).format('MMM'));
+                          }}
+                          className={`flex items-center justify-center mr-1 mb-1 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
+                            selectedDay === moment(item.date).format('D') &&
+                            selectedMonth === moment(item.date).format('MMM') &&
+                            'bg-opacity-30 bg-theme-blue'
+                          }`}
+                        >
+                          {moment(item.date).format('D')}
+                        </div>
+                      );
+                    } else {
+                      return null;
+                    }
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </Slider>
+      </div>
     </>
   );
 }

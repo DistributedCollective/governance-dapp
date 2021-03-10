@@ -14,9 +14,24 @@ module.exports = {
       montserrat: ['Montserrat', 'sans-serif'],
       worksans: ['Work Sans', 'sans-serif'],
     },
+    fontSize: {
+      'xs': '.75rem',
+      'sm': '.875rem',
+      'tiny': '.875rem',
+      'base': '1rem',
+      'lg': '1.125rem',
+      'xl': '1.25rem',
+      '2xl': '1.5rem',
+      '3xl': '1.875rem',
+      '4xl': '2.25rem',
+      '4-5xl': '2.5rem',
+      '5xl': '3rem',
+      '6xl': '4rem',
+      '7xl': '5rem',
+    },
     container: {
       center: true,
-      padding: '15px',
+      padding: '1.875rem',
       screens: {
         sm: '100%',
         md: { min: '1920px' },
@@ -43,6 +58,9 @@ module.exports = {
         200: '#2F2F2F',
         300: '#EDEDED',
         600: '#F4F4F4',
+        700: '#191919',
+        800: '#282828',
+        900: '#686868',
         dark: '#707070',
         light: '#181818',
         lighter: '#161616',
@@ -52,6 +70,10 @@ module.exports = {
       black: 'black',
       turquoise: '#4ECDC4',
       red: '#CD4E4E',
+      theme: {
+        white: '#E9EAE9',
+        blue: '#2274A5',
+      }
     },
     extend: {
       minHeight: {
