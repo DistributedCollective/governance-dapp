@@ -6,6 +6,7 @@ export function useStaking_getCurrentVotes(address: string) {
     'staking',
     'getCurrentVotes',
     '0',
+    !!address && address !== genesisAddress,
     address || genesisAddress,
   );
 }

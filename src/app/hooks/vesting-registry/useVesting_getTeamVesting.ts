@@ -6,6 +6,7 @@ export function useVesting_getTeamVesting(address: string) {
     'vestingRegistry',
     'getTeamVesting',
     genesisAddress,
+    !!address && address !== genesisAddress,
     address || genesisAddress,
   );
 }

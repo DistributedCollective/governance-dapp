@@ -6,11 +6,13 @@ export function useContractCallWithValue<T = string>(
   contractName: ContractName,
   methodName: string,
   defaultValue: T | any = '0',
+  condition?: boolean,
   ...args: any
 ): { value: T; loading: boolean; error: string | null } {
   const { value, loading, error } = useContractCall<T>(
     contractName,
     methodName,
+    condition,
     ...args,
   );
 

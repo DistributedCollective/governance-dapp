@@ -13,6 +13,7 @@ export function useStaking_delegates(address: string) {
     'staking',
     'delegates',
     genesisAddress,
+    !!address && address !== genesisAddress,
     address,
     ts || 0,
   );

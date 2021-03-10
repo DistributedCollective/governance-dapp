@@ -1,4 +1,5 @@
 import { useContractCallWithValue } from '../useContractCallWithValue';
+import { genesisAddress } from '../../../utils/helpers';
 
 export function useStaking_weightedStakeByDate(
   address: string,
@@ -10,6 +11,7 @@ export function useStaking_weightedStakeByDate(
     'staking',
     'weightedStakeByDate',
     '0',
+    !!address && address !== genesisAddress,
     address,
     timestamp,
     startDate,

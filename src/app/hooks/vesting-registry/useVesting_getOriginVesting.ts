@@ -6,6 +6,7 @@ export function useVesting_getOriginVesting(address: string) {
     'vestingRegistry2',
     'getVesting',
     genesisAddress,
+    !!address && address !== genesisAddress,
     address || genesisAddress,
   );
 }

@@ -56,19 +56,20 @@ export function VestingOriginTable() {
           .then(res => {
             return setUnlockOriginDate(res);
           });
-
         setOriginLoading(false);
       } catch (e) {
         console.error(e);
         setOriginLoading(false);
       }
     }
-    getVestsOriginList();
+    if (vestingOrigin.value !== genesisAddress) {
+      getVestsOriginList().catch(console.error);
+    }
   }, [vestingOrigin.value, account]);
 
   return (
     <>
-      {vestingOrigin.value !== genesisAddress && !teamLoading && (
+      {vestingOrigin.value !== genesisAddress && !teamLoading ? (
         <tr>
           <td>
             <div className="username flex items-center">
@@ -139,6 +140,16 @@ export function VestingOriginTable() {
             </div>
           </td>
         </tr>
+      ) : (
+        <>
+          {vestingOrigin.value !== genesisAddress && teamLoading && (
+            <tr>
+              <td colSpan={7} className={`text-center font-normal skeleton`}>
+                No vests yet.
+              </td>
+            </tr>
+          )}
+        </>
       )}
     </>
   );

@@ -63,19 +63,24 @@ export function VestingTeamTable() {
         setTeamLoading(false);
       }
     }
-    getVestsTeamList();
+
+    if (vestingTeam.value !== genesisAddress) {
+      getVestsTeamList().catch(console.error);
+    }
   }, [vestingTeam.value, account]);
 
   return (
     <>
-      {vestingTeam.value !== genesisAddress && !teamLoading && (
+      {vestingTeam.value !== genesisAddress && !teamLoading ? (
         <tr>
           <td>
             <div className="username flex items-center">
               <div>
                 <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
               </div>
-              <div className="text-sm font-normal hidden xl:block">CSOV</div>
+              <div className="text-sm font-normal hidden xl:block">
+                CSOV Team
+              </div>
             </div>
           </td>
           <td
@@ -139,6 +144,16 @@ export function VestingTeamTable() {
             </div>
           </td>
         </tr>
+      ) : (
+        <>
+          {vestingTeam.value !== genesisAddress && teamLoading && (
+            <tr>
+              <td colSpan={7} className={`text-center font-normal skeleton`}>
+                No vests yet.
+              </td>
+            </tr>
+          )}
+        </>
       )}
     </>
   );

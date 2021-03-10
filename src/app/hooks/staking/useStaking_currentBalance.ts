@@ -6,6 +6,7 @@ export function useStaking_currentBalance(address: string) {
     'staking',
     'currentBalance',
     '0',
+    !!address && address !== genesisAddress,
     address || genesisAddress,
   );
 }
