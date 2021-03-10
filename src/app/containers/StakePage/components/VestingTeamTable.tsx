@@ -26,38 +26,32 @@ export function VestingTeamTable() {
     setTeamLoading(true);
     async function getVestsTeamList() {
       try {
-        await network
-          .callCustomContract(
-            vestingTeam.value as any,
-            VestingABI,
-            'startDate',
-            [],
-          )
-          .then(res => {
-            return setStakingPeriodTeamStart(res);
-          });
-        await network
-          .callCustomContract(
-            vestingTeam.value as any,
-            VestingABI,
-            'duration',
-            [],
-          )
-          .then(res => {
-            return setStakingTeamPeriod(res);
-          });
-        await network
-          .callCustomContract(
-            vestingTeam.value as any,
-            VestingABI,
-            'endDate',
-            [],
-          )
-          .then(res => {
-            return setUnlockTeamDate(res);
-          });
-
-        setTeamLoading(false);
+        Promise.all([
+          network
+            .callCustomContract(
+              vestingTeam.value as any,
+              VestingABI,
+              'startDate',
+              [],
+            )
+            .then(res => setStakingPeriodTeamStart(res)),
+          network
+            .callCustomContract(
+              vestingTeam.value as any,
+              VestingABI,
+              'duration',
+              [],
+            )
+            .then(res => setStakingTeamPeriod(res)),
+          network
+            .callCustomContract(
+              vestingTeam.value as any,
+              VestingABI,
+              'endDate',
+              [],
+            )
+            .then(res => setUnlockTeamDate(res)),
+        ]).then(_ => setTeamLoading(false));
       } catch (e) {
         console.error(e);
         setTeamLoading(false);
@@ -71,21 +65,19 @@ export function VestingTeamTable() {
 
   return (
     <>
-      {vestingTeam.value !== genesisAddress && !teamLoading ? (
+      {vestingTeam.value !== genesisAddress ? (
         <tr>
           <td>
             <div className="username flex items-center">
               <div>
                 <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
               </div>
-              <div className="text-sm font-normal hidden xl:block">
-                CSOV Team
-              </div>
+              <div className="text-sm font-normal hidden xl:block">CSOV</div>
             </div>
           </td>
           <td
             className={`text-left font-normal
-            ${!lockedAmountTeam.value && 'skeleton'}`}
+            ${lockedAmountTeam.loading && 'skeleton'}`}
           >
             {numberFromWei(lockedAmountTeam.value)} CSOV
           </td>
