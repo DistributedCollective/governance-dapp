@@ -6,11 +6,14 @@ import { useAccount } from '../../../hooks/useAccount';
 import { useContractCall } from '../../../hooks/useContractCall';
 import { numberFromWei, kFormatter } from 'utils/helpers';
 import { ContractName } from '../../BlockChainProvider/types';
+import { Proposal } from 'types/Proposal';
+import { useStaking_getPriorVotes } from '../../../hooks/staking/useStaking_getPriorVotes';
 
 interface Props {
   proposalId: number;
   contractName: ContractName;
   voutesAgainst: number;
+  proposal: Proposal;
   voutesFor: number;
 }
 
@@ -24,6 +27,12 @@ export function VoteCaster(props: Props) {
     undefined,
     props.proposalId,
     account,
+  );
+
+  const votesCurrent = useStaking_getPriorVotes(
+    account,
+    props.proposal.startBlock,
+    Number(props.proposal.startTime),
   );
 
   const [loading, setLoading] = useState(false);
@@ -83,14 +92,14 @@ export function VoteCaster(props: Props) {
         type="button"
         onClick={() => handleVote(true)}
       >
-        {kFormatter(numberFromWei(props.voutesFor || 0))} Votes For
+        {kFormatter(numberFromWei(votesCurrent.value || 0))} Votes For
       </button>
       <button
         className="tracking-normal vote__danger w-full xl:w-auto bg-red focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-30 rounded-xl border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red"
         type="button"
         onClick={() => handleVote(false)}
       >
-        {kFormatter(numberFromWei(props.voutesAgainst || 0))} Votes Against
+        {kFormatter(numberFromWei(votesCurrent.value || 0))} Votes Against
       </button>
     </div>
   );
