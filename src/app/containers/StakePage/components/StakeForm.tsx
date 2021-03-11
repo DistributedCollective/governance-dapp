@@ -109,6 +109,7 @@ export function StakeForm(props: Props) {
           </label>
           <div className="flex space-x-4">
             <input
+              readOnly
               className="border text-theme-white appearance-none text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-3 bg-transparent tracking-normal focus:outline-none focus:shadow-outline"
               id="vouting-power"
               type="text"

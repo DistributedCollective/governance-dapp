@@ -24,7 +24,6 @@ import { useSoV_balanceOf } from '../../hooks/sov/useSoV_balanceOf';
 import { useStaking_getStakes } from '../../hooks/staking/useStaking_getStakes';
 import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
 import { useStaking_WEIGHT_FACTOR } from '../../hooks/staking/useStaking_WEIGHT_FACTOR';
-import { useStaking_currentBalance } from '../../hooks/staking/useStaking_currentBalance';
 import { useStaking_getCurrentVotes } from '../../hooks/staking/useStaking_getCurrentVotes';
 import { useStaking_computeWeightByDate } from '../../hooks/staking/useStaking_computeWeightByDate';
 import {
@@ -99,12 +98,10 @@ function InnerStakePage(props: Props) {
   const kickoffTs = useStaking_kickoffTs();
   const getStakes = useStaking_getStakes(account);
   const sovBalanceOf = useSoV_balanceOf(account);
-  const s = useStaking_currentBalance(account);
   const [amount, setAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [timestamp, setTimestamp] = useState<number>(0 as any);
   const [loading, setLoading] = useState(false);
-  const [currentLock, setCurrentLock] = useState<Date>(null as any);
   const weiAmount = useWeiAmount(amount);
   const weiWithdrawAmount = useWeiAmount(withdrawAmount);
   const [until, setUntil] = useState<number>(0 as any);
@@ -241,7 +238,6 @@ function InnerStakePage(props: Props) {
   };
 
   useEffect(() => {
-    setCurrentLock(new Date(Number(s.value) * 1e3));
     if (timestamp && weiAmount && stakeForm) {
       setLockDate(timestamp / 1e3);
       setWeight(getWeight.value);
@@ -254,7 +250,6 @@ function InnerStakePage(props: Props) {
       setVotingPower(0);
     }
   }, [
-    s.value,
     getWeight.value,
     weight,
     stakeForm,
@@ -283,9 +278,8 @@ function InnerStakePage(props: Props) {
     if (loading) return false;
     const num = Number(withdrawAmount);
     if (!num || isNaN(num) || num <= 0) return false;
-    if (currentLock && currentLock > now) return false;
     return num * 1e18 <= Number(balanceOf.value);
-  }, [loading, withdrawAmount, balanceOf, currentLock]);
+  }, [loading, withdrawAmount, balanceOf]);
 
   const validateExtendTimeForm = useCallback(() => {
     if (loading) return false;
@@ -626,7 +620,7 @@ function InnerStakePage(props: Props) {
                     show={extendForm}
                     content={
                       <>
-                        {currentLock && kickoffTs.value !== '0' && (
+                        {kickoffTs.value !== '0' && (
                           <ExtendStakeForm
                             handleSubmit={handleExtendTimeSubmit}
                             amount={amount}
@@ -639,7 +633,6 @@ function InnerStakePage(props: Props) {
                             balanceOf={balanceOf}
                             votePower={votingPower}
                             prevExtend={prevTimestamp}
-                            currentLock={currentLock}
                             onCloseModal={() => setExtendForm(!extendForm)}
                           />
                         )}

@@ -16,7 +16,6 @@ interface Props {
   stakes: undefined;
   votePower?: number;
   prevExtend: number;
-  currentLock: Date;
   onCloseModal: () => void;
 }
 
@@ -57,7 +56,6 @@ export function ExtendStakeForm(props: Props) {
           <StakingDateSelector
             title="Select new date"
             kickoffTs={Number(props.kickoff.value)}
-            startTs={props.currentLock.getTime()}
             value={props.timestamp}
             onClick={value => props.onChangeTimestamp(value)}
             stakes={props.stakes}
@@ -72,11 +70,12 @@ export function ExtendStakeForm(props: Props) {
           </label>
           <div className="flex space-x-4">
             <input
+              readOnly
               className="border text-theme-white appearance-none text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-3 bg-transparent tracking-normal focus:outline-none focus:shadow-outline"
               id="vouting-power"
               type="text"
               placeholder="0"
-              defaultValue={numberFromWei(props.votePower)}
+              value={numberFromWei(props.votePower)}
             />
           </div>
           <p className="block text-theme-white text-md font-light mb-2 mt-7">
