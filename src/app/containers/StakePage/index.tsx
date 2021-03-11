@@ -543,7 +543,7 @@ function InnerStakePage(props: Props) {
                         Staking Date
                       </th>
                       <th className="text-left hidden lg:table-cell">
-                        Vouting Power
+                        Voting Power
                       </th>
                       <th className="text-left hidden lg:table-cell">
                         Staking Period

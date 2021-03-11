@@ -111,7 +111,7 @@ export function WithdrawForm(props: Props) {
           </div>
           <label
             className="block text-theme-white text-md font-medium mb-2 mt-8"
-            htmlFor="vouting-power"
+            htmlFor="voting-power"
           >
             Voting Power:
           </label>
@@ -119,7 +119,7 @@ export function WithdrawForm(props: Props) {
             <input
               readOnly
               className="border text-theme-white appearance-none text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-3 bg-transparent tracking-normal focus:outline-none focus:shadow-outline"
-              id="vouting-power"
+              id="voting-power"
               type="text"
               placeholder="0"
               defaultValue={numberFromWei(props.votePower)}
