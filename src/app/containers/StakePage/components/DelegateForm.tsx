@@ -42,7 +42,7 @@ export function DelegateForm(props: Props) {
             title="Select new date"
             kickoffTs={Number(props.kickoff.value)}
             value={props.timestamp}
-            onClick={value => props.onChangeTimestamp(value)}
+            onClick={value => props.onChangeTimestamp(value / 1e3)}
             stakes={props.stakes}
             delegate={true}
           />

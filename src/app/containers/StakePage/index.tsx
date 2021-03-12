@@ -274,7 +274,7 @@ function InnerStakePage(props: Props) {
 
   const validateDelegateForm = useCallback(() => {
     if (loading) return false;
-    if (!timestamp || timestamp < now.getTime()) return false;
+    if (!timestamp || timestamp < Math.round(now.getTime() / 1e3)) return false;
     return Rsk3.utils.isAddress(address.toLowerCase());
   }, [loading, address, timestamp]);
 
@@ -526,6 +526,7 @@ function InnerStakePage(props: Props) {
                     <button
                       className="bg-gold bg-opacity-10 mt-4 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light border transition-colors duration-300 ease-in-out border-gold rounded-xl hover:no-underline no-underline inline-block"
                       onClick={() => {
+                        setTimestamp(0);
                         setDelegateForm(!delegateForm);
                       }}
                     >
