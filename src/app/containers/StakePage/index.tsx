@@ -323,7 +323,7 @@ function InnerStakePage(props: Props) {
       e.preventDefault();
       setLoading(true);
       try {
-        await staking_delegate(address.toLowerCase(), timestamp / 1e3, account);
+        await staking_delegate(address.toLowerCase(), timestamp, account);
         setLoading(false);
       } catch (e) {
         setLoading(false);
