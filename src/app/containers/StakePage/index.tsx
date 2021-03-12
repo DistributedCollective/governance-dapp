@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Header } from 'app/components/Header';
+import Rsk3 from '@rsksmart/rsk3';
 import moment from 'moment';
 import { bignumber } from 'mathjs';
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
@@ -32,9 +33,11 @@ import {
   staking_extendStakingDuration,
   staking_stake,
   staking_withdraw,
+  staking_delegate,
 } from '../BlockChainProvider/requests/staking';
 import { Modal } from '../../components/Modal';
 import { StakeForm } from './components/StakeForm';
+import { DelegateForm } from './components/DelegateForm';
 import { WithdrawForm } from './components/WithdrawForm';
 import { useIsConnected } from '../../hooks/useIsConnected';
 import { ExtendStakeForm } from './components/ExtendStakeForm';
@@ -99,6 +102,7 @@ function InnerStakePage(props: Props) {
   const getStakes = useStaking_getStakes(account);
   const sovBalanceOf = useSoV_balanceOf(account);
   const [amount, setAmount] = useState('');
+  const [address, setAddress] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [timestamp, setTimestamp] = useState<number>(0 as any);
   const [loading, setLoading] = useState(false);
@@ -107,6 +111,7 @@ function InnerStakePage(props: Props) {
   const [until, setUntil] = useState<number>(0 as any);
   const [prevTimestamp, setPrevTimestamp] = useState<number>(undefined as any);
   const [stakeForm, setStakeForm] = useState(false);
+  const [delegateForm, setDelegateForm] = useState(false);
   const [extendForm, setExtendForm] = useState(false);
   const [withdrawForm, setWithdrawForm] = useState(false);
   const [increaseForm, setIncreaseForm] = useState(false);
@@ -125,7 +130,7 @@ function InnerStakePage(props: Props) {
     if (dates && stakes) {
       setStakesArray(dates.map((v, index) => [stakes[index], v]));
     }
-  }, [account, getStakes.value]);
+  }, [account, getStakes.value, setStakesArray]);
 
   interface Stakes {
     stakes: any[] | any;
@@ -267,6 +272,12 @@ function InnerStakePage(props: Props) {
     return num * 1e18 <= Number(sovBalanceOf.value);
   }, [loading, amount, sovBalanceOf, timestamp]);
 
+  const validateDelegateForm = useCallback(() => {
+    if (loading) return false;
+    if (!timestamp || timestamp < now.getTime()) return false;
+    return Rsk3.utils.isAddress(address.toLowerCase());
+  }, [loading, address, timestamp]);
+
   const validateIncreaseForm = useCallback(() => {
     if (loading) return false;
     const num = Number(amount);
@@ -305,6 +316,21 @@ function InnerStakePage(props: Props) {
       }
     },
     [weiAmount, sovBalanceOf.value, account, timestamp],
+  );
+
+  const handleDelegateSubmit = useCallback(
+    async e => {
+      e.preventDefault();
+      setLoading(true);
+      try {
+        await staking_delegate(address.toLowerCase(), timestamp / 1e3, account);
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        console.error(e);
+      }
+    },
+    [address, account, timestamp],
   );
 
   const handleIncreaseStakeSubmit = useCallback(
@@ -420,7 +446,7 @@ function InnerStakePage(props: Props) {
                 {balanceOf.value !== '0' && (
                   <button
                     type="button"
-                    className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light py-3 px-3 border transition-colors duration-300 ease-in-out border-gold rounded-xl"
+                    className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out text-lg text-gold hover:text-gray-light py-3 px-8 border transition-colors duration-300 ease-in-out border-gold rounded-xl"
                     onClick={() => {
                       setTimestamp(0);
                       setAmount('');
@@ -489,12 +515,43 @@ function InnerStakePage(props: Props) {
                 >
                   {numberFromWei(voteBalance.value).toLocaleString()}
                 </p>
-                <Link
-                  to={'/'}
-                  className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light py-3 px-3 border transition-colors duration-300 ease-in-out border-gold rounded-xl hover:no-underline no-underline inline-block"
-                >
-                  View Governance
-                </Link>
+                <div className="flex flex-col items-start">
+                  <Link
+                    to={'/'}
+                    className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light border transition-colors duration-300 ease-in-out border-gold rounded-xl hover:no-underline no-underline inline-block"
+                  >
+                    View Governance
+                  </Link>
+                  {stakesArray.length > 0 && (
+                    <button
+                      className="bg-gold bg-opacity-10 mt-4 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light border transition-colors duration-300 ease-in-out border-gold rounded-xl hover:no-underline no-underline inline-block"
+                      onClick={() => {
+                        setDelegateForm(!delegateForm);
+                      }}
+                    >
+                      Delegate
+                    </button>
+                  )}
+                  <Modal
+                    show={delegateForm}
+                    content={
+                      <>
+                        <DelegateForm
+                          handleSubmit={handleDelegateSubmit}
+                          address={address}
+                          timestamp={timestamp}
+                          onChangeAddress={e => setAddress(e)}
+                          onChangeTimestamp={e => setTimestamp(e)}
+                          sovBalanceOf={sovBalanceOf}
+                          isValid={validateDelegateForm()}
+                          kickoff={kickoffTs}
+                          stakes={getStakes.value['dates']}
+                          onCloseModal={() => setDelegateForm(!delegateForm)}
+                        />
+                      </>
+                    }
+                  />
+                </div>
               </div>
             </div>
 

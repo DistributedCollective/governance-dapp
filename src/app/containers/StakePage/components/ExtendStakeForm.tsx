@@ -25,7 +25,7 @@ export function ExtendStakeForm(props: Props) {
       <h3 className="text-center mb-10 leading-10 text-3xl">
         Extend SOV Stake
       </h3>
-      <div className="text-gray-5 mb-4 text-xs">
+      <div className="text-gray-5 mb-4 md:px-9 tracking-normal text-xs">
         Previous until:
         <br />
         <span className="font-bold">
@@ -60,6 +60,7 @@ export function ExtendStakeForm(props: Props) {
             onClick={value => props.onChangeTimestamp(value)}
             stakes={props.stakes}
             prevExtend={props.prevExtend}
+            delegate={false}
           />
 
           <label
