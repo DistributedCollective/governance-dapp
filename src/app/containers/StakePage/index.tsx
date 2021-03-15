@@ -103,7 +103,7 @@ function InnerStakePage(props: Props) {
   const sovBalanceOf = useSoV_balanceOf(account);
   const [amount, setAmount] = useState('');
   const [address, setAddress] = useState('');
-  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [withdrawAmount, setWithdrawAmount] = useState<number>(0 as any);
   const [timestamp, setTimestamp] = useState<number>(0 as any);
   const [loading, setLoading] = useState(false);
   const weiAmount = useWeiAmount(amount);
@@ -211,7 +211,7 @@ function InnerStakePage(props: Props) {
                     className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
                     onClick={() => {
                       setAmount(item[0]);
-                      setWithdrawAmount('');
+                      setWithdrawAmount(0);
                       setTimestamp(item[1]);
                       setUntil(item[1]);
                       setStakeForm(false);
@@ -285,12 +285,15 @@ function InnerStakePage(props: Props) {
     return num * 1e18 <= Number(sovBalanceOf.value);
   }, [loading, amount, sovBalanceOf]);
 
-  const validateWithdrawForm = useCallback(() => {
-    if (loading) return false;
-    const num = Number(withdrawAmount);
-    if (!num || isNaN(num) || num <= 0) return false;
-    return num * 1e18 <= Number(balanceOf.value);
-  }, [loading, withdrawAmount, balanceOf]);
+  const validateWithdrawForm = useCallback(
+    amount => {
+      if (loading) return false;
+      const num = Number(withdrawAmount);
+      if (!num || isNaN(num) || num <= 0) return false;
+      return num * 1e18 <= Number(amount);
+    },
+    [loading, withdrawAmount],
+  );
 
   const validateExtendTimeForm = useCallback(() => {
     if (loading) return false;
@@ -712,7 +715,7 @@ function InnerStakePage(props: Props) {
                           sovBalanceOf={sovBalanceOf}
                           balanceOf={balanceOf}
                           votePower={votingPower}
-                          isValid={validateWithdrawForm()}
+                          isValid={validateWithdrawForm(amount)}
                           onCloseModal={() => setWithdrawForm(!withdrawForm)}
                         />
                       </>

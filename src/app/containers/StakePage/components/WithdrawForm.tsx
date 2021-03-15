@@ -1,13 +1,13 @@
-import React, { FormEvent } from 'react';
-import { handleNumberInput, numberFromWei } from 'utils/helpers';
+import React, { FormEvent, useEffect } from 'react';
+import { handleNumberInput, numberFromWei, toWei } from 'utils/helpers';
 import { ContractCallResponse } from 'app/hooks/useContractCall';
-
+import { useStaking_getWithdrawAmounts } from '../../../hooks/staking/useStaking_getWithdrawAmounts';
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;
-  withdrawAmount: string;
+  withdrawAmount: number;
   until: number;
-  onChangeAmount: (value: string) => void;
+  onChangeAmount: (value: number) => void;
   sovBalanceOf: ContractCallResponse;
   balanceOf: ContractCallResponse;
   isValid: boolean;
@@ -16,6 +16,17 @@ interface Props {
 }
 
 export function WithdrawForm(props: Props) {
+  const unStake = useStaking_getWithdrawAmounts(
+    toWei(props.withdrawAmount),
+    Number(props.until),
+  );
+  console.log(toWei(props.withdrawAmount));
+  console.log(Number(props.until));
+
+  useEffect(() => {
+    console.log('unStake', unStake);
+  }, [unStake, props.withdrawAmount]);
+
   return (
     <>
       <h3 className="text-center mb-10 leading-10 text-3xl">Unstake SOV</h3>
@@ -62,9 +73,7 @@ export function WithdrawForm(props: Props) {
           <div className="flex rounded border border-theme-blue mt-4">
             <div
               onClick={() =>
-                props.onChangeAmount(
-                  (numberFromWei(props.amount) / 10).toString(),
-                )
+                props.onChangeAmount(numberFromWei(props.amount) / 10)
               }
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
@@ -72,9 +81,7 @@ export function WithdrawForm(props: Props) {
             </div>
             <div
               onClick={() =>
-                props.onChangeAmount(
-                  (numberFromWei(props.amount) / 4).toString(),
-                )
+                props.onChangeAmount(numberFromWei(props.amount) / 4)
               }
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
@@ -82,9 +89,7 @@ export function WithdrawForm(props: Props) {
             </div>
             <div
               onClick={() =>
-                props.onChangeAmount(
-                  (numberFromWei(props.amount) / 2).toString(),
-                )
+                props.onChangeAmount(numberFromWei(props.amount) / 2)
               }
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
@@ -92,18 +97,14 @@ export function WithdrawForm(props: Props) {
             </div>
             <div
               onClick={() =>
-                props.onChangeAmount(
-                  ((numberFromWei(props.amount) / 4) * 3).toString(),
-                )
+                props.onChangeAmount((numberFromWei(props.amount) / 4) * 3)
               }
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
               75%
             </div>
             <div
-              onClick={() =>
-                props.onChangeAmount(numberFromWei(props.amount).toString())
-              }
+              onClick={() => props.onChangeAmount(numberFromWei(props.amount))}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center text-sm text-theme-blue tracking-tighter"
             >
               100%
@@ -125,22 +126,27 @@ export function WithdrawForm(props: Props) {
               defaultValue={numberFromWei(props.votePower)}
             />
           </div>
-          <label
-            className="block text-theme-white text-md font-medium mb-2 mt-8"
-            htmlFor="unstake"
-          >
-            Early unstake forfeit:
-          </label>
-          <div className="flex space-x-4">
-            <input
-              readOnly
-              className="border text-theme-white appearance-none text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-3 bg-transparent tracking-normal focus:outline-none focus:shadow-outline"
-              id="unstake"
-              type="text"
-              placeholder="0"
-              defaultValue="25% ≈ 1500 SOV"
-            />
-          </div>
+          {Number(props.until) > Math.round(new Date().getTime() / 1e3) && (
+            <>
+              <label
+                className="block text-theme-white text-md font-medium mb-2 mt-8"
+                htmlFor="unstake"
+              >
+                Early unstake forfeit:
+              </label>
+              <div className="flex space-x-4">
+                <input
+                  readOnly
+                  className="border text-theme-white appearance-none text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-3 bg-transparent tracking-normal focus:outline-none focus:shadow-outline"
+                  id="unstake"
+                  type="text"
+                  placeholder="0"
+                  value={'25% ≈ ' + props.withdrawAmount / 4 + ' SOV'}
+                />
+              </div>
+            </>
+          )}
+
           <p className="block text-theme-white text-md font-light mb-2 mt-7">
             Tx Fee: 0.0006 rBTC
           </p>
