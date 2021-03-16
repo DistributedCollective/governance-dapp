@@ -446,7 +446,7 @@ function InnerStakePage(props: Props) {
                     </>
                   }
                 />
-                {balanceOf.value !== '0' && (
+                {sovBalanceOf.value !== '0' && (
                   <button
                     type="button"
                     className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out text-lg text-gold hover:text-gray-light py-3 px-8 border transition-colors duration-300 ease-in-out border-gold rounded-xl"

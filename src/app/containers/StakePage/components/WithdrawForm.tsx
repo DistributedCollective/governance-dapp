@@ -1,7 +1,8 @@
-import React, { FormEvent, useEffect } from 'react';
+import React, { FormEvent, useEffect, useCallback, useState } from 'react';
 import { handleNumberInput, numberFromWei, toWei } from 'utils/helpers';
 import { ContractCallResponse } from 'app/hooks/useContractCall';
-import { useStaking_getWithdrawAmounts } from '../../../hooks/staking/useStaking_getWithdrawAmounts';
+import { network } from '../../BlockChainProvider/network';
+import { useAccount } from 'app/hooks/useAccount';
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;
@@ -16,16 +17,40 @@ interface Props {
 }
 
 export function WithdrawForm(props: Props) {
-  const unStake = useStaking_getWithdrawAmounts(
-    toWei(props.withdrawAmount),
-    Number(props.until),
-  );
-  console.log(toWei(props.withdrawAmount));
-  console.log(Number(props.until));
+  const account = useAccount();
+  const [forfeitWithdraw, setForfeitWithdraw] = useState<number>(0);
+  const [forfeitPercent, setForfeitPercent] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
+  const getEvent = useCallback(async () => {
+    setLoading(true);
+    await network
+      .call(
+        'staking',
+        'getWithdrawAmounts',
+        [toWei(props.withdrawAmount), Number(props.until)],
+        account,
+      )
+      .then(res => {
+        setForfeitWithdraw(res[1]);
+        setForfeitPercent(
+          Math.floor(
+            (Number(forfeitWithdraw) / Number(toWei(props.withdrawAmount))) *
+              100,
+          ),
+        );
+        setLoading(false);
+      })
+      .catch(error => {
+        setLoading(false);
+        setForfeitWithdraw(0);
+        setForfeitPercent(0);
+        return false;
+      });
+  }, [account, props.until, props.withdrawAmount, forfeitWithdraw]);
 
   useEffect(() => {
-    console.log('unStake', unStake);
-  }, [unStake, props.withdrawAmount]);
+    getEvent();
+  }, [getEvent]);
 
   return (
     <>
@@ -137,11 +162,18 @@ export function WithdrawForm(props: Props) {
               <div className="flex space-x-4">
                 <input
                   readOnly
-                  className="border text-theme-white appearance-none text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-3 bg-transparent tracking-normal focus:outline-none focus:shadow-outline"
+                  className={`border text-theme-white appearance-none text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-3 bg-transparent tracking-normal focus:outline-none focus:shadow-outline ${
+                    loading && 'skeleton'
+                  }`}
                   id="unstake"
                   type="text"
                   placeholder="0"
-                  value={'25% ≈ ' + props.withdrawAmount / 4 + ' SOV'}
+                  value={
+                    forfeitPercent +
+                    '% ≈ ' +
+                    numberFromWei(forfeitWithdraw) +
+                    ' SOV'
+                  }
                 />
               </div>
             </>
