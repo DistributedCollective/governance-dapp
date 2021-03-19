@@ -61,7 +61,7 @@ export function VestingTable() {
 
   return (
     <>
-      {vesting.value !== genesisAddress ? (
+      {vesting.value !== genesisAddress && (
         <>
           {vestLoading ? (
             <tr>
@@ -141,14 +141,6 @@ export function VestingTable() {
               </td>
             </tr>
           )}
-        </>
-      ) : (
-        <>
-          <tr>
-            <td colSpan={7} className="text-center font-normal">
-              No vests yet.
-            </td>
-          </tr>
         </>
       )}
     </>

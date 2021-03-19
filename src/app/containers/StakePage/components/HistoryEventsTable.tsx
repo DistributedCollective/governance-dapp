@@ -65,7 +65,6 @@ export function HistoryEventsTable() {
     <>
       {eventsHistory &&
         !loading &&
-        eventsHistory.length > 0 &&
         eventsHistory.map((item, i: string) => {
           return (
             <tr key={i}>
@@ -102,7 +101,6 @@ export function HistoryEventsTable() {
         })}
       {eventsHistoryVesting &&
         !loading &&
-        eventsHistoryVesting.length > 0 &&
         eventsHistoryVesting.map(item => {
           return (
             <tr key={item.id}>
@@ -142,7 +140,6 @@ export function HistoryEventsTable() {
         })}
       {eventsHistoryVestingTeam &&
         !loading &&
-        eventsHistoryVestingTeam.length > 0 &&
         eventsHistoryVestingTeam.map(item => {
           return (
             <tr key={item.id}>
