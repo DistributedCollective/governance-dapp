@@ -148,21 +148,25 @@
             line-height: 3rem;
         }
         .min-w-15 {
-            min-width: 24.5rem;
+            min-width: 32.5rem;
         }
         .max-w-15 {
-            max-width: 24.5rem;
+            max-width: 32.5rem;
         }
     }
 
     @media (min-width: 1700px) {
         .min-w-15 {
-            min-width: 16.6rem;
+            min-width: 23.6rem;
         }
         .max-w-15 {
-            max-width: 16.6rem;
+            max-width: 23.6rem;
         }
     }
+}
+
+[disabled].hover\:bg-opacity-0:hover {
+    background: transparent !important;
 }
 
 .slick-slider {
@@ -252,6 +256,10 @@
     float: left;
     height: 100%;
     min-height: 1px;
+}
+.slick-slide div:focus {
+    outline: 0;
+    outline-offset: 0;
 }
 .slick-slide:hover, .slick-slide:focus, .slick-slide:active {
     border: none;

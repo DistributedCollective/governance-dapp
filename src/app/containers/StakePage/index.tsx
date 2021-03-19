@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Header } from 'app/components/Header';
+import Rsk3 from '@rsksmart/rsk3';
 import moment from 'moment';
 import { bignumber } from 'mathjs';
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
@@ -32,10 +33,13 @@ import {
   staking_extendStakingDuration,
   staking_stake,
   staking_withdraw,
+  staking_delegate,
 } from '../BlockChainProvider/requests/staking';
 import { Modal } from '../../components/Modal';
 import { StakeForm } from './components/StakeForm';
+import { DelegateForm } from './components/DelegateForm';
 import { WithdrawForm } from './components/WithdrawForm';
+import { LinkToExplorer } from '../../components/LinkToExplorer';
 import { useIsConnected } from '../../hooks/useIsConnected';
 import { ExtendStakeForm } from './components/ExtendStakeForm';
 import { IncreaseStakeForm } from './components/IncreaseStakeForm';
@@ -99,7 +103,8 @@ function InnerStakePage(props: Props) {
   const getStakes = useStaking_getStakes(account);
   const sovBalanceOf = useSoV_balanceOf(account);
   const [amount, setAmount] = useState('');
-  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [address, setAddress] = useState('');
+  const [withdrawAmount, setWithdrawAmount] = useState<number>(0 as any);
   const [timestamp, setTimestamp] = useState<number>(0 as any);
   const [loading, setLoading] = useState(false);
   const weiAmount = useWeiAmount(amount);
@@ -107,6 +112,7 @@ function InnerStakePage(props: Props) {
   const [until, setUntil] = useState<number>(0 as any);
   const [prevTimestamp, setPrevTimestamp] = useState<number>(undefined as any);
   const [stakeForm, setStakeForm] = useState(false);
+  const [delegateForm, setDelegateForm] = useState(false);
   const [extendForm, setExtendForm] = useState(false);
   const [withdrawForm, setWithdrawForm] = useState(false);
   const [increaseForm, setIncreaseForm] = useState(false);
@@ -118,14 +124,36 @@ function InnerStakePage(props: Props) {
     Math.round(now.getTime() / 1e3),
   );
   const [stakesArray, setStakesArray] = useState([]);
-
+  const [stakeLoad, setStakeLoad] = useState(false);
   useEffect(() => {
     let dates = getStakes.value['dates'];
     let stakes = getStakes.value['stakes'];
+    let cleanupFunction = false;
+    setStakeLoad(true);
     if (dates && stakes) {
-      setStakesArray(dates.map((v, index) => [stakes[index], v]));
+      Promise.all(
+        dates.map(async (value, index) => {
+          const delegate = await network
+            .call('staking', 'delegates', [account, value])
+            .then(res => {
+              if (res.toString().toLowerCase() !== account.toLowerCase()) {
+                return res;
+              }
+              return false;
+            });
+          return [stakes[index], value, delegate];
+        }),
+      )
+        .then(result => {
+          setStakeLoad(false);
+          if (!cleanupFunction) setStakesArray(result as any);
+        })
+        .then(_ => setStakeLoad(false));
     }
-  }, [account, getStakes.value]);
+    return () => {
+      cleanupFunction = true;
+    };
+  }, [account, getStakes.value, setStakesArray]);
 
   interface Stakes {
     stakes: any[] | any;
@@ -135,6 +163,7 @@ function InnerStakePage(props: Props) {
     return stakes.length ? (
       <>
         {stakes.map((item, i: string) => {
+          const locked = Number(item[1]) > Math.round(now.getTime() / 1e3); //check if date is locked
           return (
             <tr key={i}>
               <td>
@@ -147,6 +176,19 @@ function InnerStakePage(props: Props) {
               </td>
               <td className="text-left font-normal">
                 {numberFromWei(item[0])} SOV
+              </td>
+              <td className="text-left font-normal max-w-15">
+                {item[2].length && (
+                  <>
+                    Delegated to{' '}
+                    <LinkToExplorer
+                      isAddress={true}
+                      txHash={item[2]}
+                      className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                    />
+                  </>
+                )}
+                {!item[2].length && <p>No delegate</p>}
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 {moment(new Date(parseInt(item[1]) * 1e3)).format(
@@ -161,28 +203,38 @@ function InnerStakePage(props: Props) {
                   {moment(new Date(parseInt(item[1]) * 1e3)).format(
                     'DD/MM/YYYY',
                   )}
-                  <br />
-                  {moment().diff(
-                    moment(new Date(parseInt(item[1]) * 1e3)),
-                    'days',
-                  )}{' '}
-                  days
+                  {locked && (
+                    <>
+                      <br />
+                      {Math.abs(
+                        moment().diff(
+                          moment(new Date(parseInt(item[1]) * 1e3)),
+                          'days',
+                        ),
+                      )}{' '}
+                      days
+                    </>
+                  )}
                 </p>
               </td>
               <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
                 <div className="flex flex-nowrap">
                   <button
                     type="button"
-                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                    className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
+                      !locked &&
+                      'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
+                    }`}
                     onClick={() => {
                       setTimestamp(item[1]);
-                      setAmount(item[0]);
+                      setAmount(numberFromWei(item[0]).toString());
                       setUntil(item[1]);
                       setStakeForm(false);
                       setExtendForm(false);
                       setIncreaseForm(true);
                       setWithdrawForm(false);
                     }}
+                    disabled={!locked}
                   >
                     Increase
                   </button>
@@ -192,7 +244,7 @@ function InnerStakePage(props: Props) {
                     onClick={() => {
                       setPrevTimestamp(item[1]);
                       setTimestamp(item[1]);
-                      setAmount(item[0]);
+                      setAmount(numberFromWei(item[0]).toString());
                       setStakeForm(false);
                       setExtendForm(true);
                       setIncreaseForm(false);
@@ -203,10 +255,10 @@ function InnerStakePage(props: Props) {
                   </button>
                   <button
                     type="button"
-                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
                     onClick={() => {
-                      setAmount(item[0]);
-                      setWithdrawAmount('');
+                      setAmount(numberFromWei(item[0]).toString());
+                      setWithdrawAmount(0);
                       setTimestamp(item[1]);
                       setUntil(item[1]);
                       setStakeForm(false);
@@ -217,6 +269,19 @@ function InnerStakePage(props: Props) {
                   >
                     Unstake
                   </button>
+                  <button
+                    className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
+                      !locked &&
+                      'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
+                    }`}
+                    onClick={() => {
+                      setTimestamp(item[1]);
+                      setDelegateForm(!delegateForm);
+                    }}
+                    disabled={!locked}
+                  >
+                    Delegate
+                  </button>
                 </div>
               </td>
             </tr>
@@ -226,10 +291,8 @@ function InnerStakePage(props: Props) {
     ) : (
       <tr>
         <td
-          colSpan={6}
-          className={`text-center font-normal ${
-            getStakes.loading && 'skeleton'
-          }`}
+          colSpan={7}
+          className={`text-center font-normal ${stakeLoad && 'skeleton'}`}
         >
           No stakes yet
         </td>
@@ -238,8 +301,8 @@ function InnerStakePage(props: Props) {
   };
 
   useEffect(() => {
-    if (timestamp && weiAmount && stakeForm) {
-      setLockDate(timestamp / 1e3);
+    if (timestamp && weiAmount && (stakeForm || increaseForm || extendForm)) {
+      setLockDate(timestamp);
       setWeight(getWeight.value);
       setVotingPower(
         (Number(weiAmount) * Number(weight)) / Number(WEIGHT_FACTOR.value),
@@ -256,16 +319,25 @@ function InnerStakePage(props: Props) {
     WEIGHT_FACTOR.value,
     weiAmount,
     timestamp,
+    increaseForm,
+    extendForm,
   ]);
 
+  //Form Validations
   const validateStakeForm = useCallback(() => {
     if (loading) return false;
     const num = Number(amount);
 
     if (!num || isNaN(num) || num <= 0) return false;
-    if (!timestamp || timestamp < now.getTime()) return false;
+    if (!timestamp || timestamp < Math.round(now.getTime() / 1e3)) return false;
     return num * 1e18 <= Number(sovBalanceOf.value);
   }, [loading, amount, sovBalanceOf, timestamp]);
+
+  const validateDelegateForm = useCallback(() => {
+    if (loading) return false;
+    if (!timestamp || timestamp < Math.round(now.getTime() / 1e3)) return false;
+    return Rsk3.utils.isAddress(address.toLowerCase());
+  }, [loading, address, timestamp]);
 
   const validateIncreaseForm = useCallback(() => {
     if (loading) return false;
@@ -274,18 +346,22 @@ function InnerStakePage(props: Props) {
     return num * 1e18 <= Number(sovBalanceOf.value);
   }, [loading, amount, sovBalanceOf]);
 
-  const validateWithdrawForm = useCallback(() => {
-    if (loading) return false;
-    const num = Number(withdrawAmount);
-    if (!num || isNaN(num) || num <= 0) return false;
-    return num * 1e18 <= Number(balanceOf.value);
-  }, [loading, withdrawAmount, balanceOf]);
+  const validateWithdrawForm = useCallback(
+    amount => {
+      if (loading) return false;
+      const num = Number(withdrawAmount);
+      if (!num || isNaN(num) || num <= 0) return false;
+      return num <= Number(amount);
+    },
+    [loading, withdrawAmount],
+  );
 
   const validateExtendTimeForm = useCallback(() => {
     if (loading) return false;
-    return timestamp >= now.getTime();
+    return timestamp >= Math.round(now.getTime() / 1e3);
   }, [loading, timestamp]);
 
+  //Submit Forms
   const handleStakeSubmit = useCallback(
     async e => {
       e.preventDefault();
@@ -297,14 +373,31 @@ function InnerStakePage(props: Props) {
           await staking_approve(sovBalanceOf.value, account, nonce);
           nonce += 1;
         }
-        await staking_stake(weiAmount, timestamp / 1e3, account, nonce);
+        await staking_stake(weiAmount, timestamp, account, nonce);
         setLoading(false);
+        setStakeForm(!stakeForm);
       } catch (e) {
         setLoading(false);
         console.error(e);
       }
     },
-    [weiAmount, sovBalanceOf.value, account, timestamp],
+    [weiAmount, sovBalanceOf.value, account, timestamp, stakeForm],
+  );
+
+  const handleDelegateSubmit = useCallback(
+    async e => {
+      e.preventDefault();
+      setLoading(true);
+      try {
+        await staking_delegate(address.toLowerCase(), timestamp, account);
+        setLoading(false);
+        setDelegateForm(!delegateForm);
+      } catch (e) {
+        setLoading(false);
+        console.error(e);
+      }
+    },
+    [address, account, timestamp, delegateForm],
   );
 
   const handleIncreaseStakeSubmit = useCallback(
@@ -320,12 +413,13 @@ function InnerStakePage(props: Props) {
         }
         await staking_stake(weiAmount, timestamp, account, nonce);
         setLoading(false);
+        setIncreaseForm(!increaseForm);
       } catch (e) {
         setLoading(false);
         console.error(e);
       }
     },
-    [weiAmount, account, timestamp],
+    [weiAmount, account, timestamp, increaseForm],
   );
 
   const handleWithdrawSubmit = useCallback(
@@ -334,40 +428,25 @@ function InnerStakePage(props: Props) {
       setLoading(true);
       await staking_withdraw(weiWithdrawAmount, until, account);
       setLoading(false);
+      setWithdrawForm(!withdrawForm);
     },
-    [weiWithdrawAmount, until, account],
+    [weiWithdrawAmount, until, account, withdrawForm],
   );
 
-  //extend STAKES
   const handleExtendTimeSubmit = useCallback(
     async e => {
       e.preventDefault();
       setLoading(true);
       try {
-        await staking_extendStakingDuration(
-          prevTimestamp,
-          timestamp / 1e3,
-          account,
-        );
+        await staking_extendStakingDuration(prevTimestamp, timestamp, account);
         setLoading(false);
+        setExtendForm(!extendForm);
       } catch (e) {
         setLoading(false);
       }
     },
-    [prevTimestamp, timestamp, account],
+    [prevTimestamp, timestamp, account, extendForm],
   );
-
-  // const createProposal = useCallback(async () => {
-  //   const nextId = (await governance_proposalCount()) + 1;
-  //   await governance_propose(
-  //     ['0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083'],
-  //     ['0'],
-  //     ['setWeightScaling(uint96)'],
-  //     ['0x0000000000000000000000000000000000000000000000000000000000000004'],
-  //     `set weight scaling to 4 ${nextId}`,
-  //     account,
-  //   );
-  // }, [account]);
 
   return (
     <>
@@ -379,14 +458,6 @@ function InnerStakePage(props: Props) {
         <div className="bg-gray-700 tracking-normal">
           <div className="container">
             <h2 className="text-white pt-8 pb-5 pl-10">Staking/Vesting</h2>
-            {/* <button
-              className={`bg-green-500 text-white px-4 py-2 rounded mb-2`}
-              type="button"
-              onClick={() => createProposal()}
-            >
-              Add proposal
-            </button> */}
-
             <div className="xl:flex items-stretch justify-around mt-2">
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Total staked SOV</p>
@@ -417,10 +488,10 @@ function InnerStakePage(props: Props) {
                     </>
                   }
                 />
-                {balanceOf.value !== '0' && (
+                {sovBalanceOf.value !== '0' && (
                   <button
                     type="button"
-                    className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light py-3 px-3 border transition-colors duration-300 ease-in-out border-gold rounded-xl"
+                    className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out text-lg text-gold hover:text-gray-light py-3 px-8 border transition-colors duration-300 ease-in-out border-gold rounded-xl"
                     onClick={() => {
                       setTimestamp(0);
                       setAmount('');
@@ -481,7 +552,7 @@ function InnerStakePage(props: Props) {
               </div>*/}
 
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 mb-5 xl:mb-0">
-                <p className="text-lg -mt-1">Combined Voting Power </p>
+                <p className="text-lg -mt-1">Combined Voting Power</p>
                 <p
                   className={`text-4-5xl mt-2 mb-6 ${
                     voteBalance.loading && 'skeleton'
@@ -489,12 +560,14 @@ function InnerStakePage(props: Props) {
                 >
                   {numberFromWei(voteBalance.value).toLocaleString()}
                 </p>
-                <Link
-                  to={'/'}
-                  className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light py-3 px-3 border transition-colors duration-300 ease-in-out border-gold rounded-xl hover:no-underline no-underline inline-block"
-                >
-                  View Governance
-                </Link>
+                <div className="flex flex-col items-start">
+                  <Link
+                    to={'/'}
+                    className="bg-gold bg-opacity-10 hover:text-gold focus:outline-none focus:bg-opacity-50 hover:bg-opacity-40 transition duration-500 ease-in-out px-8 py-3 text-lg text-gold hover:text-gray-light border transition-colors duration-300 ease-in-out border-gold rounded-xl hover:no-underline no-underline inline-block"
+                  >
+                    View Governance
+                  </Link>
+                </div>
               </div>
             </div>
 
@@ -508,6 +581,9 @@ function InnerStakePage(props: Props) {
                     <tr>
                       <th className="text-left assets">Asset</th>
                       <th className="text-left">Locked Amount</th>
+                      <th className="text-left font-normal lg:table-cell">
+                        Voting Power:
+                      </th>
                       <th className="text-left hidden lg:table-cell">
                         Staking Date
                       </th>
@@ -526,6 +602,20 @@ function InnerStakePage(props: Props) {
                     <StakesOverview stakes={stakesArray} />
                   </tbody>
                 </StyledTable>
+                <Modal
+                  show={delegateForm}
+                  content={
+                    <>
+                      <DelegateForm
+                        handleSubmit={handleDelegateSubmit}
+                        address={address}
+                        onChangeAddress={e => setAddress(e)}
+                        isValid={validateDelegateForm()}
+                        onCloseModal={() => setDelegateForm(!delegateForm)}
+                      />
+                    </>
+                  }
+                />
               </div>
             </div>
 
@@ -654,7 +744,7 @@ function InnerStakePage(props: Props) {
                           sovBalanceOf={sovBalanceOf}
                           balanceOf={balanceOf}
                           votePower={votingPower}
-                          isValid={validateWithdrawForm()}
+                          isValid={validateWithdrawForm(amount)}
                           onCloseModal={() => setWithdrawForm(!withdrawForm)}
                         />
                       </>

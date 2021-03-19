@@ -28,20 +28,32 @@ interface Props {
   stakes?: undefined;
   prevExtend?: number;
   autoselect?: boolean;
+  delegate?: boolean;
 }
 
 export function StakingDateSelector(props: Props) {
-  const onItemSelect = (item: { key: number }) => props.onClick(item.key);
+  const onItemSelect = (item: { key: number }) => props.onClick(item.key / 1e3);
   const [dates, setDates] = useState<Date[]>([]);
   const [currentYearDates, setCurrenYearDates] = useState<any>([]);
   const [filteredDates, setFilteredDates] = useState<DateItem[]>([]);
   const [itemDisabled, setItemDisabled] = useState<any>([]);
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedDay, setSelectedDay] = useState('');
 
-  let avaliableYears = filteredDates
+  const dateWithoutStake = filteredDates.reduce((unique: any, o: any) => {
+    let isFound = itemDisabled.some((b: { key: any }) => {
+      return b.key === o.key;
+    });
+    if (!isFound) unique.push(o);
+    return unique;
+  }, []);
+
+  const avaliableYears = dateWithoutStake
     .map(yearDate => moment(yearDate.date).format('YYYY'))
     .filter((year, index, arr) => arr.indexOf(year) === index);
 
-  let avaliableMonth = currentYearDates
+  const avaliableMonth = currentYearDates
     .map(yearDate => moment(yearDate.date).format('MMM'))
     .filter((month, index, arr) => arr.indexOf(month) === index);
 
@@ -50,13 +62,53 @@ export function StakingDateSelector(props: Props) {
       let theBigDay = new Date();
       theBigDay.setFullYear(year);
       return setCurrenYearDates(
-        filteredDates.filter(
+        dateWithoutStake.filter(
           item => new Date(item.date).getFullYear() === theBigDay.getFullYear(),
         ),
       );
     },
-    [filteredDates],
+    [dateWithoutStake],
   );
+
+  useEffect(() => {
+    let filtered: Date[] = [];
+    if (!!props.startTs) {
+      filtered = dates.filter(
+        item => item.getTime() > ((props.startTs as unknown) as number),
+      );
+    } else {
+      const now = Date.now();
+      filtered = dates.filter(item => item.getTime() > now);
+    }
+
+    setFilteredDates(
+      filtered.map(item => ({
+        key: item.getTime(),
+        label: item.toLocaleDateString(),
+        date: item,
+      })),
+    );
+
+    if (props.stakes && !props.delegate) {
+      setItemDisabled(
+        (props.stakes as any).map((item: number) => ({
+          key: item * 1e3,
+          label: moment(new Date(item * 1e3)).format('DD.MM.YYYY'),
+          date: new Date(item * 1e3),
+        })),
+      );
+    }
+
+    if (props.delegate) {
+      setFilteredDates(
+        (props.stakes as any).map((item: number) => ({
+          key: item * 1e3,
+          label: moment(new Date(item * 1e3)).format('DD.MM.YYYY'),
+          date: new Date(item * 1e3),
+        })),
+      );
+    }
+  }, [dates, props.startTs, props.stakes, props.delegate]);
 
   useEffect(() => {
     if (props.kickoffTs) {
@@ -77,67 +129,6 @@ export function StakingDateSelector(props: Props) {
       }
     }
   }, [props.kickoffTs, props.value, props.prevExtend]);
-
-  useEffect(() => {
-    let filtered: Date[] = [];
-    if (!!props.startTs) {
-      filtered = dates.filter(
-        item => item.getTime() > ((props.startTs as unknown) as number),
-      );
-    } else {
-      const now = Date.now();
-
-      filtered = dates.filter(item => item.getTime() > now);
-    }
-
-    setFilteredDates(
-      filtered.map(item => ({
-        key: item.getTime(),
-        label: item.toLocaleDateString(),
-        date: item,
-      })),
-    );
-
-    if (props.stakes) {
-      setItemDisabled(
-        (props.stakes as any).map((item: number) => ({
-          key: item * 1e3,
-          label: moment(new Date(item * 1e3)).format('DD.MM.YYYY'),
-          date: new Date(item * 1e3),
-        })),
-      );
-    }
-  }, [dates, props.startTs, props.stakes]);
-
-  const dateWithoutStake = filteredDates.reduce((unique: any, o: any) => {
-    let isFound = itemDisabled.some((b: { key: any }) => {
-      return b.key === o.key;
-    });
-    if (!isFound) unique.push(o);
-    return unique;
-  }, []);
-
-  const getSelected = useCallback(() => {
-    return dateWithoutStake.find(
-      (item: { key: number | undefined }) => item.key === props.value,
-    );
-  }, [dateWithoutStake, props.value]);
-
-  const [, setSelected] = useState<DateItem | undefined>(getSelected());
-
-  const [selectedYear, setSelectedYear] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('');
-  const [selectedDay, setSelectedDay] = useState('');
-
-  useEffect(() => {
-    setSelected(getSelected());
-  }, [getSelected, props.value, dateWithoutStake]);
-
-  useEffect(() => {
-    setSelectedYear(moment((props.prevExtend as any) * 1e3).format('YYYY'));
-    setSelectedMonth(moment((props.prevExtend as any) * 1e3).format('MMM'));
-    setSelectedDay(moment((props.prevExtend as any) * 1e3).format('D'));
-  }, [props.prevExtend]);
 
   const SampleNextArrow = props => {
     const { className, style, onClick } = props;
@@ -177,17 +168,13 @@ export function StakingDateSelector(props: Props) {
     prevArrow: <SamplePrevArrow />,
   };
 
-  useEffect(() => {
-    if (props.prevExtend) {
-      getDatesByYear(selectedYear);
-    }
-  }, [props.prevExtend, getDatesByYear, selectedYear]);
-
   return (
     <>
-      <label className="block mt-8 text-theme-white text-md font-medium mb-2">
-        Select Year:
-      </label>
+      {avaliableYears.length > 0 && (
+        <label className="block mt-8 text-theme-white text-md font-medium mb-2">
+          {props.delegate ? <>Choose delegate period:</> : <>Select Year:</>}
+        </label>
+      )}
       <Slider {...settingsSliderYear}>
         {avaliableYears.map((year, i) => {
           return (
@@ -244,6 +231,11 @@ export function StakingDateSelector(props: Props) {
           })}
         </Slider>
       </div>
+      {avaliableYears.length <= 0 && (
+        <p className="block mt-4 text-red text-sm font-medium mb-2">
+          No avaliable dates.
+        </p>
+      )}
     </>
   );
 }
@@ -281,10 +273,6 @@ export const filterItem: ItemPredicate<DateItem> = (
     return normalizedTitle.indexOf(normalizedQuery) >= 0;
   }
 };
-
-export function areOptionsEqual(optionA: DateItem, optionB: DateItem) {
-  return optionA.key === optionB.key;
-}
 
 export function highlightText(text: string, query: string) {
   let lastIndex = 0;

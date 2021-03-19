@@ -93,8 +93,11 @@ class Network {
     contractName: ContractName,
     methodName: string,
     args: Array<any>,
+    account?: string,
   ): Promise<string | RevertInstructionError> {
-    return this.contracts[contractName].methods[methodName](...args).call();
+    return this.contracts[contractName].methods[methodName](...args).call({
+      from: account,
+    });
   }
 
   public async callCustomContract(

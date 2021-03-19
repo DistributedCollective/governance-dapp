@@ -62,6 +62,9 @@ export function VestingOriginTable() {
     }
   }, [vestingOrigin.value, account]);
 
+  const locked =
+    Number(unlockOriginDate) > Math.round(new Date().getTime() / 1e3); //check if date is locked
+
   return (
     <>
       {vestingOrigin.value !== genesisAddress && (
@@ -114,12 +117,18 @@ export function VestingOriginTable() {
                   {moment(new Date(parseInt(unlockOriginDate) * 1e3)).format(
                     'DD/MM/YYYY',
                   )}
-                  <br />
-                  {moment().diff(
-                    moment(new Date(parseInt(unlockOriginDate) * 1e3)),
-                    'days',
-                  )}{' '}
-                  days
+                  {locked && (
+                    <>
+                      <br />
+                      {Math.abs(
+                        moment().diff(
+                          moment(new Date(parseInt(unlockOriginDate) * 1e3)),
+                          'days',
+                        ),
+                      )}{' '}
+                      days
+                    </>
+                  )}
                 </p>
               </td>
               <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">

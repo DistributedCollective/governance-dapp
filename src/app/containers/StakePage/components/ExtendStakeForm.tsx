@@ -25,7 +25,7 @@ export function ExtendStakeForm(props: Props) {
       <h3 className="text-center mb-10 leading-10 text-3xl">
         Extend SOV Stake
       </h3>
-      <div className="text-gray-5 mb-4 text-xs">
+      <div className="text-gray-5 mb-4 md:px-9 tracking-normal text-xs">
         Previous until:
         <br />
         <span className="font-bold">
@@ -46,7 +46,7 @@ export function ExtendStakeForm(props: Props) {
               className="appearance-none border border-theme-white text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-14 bg-black text-theme-white tracking-normal focus:outline-none focus:shadow-outline"
               id="amount"
               type="text"
-              defaultValue={numberFromWei(props.amount)}
+              defaultValue={props.amount}
             />
             <span className="text-theme-white text-md font-semibold absolute top-3 right-5 leading-4">
               SOV
@@ -60,6 +60,7 @@ export function ExtendStakeForm(props: Props) {
             onClick={value => props.onChangeTimestamp(value)}
             stakes={props.stakes}
             prevExtend={props.prevExtend}
+            delegate={false}
           />
 
           <label
