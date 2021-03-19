@@ -165,6 +165,10 @@
     }
 }
 
+[disabled].hover\:bg-opacity-0:hover {
+    background: transparent !important;
+}
+
 .slick-slider {
     box-sizing: border-box;
     -webkit-user-select: none;

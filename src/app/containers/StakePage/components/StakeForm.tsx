@@ -18,8 +18,6 @@ interface Props {
 }
 
 export function StakeForm(props: Props) {
-  console.log('stake vout ', props.votePower);
-
   return (
     <>
       <h3 className="text-center mb-10 leading-10 text-3xl">Stake SOV</h3>

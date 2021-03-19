@@ -63,6 +63,9 @@ export function VestingTeamTable() {
     }
   }, [vestingTeam.value, account]);
 
+  const locked =
+    Number(unlockTeamDate) > Math.round(new Date().getTime() / 1e3); //check if date is locked
+
   return (
     <>
       {vestingTeam.value !== genesisAddress && (
@@ -109,12 +112,18 @@ export function VestingTeamTable() {
                   {moment(new Date(parseInt(unlockTeamDate) * 1e3)).format(
                     'DD/MM/YYYY',
                   )}
-                  <br />
-                  {moment().diff(
-                    moment(new Date(parseInt(unlockTeamDate) * 1e3)),
-                    'days',
-                  )}{' '}
-                  days
+                  {locked && (
+                    <>
+                      <br />
+                      {Math.abs(
+                        moment().diff(
+                          moment(new Date(parseInt(unlockTeamDate) * 1e3)),
+                          'days',
+                        ),
+                      )}{' '}
+                      days
+                    </>
+                  )}
                 </p>
               </td>
               <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">

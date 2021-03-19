@@ -20,8 +20,6 @@ interface Props {
 }
 
 export function ExtendStakeForm(props: Props) {
-  console.log('extend vout', props.votePower);
-
   return (
     <>
       <h3 className="text-center mb-10 leading-10 text-3xl">

@@ -128,6 +128,7 @@ function InnerStakePage(props: Props) {
   useEffect(() => {
     let dates = getStakes.value['dates'];
     let stakes = getStakes.value['stakes'];
+    let cleanupFunction = false;
     setStakeLoad(true);
     if (dates && stakes) {
       Promise.all(
@@ -142,11 +143,16 @@ function InnerStakePage(props: Props) {
             });
           return [stakes[index], value, delegate];
         }),
-      ).then(result => {
-        setStakeLoad(false);
-        setStakesArray(result as any);
-      });
+      )
+        .then(result => {
+          setStakeLoad(false);
+          if (!cleanupFunction) setStakesArray(result as any);
+        })
+        .then(_ => setStakeLoad(false));
     }
+    return () => {
+      cleanupFunction = true;
+    };
   }, [account, getStakes.value, setStakesArray]);
 
   interface Stakes {
@@ -157,6 +163,7 @@ function InnerStakePage(props: Props) {
     return stakes.length ? (
       <>
         {stakes.map((item, i: string) => {
+          const locked = Number(item[1]) > Math.round(now.getTime() / 1e3); //check if date is locked
           return (
             <tr key={i}>
               <td>
@@ -196,19 +203,28 @@ function InnerStakePage(props: Props) {
                   {moment(new Date(parseInt(item[1]) * 1e3)).format(
                     'DD/MM/YYYY',
                   )}
-                  <br />
-                  {moment().diff(
-                    moment(new Date(parseInt(item[1]) * 1e3)),
-                    'days',
-                  )}{' '}
-                  days
+                  {locked && (
+                    <>
+                      <br />
+                      {Math.abs(
+                        moment().diff(
+                          moment(new Date(parseInt(item[1]) * 1e3)),
+                          'days',
+                        ),
+                      )}{' '}
+                      days
+                    </>
+                  )}
                 </p>
               </td>
               <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
                 <div className="flex flex-nowrap">
                   <button
                     type="button"
-                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                    className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
+                      !locked &&
+                      'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
+                    }`}
                     onClick={() => {
                       setTimestamp(item[1]);
                       setAmount(numberFromWei(item[0]).toString());
@@ -218,6 +234,7 @@ function InnerStakePage(props: Props) {
                       setIncreaseForm(true);
                       setWithdrawForm(false);
                     }}
+                    disabled={!locked}
                   >
                     Increase
                   </button>
@@ -253,11 +270,15 @@ function InnerStakePage(props: Props) {
                     Unstake
                   </button>
                   <button
-                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                    className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
+                      !locked &&
+                      'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
+                    }`}
                     onClick={() => {
                       setTimestamp(item[1]);
                       setDelegateForm(!delegateForm);
                     }}
+                    disabled={!locked}
                   >
                     Delegate
                   </button>
@@ -302,6 +323,7 @@ function InnerStakePage(props: Props) {
     extendForm,
   ]);
 
+  //Form Validations
   const validateStakeForm = useCallback(() => {
     if (loading) return false;
     const num = Number(amount);
@@ -328,9 +350,6 @@ function InnerStakePage(props: Props) {
     amount => {
       if (loading) return false;
       const num = Number(withdrawAmount);
-      console.log('w am', amount);
-      console.log('w num', num);
-
       if (!num || isNaN(num) || num <= 0) return false;
       return num <= Number(amount);
     },
@@ -342,6 +361,7 @@ function InnerStakePage(props: Props) {
     return timestamp >= Math.round(now.getTime() / 1e3);
   }, [loading, timestamp]);
 
+  //Submit Forms
   const handleStakeSubmit = useCallback(
     async e => {
       e.preventDefault();
@@ -413,7 +433,6 @@ function InnerStakePage(props: Props) {
     [weiWithdrawAmount, until, account, withdrawForm],
   );
 
-  //extend STAKES
   const handleExtendTimeSubmit = useCallback(
     async e => {
       e.preventDefault();
@@ -429,18 +448,6 @@ function InnerStakePage(props: Props) {
     [prevTimestamp, timestamp, account, extendForm],
   );
 
-  // const createProposal = useCallback(async () => {
-  //   const nextId = (await governance_proposalCount()) + 1;
-  //   await governance_propose(
-  //     ['0x0a440C27decD34dBb02754e9Ec00d3d3d38a4083'],
-  //     ['0'],
-  //     ['setWeightScaling(uint96)'],
-  //     ['0x0000000000000000000000000000000000000000000000000000000000000004'],
-  //     `set weight scaling to 4 ${nextId}`,
-  //     account,
-  //   );
-  // }, [account]);
-
   return (
     <>
       <Helmet>
@@ -451,14 +458,6 @@ function InnerStakePage(props: Props) {
         <div className="bg-gray-700 tracking-normal">
           <div className="container">
             <h2 className="text-white pt-8 pb-5 pl-10">Staking/Vesting</h2>
-            {/* <button
-              className={`bg-green-500 text-white px-4 py-2 rounded mb-2`}
-              type="button"
-              onClick={() => createProposal()}
-            >
-              Add proposal
-            </button> */}
-
             <div className="xl:flex items-stretch justify-around mt-2">
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Total staked SOV</p>
