@@ -1,17 +1,9 @@
 import React, { FormEvent } from 'react';
-import { ContractCallResponse } from 'app/hooks/useContractCall';
-import { StakingDateSelector } from '../../../components/StakingDateSelector';
-
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   address: string;
-  timestamp?: number;
   onChangeAddress: (value: string) => void;
-  onChangeTimestamp: (value: number) => void;
-  sovBalanceOf: ContractCallResponse;
   isValid: boolean;
-  kickoff: ContractCallResponse;
-  stakes: undefined;
   onCloseModal: () => void;
 }
 
@@ -37,15 +29,6 @@ export function DelegateForm(props: Props) {
               onChange={e => props.onChangeAddress(e.currentTarget.value)}
             />
           </div>
-
-          <StakingDateSelector
-            title="Select new date"
-            kickoffTs={Number(props.kickoff.value)}
-            value={props.timestamp}
-            onClick={value => props.onChangeTimestamp(value / 1e3)}
-            stakes={props.stakes}
-            delegate={true}
-          />
 
           <p className="block text-theme-white text-md font-light mb-2 mt-7">
             Tx Fee: 0.0006 rBTC

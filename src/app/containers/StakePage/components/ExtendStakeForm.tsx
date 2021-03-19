@@ -20,6 +20,8 @@ interface Props {
 }
 
 export function ExtendStakeForm(props: Props) {
+  console.log('extend vout', props.votePower);
+
   return (
     <>
       <h3 className="text-center mb-10 leading-10 text-3xl">
@@ -46,7 +48,7 @@ export function ExtendStakeForm(props: Props) {
               className="appearance-none border border-theme-white text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-14 bg-black text-theme-white tracking-normal focus:outline-none focus:shadow-outline"
               id="amount"
               type="text"
-              defaultValue={numberFromWei(props.amount)}
+              defaultValue={props.amount}
             />
             <span className="text-theme-white text-md font-semibold absolute top-3 right-5 leading-4">
               SOV

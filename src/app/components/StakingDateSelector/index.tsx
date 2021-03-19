@@ -32,7 +32,7 @@ interface Props {
 }
 
 export function StakingDateSelector(props: Props) {
-  const onItemSelect = (item: { key: number }) => props.onClick(item.key);
+  const onItemSelect = (item: { key: number }) => props.onClick(item.key / 1e3);
   const [dates, setDates] = useState<Date[]>([]);
   const [currentYearDates, setCurrenYearDates] = useState<any>([]);
   const [filteredDates, setFilteredDates] = useState<DateItem[]>([]);

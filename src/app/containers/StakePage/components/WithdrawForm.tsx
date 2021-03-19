@@ -33,9 +33,11 @@ export function WithdrawForm(props: Props) {
       .then(res => {
         setForfeitWithdraw(res[1]);
         setForfeitPercent(
-          Math.floor(
-            (Number(forfeitWithdraw) / Number(toWei(props.withdrawAmount))) *
-              100,
+          Number(
+            (
+              (Number(forfeitWithdraw) / Number(toWei(props.withdrawAmount))) *
+              100
+            ).toFixed(1),
           ),
         );
         setLoading(false);
@@ -69,7 +71,7 @@ export function WithdrawForm(props: Props) {
               className="appearance-none border border-theme-white text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-14 bg-black text-theme-white tracking-normal focus:outline-none focus:shadow-outline"
               id="amount"
               type="text"
-              defaultValue={numberFromWei(props.amount)}
+              defaultValue={props.amount}
             />
             <span className="text-theme-white text-md font-semibold absolute top-3 right-5 leading-4">
               SOV
@@ -97,39 +99,33 @@ export function WithdrawForm(props: Props) {
           </div>
           <div className="flex rounded border border-theme-blue mt-4">
             <div
-              onClick={() =>
-                props.onChangeAmount(numberFromWei(props.amount) / 10)
-              }
+              onClick={() => props.onChangeAmount(Number(props.amount) / 10)}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
               10%
             </div>
             <div
-              onClick={() =>
-                props.onChangeAmount(numberFromWei(props.amount) / 4)
-              }
+              onClick={() => props.onChangeAmount(Number(props.amount) / 4)}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
               25%
             </div>
             <div
-              onClick={() =>
-                props.onChangeAmount(numberFromWei(props.amount) / 2)
-              }
+              onClick={() => props.onChangeAmount(Number(props.amount) / 2)}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
               50%
             </div>
             <div
               onClick={() =>
-                props.onChangeAmount((numberFromWei(props.amount) / 4) * 3)
+                props.onChangeAmount((Number(props.amount) / 4) * 3)
               }
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
               75%
             </div>
             <div
-              onClick={() => props.onChangeAmount(numberFromWei(props.amount))}
+              onClick={() => props.onChangeAmount(Number(props.amount))}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center text-sm text-theme-blue tracking-tighter"
             >
               100%

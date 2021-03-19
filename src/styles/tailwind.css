@@ -148,19 +148,19 @@
             line-height: 3rem;
         }
         .min-w-15 {
-            min-width: 24.5rem;
+            min-width: 32.5rem;
         }
         .max-w-15 {
-            max-width: 24.5rem;
+            max-width: 32.5rem;
         }
     }
 
     @media (min-width: 1700px) {
         .min-w-15 {
-            min-width: 16.6rem;
+            min-width: 23.6rem;
         }
         .max-w-15 {
-            max-width: 16.6rem;
+            max-width: 23.6rem;
         }
     }
 }
