@@ -480,5 +480,8 @@
         }
       }
     }
+  },
+  "onCopy": {
+    "address": "La dirección se copió en el portapapeles."
   }
 }
