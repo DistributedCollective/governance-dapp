@@ -2,14 +2,20 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { useTranslation } from 'react-i18next';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Linkify from 'react-linkify';
+import { Icon } from '@blueprintjs/core';
 import styled from 'styled-components/macro';
+import { Classes, Tooltip2, Popover2 } from '@blueprintjs/popover2';
 import {
   dateByBlocks,
   kFormatter,
   numberFromWei,
   prettyTx,
 } from 'utils/helpers';
+import { toastSuccess } from 'utils/toaster';
+import { translations } from 'locales/i18n';
 import { media } from '../../../styles/media';
 import { network } from '../BlockChainProvider/network';
 import { VoteCaster } from './components/VoteCaster';
@@ -128,9 +134,20 @@ export function ProposalDetailsPage() {
               })}
               %
             </span>
-            <p className="xl:text-lg text-sm font-light tracking-normal">
-              {kFormatter(numberFromWei(data?.forVotes || 0))} votes
-            </p>
+            <Tooltip2
+              className={Classes.TOOLTIP2_INDICATOR}
+              minimal={true}
+              content={
+                <p className="text-white text-sm tracking-normal">
+                  {numberFromWei(data?.forVotes || 0)} votes
+                </p>
+              }
+              placement="top"
+            >
+              <p className="xl:text-lg text-sm font-light tracking-normal">
+                {kFormatter(numberFromWei(data?.forVotes || 0))} votes
+              </p>
+            </Tooltip2>
           </div>
           <StyledBar>
             <div className="progress__blue" />
@@ -151,9 +168,20 @@ export function ProposalDetailsPage() {
               })}
               %
             </span>
-            <p className="xl:text-lg text-sm font-light tracking-normal">
-              {kFormatter(numberFromWei(data?.againstVotes || 0))} votes
-            </p>
+            <Tooltip2
+              className={Classes.TOOLTIP2_INDICATOR}
+              minimal={true}
+              content={
+                <p className="text-white text-sm tracking-normal">
+                  {numberFromWei(data?.againstVotes || 0)} votes
+                </p>
+              }
+              placement="top"
+            >
+              <p className="xl:text-lg text-sm font-light tracking-normal">
+                {kFormatter(numberFromWei(data?.againstVotes || 0))} votes
+              </p>
+            </Tooltip2>
           </div>
         </div>
         {data?.id && isConnected && state !== ProposalState.Active && (
@@ -341,6 +369,7 @@ function VotingRow({
   loading?: boolean;
 }) {
   const { chainId } = useSelector(selectBlockChainProvider);
+  const { t } = useTranslation();
 
   const getUrl = useCallback(() => {
     return blockExplorers[chainId];
@@ -375,26 +404,89 @@ function VotingRow({
   return (
     <tr>
       <td>
-        <a
-          href={`${url}/address/${voter?.toLocaleLowerCase()}`}
-          target="_blank"
-          rel="noreferrer"
-          className="text-white transition no-underline p-0 m-0 duration-300 bordered-list-item hover:text-gold hover:no-underline"
+        <Popover2
+          minimal={true}
+          placement="top"
+          popoverClassName="bp3-tooltip2"
+          content={
+            <div className="flex items-center">
+              <a
+                href={`${url}/address/${voter?.toLocaleLowerCase()}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-gold text-sm tracking-normal transition no-underline p-0 m-0 duration-300 hover:underline hover:text-gold"
+              >
+                {voter?.toLocaleLowerCase()}
+              </a>
+              <CopyToClipboard
+                onCopy={() =>
+                  toastSuccess(<>{t(translations.onCopy.address)}</>, 'copy')
+                }
+                text={voter?.toLocaleLowerCase()}
+              >
+                <Icon
+                  title="Copy"
+                  icon="duplicate"
+                  className="text-white cursor-pointer hover:text-gold ml-2"
+                  iconSize={15}
+                />
+              </CopyToClipboard>
+            </div>
+          }
         >
-          {prettyTx(voter as string)}
-        </a>
+          <p className="text-gold p-0 m-0 duration-300 hover:opacity-70 transition cursor-pointer">
+            {prettyTx(voter as string)}
+          </p>
+        </Popover2>
       </td>
       <td className="hidden md:table-cell">
-        <a
-          href={`${url}/tx/${txs?.toLocaleLowerCase()}`}
-          target="_blank"
-          rel="noreferrer"
-          className="text-white transition no-underline p-0 m-0 duration-300 bordered-list-item hover:text-gold hover:no-underline"
+        <Popover2
+          minimal={true}
+          placement="top"
+          popoverClassName="bp3-tooltip2"
+          content={
+            <div className="flex items-center">
+              <a
+                href={`${url}/tx/${txs?.toLocaleLowerCase()}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-gold text-sm tracking-normal transition no-underline p-0 m-0 duration-300 hover:underline hover:text-gold"
+              >
+                {txs?.toLocaleLowerCase()}
+              </a>
+              <CopyToClipboard
+                onCopy={() =>
+                  toastSuccess(<>{t(translations.onCopy.address)}</>, 'copy')
+                }
+                text={txs?.toLocaleLowerCase()}
+              >
+                <Icon
+                  title="Copy"
+                  icon="duplicate"
+                  className="text-white cursor-pointer hover:text-gold ml-2"
+                  iconSize={15}
+                />
+              </CopyToClipboard>
+            </div>
+          }
         >
-          {prettyTx(txs as string)}
-        </a>
+          <p className="text-gold p-0 m-0 duration-300 hover:opacity-70 transition cursor-pointer">
+            {prettyTx(txs as string)}
+          </p>
+        </Popover2>
       </td>
-      <td>{kFormatter(votes)}</td>
+      <td>
+        <Tooltip2
+          className={Classes.TOOLTIP2_INDICATOR}
+          minimal={true}
+          content={
+            <p className="text-white text-sm tracking-normal">{votes} votes</p>
+          }
+          placement="top"
+        >
+          {kFormatter(votes)}
+        </Tooltip2>
+      </td>
     </tr>
   );
 }

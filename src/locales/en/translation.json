@@ -711,5 +711,8 @@
         }
       }
     }
+  },
+  "onCopy": {
+    "address": "Address was copied to clipboard."
   }
 }
