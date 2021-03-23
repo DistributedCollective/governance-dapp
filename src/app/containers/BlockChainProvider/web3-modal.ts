@@ -1,15 +1,42 @@
 import Web3Modal, { IProviderOptions } from 'web3modal';
-import { CHAIN_ID } from './classifiers';
+import Web3 from 'web3';
+import Portis from '@portis/web3';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { CHAIN_ID, rpcNodes } from './classifiers';
 import { ChainId } from './types';
 import { store } from '../../../store/store';
 import { actions } from './slice';
 import { network } from './network';
-import Web3 from 'web3';
 
 class WalletConnection {
   private _web3Modal: Web3Modal = null as any;
   public init(chainId: ChainId) {
-    const providerOptions: IProviderOptions = {};
+    const providerOptions: IProviderOptions = {
+      walletconnect: {
+        display: {
+          // logo: 'data:image/gif;base64,INSERT_BASE64_STRING',
+          name: 'Mobile',
+          description: 'Scan qrcode with your mobile wallet',
+        },
+        package: WalletConnectProvider,
+        options: {
+          chainId: chainId,
+          rpc: rpcNodes,
+          infuraId: process.env.REACT_APP_INFURA_ID,
+          qrcodeModalOptions: {
+            mobileLinks: ['rwallet', 'metamask'],
+          },
+        },
+      },
+      portis: {
+        package: Portis, // required
+        options: {
+          dappId: process.env.REACT_APP_PORTIS_ID,
+          network: chainId === 30 ? 'orchid' : 'orchidTestnet',
+          id: process.env.REACT_APP_PORTIS_ID,
+        },
+      },
+    };
 
     this._web3Modal = new Web3Modal({
       disableInjectedProvider: false,
