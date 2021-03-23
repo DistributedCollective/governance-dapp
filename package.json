@@ -1,8 +1,8 @@
 {
-  "name": "governance-dapp",
+  "name": "bitocracy-dapp",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://vote.sovryn.app",
+  "homepage": "https://bitocracy.sovryn.app",
   "dependencies": {
     "@blueprintjs/core": "3.36.0",
     "@blueprintjs/popover2": "0.2.0",
