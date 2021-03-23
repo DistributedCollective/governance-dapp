@@ -710,5 +710,8 @@
         }
       }
     }
+  },
+  "onCopy": {
+    "address": "O endereço foi copiado para a área de transferência."
   }
 }

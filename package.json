@@ -1,8 +1,8 @@
 {
-  "name": "governance-dapp",
+  "name": "bitocracy-dapp",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://vote.sovryn.app",
+  "homepage": "https://bitocracy.sovryn.app",
   "dependencies": {
     "@blueprintjs/core": "3.36.0",
     "@blueprintjs/popover2": "0.2.0",
@@ -49,6 +49,7 @@
     "prettier": "2.0.1",
     "react": "16.13.0",
     "react-app-polyfill": "1.0.6",
+    "react-copy-to-clipboard": "5.0.3",
     "react-custom-scrollbars": "4.2.1",
     "react-dom": "16.13.0",
     "react-helmet-async": "1.0.4",
@@ -69,11 +70,12 @@
     "stylelint-config-recommended": "3.0.0",
     "stylelint-config-styled-components": "0.1.1",
     "stylelint-processor-styled-components": "1.10.0",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@2.0.3",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@2.0.4",
     "ts-node": "8.8.2",
     "typescript": "3.8.2",
-    "web3": "1.3.3",
-    "web3-utils": "1.3.0",
+    "web3": "1.3.4",
+    "web3-core-helpers": "1.3.4",
+    "web3-utils": "1.3.4",
     "web3modal": "1.9.1"
   },
   "scripts": {

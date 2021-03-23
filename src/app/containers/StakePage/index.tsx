@@ -48,6 +48,7 @@ import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
 import { VestingTable } from './components/VestingTable';
 import { VestingTeamTable } from './components/VestingTeamTable';
 import { VestingOriginTable } from './components/VestingOriginTable';
+import { VestingEmptyTable } from './components/VestingEmptyTable';
 // import {
 //   governance_proposalCount,
 //   governance_propose,
@@ -130,26 +131,33 @@ function InnerStakePage(props: Props) {
     let stakes = getStakes.value['stakes'];
     let cleanupFunction = false;
     setStakeLoad(true);
-    if (dates && stakes) {
-      Promise.all(
-        dates.map(async (value, index) => {
-          const delegate = await network
-            .call('staking', 'delegates', [account, value])
-            .then(res => {
-              if (res.toString().toLowerCase() !== account.toLowerCase()) {
-                return res;
-              }
-              return false;
-            });
-          return [stakes[index], value, delegate];
-        }),
-      )
-        .then(result => {
+    async function getStakesEvent() {
+      try {
+        Promise.all(
+          dates.map(async (value, index) => {
+            const delegate = await network
+              .call('staking', 'delegates', [account, value])
+              .then(res => {
+                if (res.toString().toLowerCase() !== account.toLowerCase()) {
+                  return res;
+                }
+                return false;
+              });
+            return [stakes[index], value, delegate];
+          }),
+        ).then(result => {
           setStakeLoad(false);
           if (!cleanupFunction) setStakesArray(result as any);
-        })
-        .then(_ => setStakeLoad(false));
+        });
+      } catch (e) {
+        console.error(e);
+        setStakeLoad(false);
+      }
     }
+    if (dates !== undefined) {
+      getStakesEvent();
+    }
+
     return () => {
       cleanupFunction = true;
     };
@@ -650,6 +658,7 @@ function InnerStakePage(props: Props) {
                     <VestingTable />
                     <VestingTeamTable />
                     <VestingOriginTable />
+                    <VestingEmptyTable />
                   </tbody>
                 </StyledTable>
               </div>
