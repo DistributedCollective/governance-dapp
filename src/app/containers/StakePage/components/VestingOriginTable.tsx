@@ -6,21 +6,24 @@ import moment from 'moment';
 import VestingABI from '../../BlockChainProvider/abi/Vesting.json';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
+import { LinkToExplorer } from '../../../components/LinkToExplorer';
 import { actions } from 'app/containers/BlockChainProvider/slice';
 import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
+import { useStaking_getStakes } from '../../../hooks/staking/useStaking_getStakes';
 import { useVesting_getOriginVesting } from '../../../hooks/vesting-registry/useVesting_getOriginVesting';
-import { useStaking_getCurrentVotes } from '../../../hooks/staking/useStaking_getCurrentVotes';
 
 export function VestingOriginTable() {
   const account = useAccount();
+  const dispatch = useDispatch();
   const vestingOrigin = useVesting_getOriginVesting(account);
+  const getStakes = useStaking_getStakes(vestingOrigin.value);
   const lockedAmountOrigin = useStaking_balanceOf(vestingOrigin.value);
   const [originLoading, setOriginLoading] = useState(false);
   const [stakingPeriodOriginStart, setStakingPeriodOriginStart] = useState('');
   const [stakingOriginPeriod, setStakingOriginPeriod] = useState('');
   const [unlockOriginDate, setUnlockOriginDate] = useState('');
-  const dispatch = useDispatch();
-  const votingPower = useStaking_getCurrentVotes(vestingOrigin.value);
+  const [delegate, setDelegate] = useState<any>([]);
+  const [delegateLoading, setDelegateLoading] = useState(false);
 
   useEffect(() => {
     setOriginLoading(true);
@@ -62,6 +65,36 @@ export function VestingOriginTable() {
     }
   }, [vestingOrigin.value, account]);
 
+  useEffect(() => {
+    async function getDelegate() {
+      setDelegateLoading(true);
+      try {
+        await network
+          .call('staking', 'delegates', [
+            vestingOrigin.value,
+            Number(
+              getStakes.value['dates'][getStakes.value['dates'].length - 2],
+            ),
+          ])
+          .then(res => {
+            setDelegateLoading(false);
+            if (
+              res.toString().toLowerCase() !== vestingOrigin.value.toLowerCase()
+            ) {
+              setDelegate(res);
+            }
+            return false;
+          });
+      } catch (e) {
+        console.error(e);
+        setDelegateLoading(false);
+      }
+    }
+    if (unlockOriginDate !== '') {
+      getDelegate();
+    }
+  }, [vestingOrigin.value, unlockOriginDate, delegate, getStakes.value]);
+
   const locked =
     Number(unlockOriginDate) > Math.round(new Date().getTime() / 1e3); //check if date is locked
 
@@ -91,6 +124,21 @@ export function VestingOriginTable() {
               >
                 {numberFromWei(lockedAmountOrigin.value)} CSOV
               </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                {delegate.length > 0 && (
+                  <>
+                    Delegated to{' '}
+                    <LinkToExplorer
+                      isAddress={true}
+                      txHash={delegate}
+                      className={`text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal ${
+                        delegateLoading && 'skeleton'
+                      }`}
+                    />
+                  </>
+                )}
+                {!delegate.length && <p>No delegate</p>}
+              </td>
               <td
                 className={`text-left hidden lg:table-cell font-normal
                 ${!stakingPeriodOriginStart && 'skeleton'}`}
@@ -98,9 +146,6 @@ export function VestingOriginTable() {
                 {moment(
                   new Date(parseInt(stakingPeriodOriginStart) * 1e3),
                 ).format('DD/MM/YYYY - h:mm:ss a')}
-              </td>
-              <td className="text-left hidden lg:table-cell font-normal">
-                {numberFromWei(votingPower.value).toLocaleString()}
               </td>
               <td
                 className={`text-left hidden lg:table-cell font-normal
@@ -136,7 +181,7 @@ export function VestingOriginTable() {
                   <button
                     className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
                     onClick={() => {
-                      dispatch(actions.vestingType('team'));
+                      dispatch(actions.vestingType('genesis'));
                       dispatch(actions.toggleDelagationDialog(true));
                     }}
                   >

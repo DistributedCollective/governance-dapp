@@ -21,6 +21,7 @@ export function VestingDelegationDialog() {
   const [loading, setLoading] = useState(false);
   const [addressTo, setAddressTo] = useState('');
   const balance = useVestedStaking_balanceOf(account || genesisAddress);
+
   const handleSubmit = async (team: boolean) => {
     setLoading(true);
     try {
@@ -85,7 +86,7 @@ export function VestingDelegationDialog() {
         </label>
         <div className="flex space-x-4 relative">
           <input
-            className="appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-14 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
+            className="appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-3 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
             id="stake-amount"
             type="text"
             placeholder="RSK wallet address"
@@ -102,52 +103,53 @@ export function VestingDelegationDialog() {
         </Text>
       </div>
       <div className="grid grid-rows-1 mb-3 grid-flow-col gap-4">
-        {balance.vestingContract !== genesisAddress &&
-          vestingType === 'genesis' && (
-            <button
-              className={`uppercase w-full text-black bg-gold text-xl font-extrabold px-4 hover:bg-opacity-80 py-2 rounded-lg transition duration-500 ease-in-out ${
-                (!addressTo ||
-                  loading ||
-                  !Rsk3.utils.isAddress((addressTo || '').toLowerCase()) ||
-                  balance.vestingContract === genesisAddress) &&
-                'opacity-50 cursor-not-allowed hover:bg-opacity-100'
-              }`}
-              disabled={
-                !addressTo ||
+        {vestingType === 'genesis' && (
+          <button
+            className={`uppercase w-full text-black bg-gold text-xl font-extrabold px-4 hover:bg-opacity-80 py-2 rounded-lg transition duration-500 ease-in-out ${
+              (!addressTo ||
                 loading ||
                 !Rsk3.utils.isAddress((addressTo || '').toLowerCase()) ||
-                balance.vestingContract === genesisAddress
-              }
-              onClick={() => handleSubmit(false)}
-            >
-              Confirm
-            </button>
-          )}
-        {balance.teamVestingContract !== genesisAddress &&
-          vestingType === 'team' && (
-            <button
-              type="submit"
-              className={`uppercase w-full text-black bg-gold text-xl font-extrabold px-4 hover:bg-opacity-80 py-2 rounded-lg transition duration-500 ease-in-out ${
-                (!addressTo ||
-                  loading ||
-                  !Rsk3.utils.isAddress((addressTo || '').toLowerCase()) ||
-                  balance.teamVestingContract === genesisAddress) &&
-                'opacity-50 cursor-not-allowed hover:bg-opacity-100'
-              }`}
-              disabled={
-                !addressTo ||
+                balance.vestingContract === genesisAddress) &&
+              'opacity-50 cursor-not-allowed hover:bg-opacity-100'
+            }`}
+            disabled={
+              !addressTo ||
+              loading ||
+              !Rsk3.utils.isAddress((addressTo || '').toLowerCase()) ||
+              balance.vestingContract === genesisAddress
+            }
+            onClick={() => handleSubmit(false)}
+          >
+            Confirm
+          </button>
+        )}
+        {vestingType === 'team' && (
+          <button
+            type="submit"
+            className={`uppercase w-full text-black bg-gold text-xl font-extrabold px-4 hover:bg-opacity-80 py-2 rounded-lg transition duration-500 ease-in-out ${
+              (!addressTo ||
                 loading ||
                 !Rsk3.utils.isAddress((addressTo || '').toLowerCase()) ||
-                balance.teamVestingContract === genesisAddress
-              }
-              onClick={() => handleSubmit(true)}
-            >
-              Confirm
-            </button>
-          )}
+                balance.teamVestingContract === genesisAddress) &&
+              'opacity-50 cursor-not-allowed hover:bg-opacity-100'
+            }`}
+            disabled={
+              !addressTo ||
+              loading ||
+              !Rsk3.utils.isAddress((addressTo || '').toLowerCase()) ||
+              balance.teamVestingContract === genesisAddress
+            }
+            onClick={() => handleSubmit(true)}
+          >
+            Confirm
+          </button>
+        )}
         <button
           type="button"
-          onClick={() => dispatch(actions.toggleDelagationDialog(false))}
+          onClick={() => {
+            dispatch(actions.toggleDelagationDialog(false));
+            setAddressTo('');
+          }}
           className="border border-gold rounded-lg text-gold uppercase w-full text-xl font-extrabold px-4 py-2 hover:bg-gold hover:bg-opacity-40 transition duration-500 ease-in-out"
         >
           Cancel

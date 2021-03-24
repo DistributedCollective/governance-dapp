@@ -310,3 +310,7 @@
 .bp3-toast.bp3-intent-success {
     background-color: theme('colors.turquoise');
 }
+.bp3-overlay-content,
+.bp3-overlay-content:focus {
+    outline: none;
+}

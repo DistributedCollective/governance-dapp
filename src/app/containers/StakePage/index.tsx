@@ -589,7 +589,7 @@ function InnerStakePage(props: Props) {
                     <tr>
                       <th className="text-left assets">Asset</th>
                       <th className="text-left">Locked Amount</th>
-                      <th className="text-left font-normal lg:table-cell">
+                      <th className="text-left font-normal hidden lg:table-cell">
                         Voting Power:
                       </th>
                       <th className="text-left hidden lg:table-cell">
@@ -638,10 +638,10 @@ function InnerStakePage(props: Props) {
                       <th className="text-left assets">Asset</th>
                       <th className="text-left">Locked Amount</th>
                       <th className="text-left hidden lg:table-cell">
-                        Staking Date
+                        Voting Power
                       </th>
                       <th className="text-left hidden lg:table-cell">
-                        Voting Power
+                        Staking Date
                       </th>
                       <th className="text-left hidden lg:table-cell">
                         Staking Period
@@ -673,9 +673,7 @@ function InnerStakePage(props: Props) {
                   <thead>
                     <tr>
                       <th className="text-left assets">Asset</th>
-                      <th className="text-left hidden lg:table-cell">
-                        Staked Amount
-                      </th>
+                      <th className="text-left">Staked Amount</th>
                       <th className="text-left hidden lg:table-cell">
                         Staking Date
                       </th>
