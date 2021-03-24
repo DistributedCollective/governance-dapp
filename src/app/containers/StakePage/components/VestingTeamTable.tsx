@@ -125,13 +125,6 @@ export function VestingTeamTable() {
                 </p>
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
-                <p className={`${!stakingPeriodTeamStart && 'skeleton'}`}>
-                  {moment(
-                    new Date(parseInt(stakingPeriodTeamStart) * 1e3),
-                  ).format('DD/MM/YYYY - h:mm:ss a')}
-                </p>
-              </td>
-              <td className="text-left hidden lg:table-cell font-normal">
                 {delegate.length > 0 && (
                   <>
                     Delegated to{' '}
@@ -145,6 +138,13 @@ export function VestingTeamTable() {
                   </>
                 )}
                 {!delegate.length && <p>No delegate</p>}
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
+                <p className={`${!stakingPeriodTeamStart && 'skeleton'}`}>
+                  {moment(
+                    new Date(parseInt(stakingPeriodTeamStart) * 1e3),
+                  ).format('DD/MM/YYYY - h:mm:ss a')}
+                </p>
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 <p className={`${!stakingTeamPeriod && 'skeleton'}`}>

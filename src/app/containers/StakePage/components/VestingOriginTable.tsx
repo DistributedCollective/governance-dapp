@@ -124,14 +124,6 @@ export function VestingOriginTable() {
               >
                 {numberFromWei(lockedAmountOrigin.value)} CSOV
               </td>
-              <td
-                className={`text-left hidden lg:table-cell font-normal
-                ${!stakingPeriodOriginStart && 'skeleton'}`}
-              >
-                {moment(
-                  new Date(parseInt(stakingPeriodOriginStart) * 1e3),
-                ).format('DD/MM/YYYY - h:mm:ss a')}
-              </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 {delegate.length > 0 && (
                   <>
@@ -146,6 +138,14 @@ export function VestingOriginTable() {
                   </>
                 )}
                 {!delegate.length && <p>No delegate</p>}
+              </td>
+              <td
+                className={`text-left hidden lg:table-cell font-normal
+                ${!stakingPeriodOriginStart && 'skeleton'}`}
+              >
+                {moment(
+                  new Date(parseInt(stakingPeriodOriginStart) * 1e3),
+                ).format('DD/MM/YYYY - h:mm:ss a')}
               </td>
               <td
                 className={`text-left hidden lg:table-cell font-normal

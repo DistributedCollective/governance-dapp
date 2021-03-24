@@ -76,7 +76,7 @@ export function HistoryEventsTable() {
                   <div className="text-sm font-normal hidden xl:block">SOV</div>
                 </div>
               </td>
-              <td className="text-left hidden lg:table-cell font-normal">
+              <td className="text-left font-normal">
                 {numberFromWei(item.returnValues.amount)} SOV
               </td>
               <td className="text-left hidden lg:table-cell font-normal relative">
@@ -114,7 +114,7 @@ export function HistoryEventsTable() {
                   </div>
                 </div>
               </td>
-              <td className="text-left hidden lg:table-cell font-normal">
+              <td className="text-left font-normal">
                 {numberFromWei(item.returnValues.amount)} CSOV
                 <br />
               </td>
@@ -153,7 +153,7 @@ export function HistoryEventsTable() {
                   </div>
                 </div>
               </td>
-              <td className="text-left hidden lg:table-cell font-normal">
+              <td className="text-left font-normal">
                 {numberFromWei(item.returnValues.amount)} CSOV
                 <br />
               </td>
