@@ -44,7 +44,6 @@ export function ProposalDetailsPage() {
       (numberFromWei(data?.forVotes || 0) +
         numberFromWei(data?.againstVotes || 0))) *
     100;
-
   const votesAgainstProgressPercents = 100 - votesForProgressPercents;
 
   useEffect(() => {
@@ -118,7 +117,11 @@ export function ProposalDetailsPage() {
               }`}
             >
               Voting ends:{' '}
-              {dateByBlocks(data?.startTime, data?.startBlock, data?.endBlock)}
+              {dateByBlocks(
+                data?.startTime,
+                createdEvent?.blockNumber,
+                data?.endBlock,
+              )}
             </p>
           </div>
         </div>

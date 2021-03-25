@@ -71,8 +71,8 @@ export function HomePage() {
                     )}
                     {!loading && total === 0 && (
                       <tr>
-                        <td colSpan={99}>
-                          <i>No proposals yet.</i>
+                        <td colSpan={5} className="text-center font-normal">
+                          No proposals yet.
                         </td>
                       </tr>
                     )}
