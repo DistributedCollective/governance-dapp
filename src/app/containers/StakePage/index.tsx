@@ -130,9 +130,9 @@ function InnerStakePage(props: Props) {
     let dates = getStakes.value['dates'];
     let stakes = getStakes.value['stakes'];
     let cleanupFunction = false;
-    setStakeLoad(true);
     async function getStakesEvent() {
       try {
+        setStakeLoad(true);
         Promise.all(
           dates.map(async (value, index) => {
             const delegate = await network
@@ -149,6 +149,7 @@ function InnerStakePage(props: Props) {
           setStakeLoad(false);
           if (!cleanupFunction) setStakesArray(result as any);
         });
+        setStakeLoad(false);
       } catch (e) {
         console.error(e);
         setStakeLoad(false);

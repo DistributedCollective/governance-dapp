@@ -22,11 +22,10 @@ export function VestingTeamTable() {
   const [unlockTeamDate, setUnlockTeamDate] = useState('');
   const dispatch = useDispatch();
   const [delegate, setDelegate] = useState<any>([]);
-  const [delegateLoading, setDelegateLoading] = useState(false);
+  const [delegateLoading, setDelegateLoading] = useState(true);
   const getStakes = useStaking_getStakes(vestingTeam.value);
 
   useEffect(() => {
-    setTeamLoading(true);
     async function getVestsTeamList() {
       try {
         Promise.all([
@@ -60,6 +59,7 @@ export function VestingTeamTable() {
         setTeamLoading(false);
       }
     }
+    setTeamLoading(false);
 
     if (vestingTeam.value !== genesisAddress) {
       getVestsTeamList().catch(console.error);
