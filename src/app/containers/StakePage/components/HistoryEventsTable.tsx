@@ -7,11 +7,9 @@ import logoSvg from 'assets/images/sovryn-icon.svg';
 import moment from 'moment';
 import { useVesting_getVesting } from '../../../hooks/vesting-registry/useVesting_getVesting';
 import { useVesting_getTeamVesting } from '../../../hooks/vesting-registry/useVesting_getTeamVesting';
-import { useSoV_balanceOf } from '../../../hooks/sov/useSoV_balanceOf';
 
 export function HistoryEventsTable() {
   const account = useAccount();
-  const sovBalanceOf = useSoV_balanceOf(account);
   const vesting = useVesting_getVesting(account);
   const vestingTeam = useVesting_getTeamVesting(account);
   const [eventsHistory, setEventsHistory] = useState<any>();
@@ -19,11 +17,10 @@ export function HistoryEventsTable() {
   const [eventsHistoryVestingTeam, setEventsHistoryVestingTeam] = useState<
     any
   >();
-  const [historyLoading, setHistoryLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     let cleanupFunction = false;
     async function getHistoryEvent() {
-      setHistoryLoading(true);
       try {
         const stakes = await network.getPastEvents(
           'staking',
@@ -32,6 +29,7 @@ export function HistoryEventsTable() {
           0,
           'latest',
         );
+        setLoading(false);
         const stakesVesting = await network.getPastEvents(
           'staking',
           'TokensStaked',
@@ -51,24 +49,23 @@ export function HistoryEventsTable() {
           setEventsHistoryVesting(stakesVesting);
           setEventsHistoryVestingTeam(stakesVestingTeam);
         }
-        setHistoryLoading(false);
       } catch (e) {
         console.error(e);
-        setHistoryLoading(false);
+        setLoading(false);
       }
     }
     getHistoryEvent();
     return () => {
       cleanupFunction = true;
     };
-  }, [account, sovBalanceOf, vestingTeam.value, vesting.value]);
+  }, [account, vestingTeam.value, vesting.value]);
 
   return (eventsHistory && eventsHistory.length > 0) ||
     (eventsHistoryVesting && eventsHistoryVesting.length > 0) ||
     (eventsHistoryVestingTeam && eventsHistoryVestingTeam.length > 0) ? (
     <>
       {eventsHistory &&
-        !historyLoading &&
+        !loading &&
         eventsHistory.map((item, i: string) => {
           return (
             <tr key={i}>
@@ -104,7 +101,7 @@ export function HistoryEventsTable() {
           );
         })}
       {eventsHistoryVesting &&
-        !historyLoading &&
+        !loading &&
         eventsHistoryVesting.map(item => {
           return (
             <tr key={item.id}>
@@ -143,7 +140,7 @@ export function HistoryEventsTable() {
           );
         })}
       {eventsHistoryVestingTeam &&
-        !historyLoading &&
+        !loading &&
         eventsHistoryVestingTeam.map(item => {
           return (
             <tr key={item.id}>
@@ -185,10 +182,7 @@ export function HistoryEventsTable() {
   ) : (
     <>
       <tr>
-        <td
-          colSpan={4}
-          className={`text-center font-normal ${!historyLoading && 'skeleton'}`}
-        >
+        <td colSpan={4} className="text-center font-normal">
           No history yet
         </td>
       </tr>
