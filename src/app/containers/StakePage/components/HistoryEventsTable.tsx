@@ -17,9 +17,8 @@ export function HistoryEventsTable() {
   const [eventsHistoryVestingTeam, setEventsHistoryVestingTeam] = useState<
     any
   >();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    setLoading(true);
     let cleanupFunction = false;
     async function getHistoryEvent() {
       try {
@@ -30,6 +29,7 @@ export function HistoryEventsTable() {
           0,
           'latest',
         );
+        setLoading(false);
         const stakesVesting = await network.getPastEvents(
           'staking',
           'TokensStaked',
@@ -49,7 +49,6 @@ export function HistoryEventsTable() {
           setEventsHistoryVesting(stakesVesting);
           setEventsHistoryVestingTeam(stakesVestingTeam);
         }
-        setLoading(false);
       } catch (e) {
         console.error(e);
         setLoading(false);
@@ -61,7 +60,9 @@ export function HistoryEventsTable() {
     };
   }, [account, vestingTeam.value, vesting.value]);
 
-  return eventsHistory || eventsHistoryVesting || eventsHistoryVestingTeam ? (
+  return (eventsHistory && eventsHistory.length > 0) ||
+    (eventsHistoryVesting && eventsHistoryVesting.length > 0) ||
+    (eventsHistoryVestingTeam && eventsHistoryVestingTeam.length > 0) ? (
     <>
       {eventsHistory &&
         !loading &&
@@ -76,7 +77,7 @@ export function HistoryEventsTable() {
                   <div className="text-sm font-normal hidden xl:block">SOV</div>
                 </div>
               </td>
-              <td className="text-left hidden lg:table-cell font-normal">
+              <td className="text-left font-normal">
                 {numberFromWei(item.returnValues.amount)} SOV
               </td>
               <td className="text-left hidden lg:table-cell font-normal relative">
@@ -114,7 +115,7 @@ export function HistoryEventsTable() {
                   </div>
                 </div>
               </td>
-              <td className="text-left hidden lg:table-cell font-normal">
+              <td className="text-left font-normal">
                 {numberFromWei(item.returnValues.amount)} CSOV
                 <br />
               </td>
@@ -153,7 +154,7 @@ export function HistoryEventsTable() {
                   </div>
                 </div>
               </td>
-              <td className="text-left hidden lg:table-cell font-normal">
+              <td className="text-left font-normal">
                 {numberFromWei(item.returnValues.amount)} CSOV
                 <br />
               </td>
@@ -177,19 +178,11 @@ export function HistoryEventsTable() {
             </tr>
           );
         })}
-      {loading && (
-        <tr>
-          <td colSpan={4} className="skeleton"></td>
-        </tr>
-      )}
     </>
   ) : (
     <>
       <tr>
-        <td
-          colSpan={4}
-          className={`text-center font-normal ${loading && 'skeleton'}`}
-        >
+        <td colSpan={4} className="text-center font-normal">
           No history yet
         </td>
       </tr>

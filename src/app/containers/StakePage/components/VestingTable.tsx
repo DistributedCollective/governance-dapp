@@ -3,29 +3,32 @@ import { useDispatch } from 'react-redux';
 import { numberFromWei, genesisAddress } from 'utils/helpers';
 import logoSvg from 'assets/images/sovryn-icon.svg';
 import moment from 'moment';
+import { actions } from 'app/containers/BlockChainProvider/slice';
 import VestingABI from '../../BlockChainProvider/abi/Vesting.json';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
-import { actions } from 'app/containers/BlockChainProvider/slice';
+import { LinkToExplorer } from '../../../components/LinkToExplorer';
 import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
+import { useStaking_getStakes } from '../../../hooks/staking/useStaking_getStakes';
 import { useVesting_getVesting } from '../../../hooks/vesting-registry/useVesting_getVesting';
-import { useStaking_getCurrentVotes } from '../../../hooks/staking/useStaking_getCurrentVotes';
 
 export function VestingTable() {
   const account = useAccount();
   const vesting = useVesting_getVesting(account);
+  const dispatch = useDispatch();
+  const getStakes = useStaking_getStakes(vesting.value);
   const lockedAmount = useStaking_balanceOf(vesting.value as string);
   const [stakingPeriodStart, setStakingPeriodStart] = useState('');
   const [stakingPeriod, setStakingPeriod] = useState('');
   const [unlockDate, setUnlockDate] = useState('');
   const [vestLoading, setVestLoading] = useState(false);
-  const dispatch = useDispatch();
-  const votingPower = useStaking_getCurrentVotes(vesting.value);
+  const [delegate, setDelegate] = useState<any>([]);
+  const [delegateLoading, setDelegateLoading] = useState(false);
 
   useEffect(() => {
-    setVestLoading(true);
     async function getVestsList() {
       try {
+        setVestLoading(true);
         Promise.all([
           network
             .callCustomContract(
@@ -47,15 +50,45 @@ export function VestingTable() {
             .callCustomContract(vesting.value as any, VestingABI, 'endDate', [])
             .then(res => setUnlockDate(res)),
         ]).then(_ => setVestLoading(false));
+        setVestLoading(false);
       } catch (e) {
         console.error(e);
         setVestLoading(false);
       }
     }
+    setVestLoading(false);
     if (vesting.value !== genesisAddress) {
       getVestsList().catch(console.error);
     }
   }, [vesting.value, account]);
+
+  useEffect(() => {
+    async function getDelegate() {
+      setDelegateLoading(true);
+      try {
+        await network
+          .call('staking', 'delegates', [
+            vesting.value,
+            Number(
+              getStakes.value['dates'][getStakes.value['dates'].length - 2],
+            ),
+          ])
+          .then(res => {
+            setDelegateLoading(false);
+            if (res.toString().toLowerCase() !== vesting.value.toLowerCase()) {
+              setDelegate(res);
+            }
+            return false;
+          });
+      } catch (e) {
+        console.error(e);
+        setDelegateLoading(false);
+      }
+    }
+    if (unlockDate !== '') {
+      getDelegate();
+    }
+  }, [vesting.value, unlockDate, delegate, getStakes.value]);
 
   const locked = Number(unlockDate) > Math.round(new Date().getTime() / 1e3); //check if date is locked
 
@@ -85,14 +118,26 @@ export function VestingTable() {
                 </p>
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
+                {delegate.length > 0 && (
+                  <>
+                    Delegated to{' '}
+                    <LinkToExplorer
+                      isAddress={true}
+                      txHash={delegate}
+                      className={`text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal ${
+                        delegateLoading && 'skeleton'
+                      }`}
+                    />
+                  </>
+                )}
+                {!delegate.length && <p>No delegate</p>}
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
                 <p className={`${!stakingPeriodStart && 'skeleton'}`}>
                   {moment(new Date(parseInt(stakingPeriodStart) * 1e3)).format(
                     'DD/MM/YYYY - h:mm:ss a',
                   )}
                 </p>
-              </td>
-              <td className="text-left hidden lg:table-cell font-normal">
-                {numberFromWei(votingPower.value).toLocaleString()}
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 <p className={`${!stakingPeriod && 'skeleton'}`}>

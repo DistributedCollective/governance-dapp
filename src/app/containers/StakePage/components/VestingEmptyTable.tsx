@@ -15,7 +15,7 @@ export function VestingEmptyTable() {
     <>
       {vesting.value === genesisAddress &&
         vestingTeam.value === genesisAddress &&
-        vestingOrigin.value && (
+        vestingOrigin.value === genesisAddress && (
           <>
             <tr>
               <td colSpan={7} className="text-center font-normal">

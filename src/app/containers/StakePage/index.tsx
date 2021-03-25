@@ -130,9 +130,9 @@ function InnerStakePage(props: Props) {
     let dates = getStakes.value['dates'];
     let stakes = getStakes.value['stakes'];
     let cleanupFunction = false;
-    setStakeLoad(true);
     async function getStakesEvent() {
       try {
+        setStakeLoad(true);
         Promise.all(
           dates.map(async (value, index) => {
             const delegate = await network
@@ -149,6 +149,7 @@ function InnerStakePage(props: Props) {
           setStakeLoad(false);
           if (!cleanupFunction) setStakesArray(result as any);
         });
+        setStakeLoad(false);
       } catch (e) {
         console.error(e);
         setStakeLoad(false);
@@ -589,7 +590,7 @@ function InnerStakePage(props: Props) {
                     <tr>
                       <th className="text-left assets">Asset</th>
                       <th className="text-left">Locked Amount</th>
-                      <th className="text-left font-normal lg:table-cell">
+                      <th className="text-left font-normal hidden lg:table-cell">
                         Voting Power:
                       </th>
                       <th className="text-left hidden lg:table-cell">
@@ -638,10 +639,10 @@ function InnerStakePage(props: Props) {
                       <th className="text-left assets">Asset</th>
                       <th className="text-left">Locked Amount</th>
                       <th className="text-left hidden lg:table-cell">
-                        Staking Date
+                        Voting Power
                       </th>
                       <th className="text-left hidden lg:table-cell">
-                        Voting Power
+                        Staking Date
                       </th>
                       <th className="text-left hidden lg:table-cell">
                         Staking Period
@@ -673,9 +674,7 @@ function InnerStakePage(props: Props) {
                   <thead>
                     <tr>
                       <th className="text-left assets">Asset</th>
-                      <th className="text-left hidden lg:table-cell">
-                        Staked Amount
-                      </th>
+                      <th className="text-left">Staked Amount</th>
                       <th className="text-left hidden lg:table-cell">
                         Staking Date
                       </th>

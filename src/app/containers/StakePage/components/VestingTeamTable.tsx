@@ -7,9 +7,10 @@ import VestingABI from '../../BlockChainProvider/abi/Vesting.json';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
 import { actions } from 'app/containers/BlockChainProvider/slice';
+import { LinkToExplorer } from '../../../components/LinkToExplorer';
 import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
+import { useStaking_getStakes } from '../../../hooks/staking/useStaking_getStakes';
 import { useVesting_getTeamVesting } from '../../../hooks/vesting-registry/useVesting_getTeamVesting';
-import { useStaking_getCurrentVotes } from '../../../hooks/staking/useStaking_getCurrentVotes';
 
 export function VestingTeamTable() {
   const account = useAccount();
@@ -20,10 +21,11 @@ export function VestingTeamTable() {
   const [stakingTeamPeriod, setStakingTeamPeriod] = useState('');
   const [unlockTeamDate, setUnlockTeamDate] = useState('');
   const dispatch = useDispatch();
-  const votingPower = useStaking_getCurrentVotes(vestingTeam.value);
+  const [delegate, setDelegate] = useState<any>([]);
+  const [delegateLoading, setDelegateLoading] = useState(true);
+  const getStakes = useStaking_getStakes(vestingTeam.value);
 
   useEffect(() => {
-    setTeamLoading(true);
     async function getVestsTeamList() {
       try {
         Promise.all([
@@ -57,11 +59,42 @@ export function VestingTeamTable() {
         setTeamLoading(false);
       }
     }
+    setTeamLoading(false);
 
     if (vestingTeam.value !== genesisAddress) {
       getVestsTeamList().catch(console.error);
     }
   }, [vestingTeam.value, account]);
+
+  useEffect(() => {
+    async function getDelegate() {
+      setDelegateLoading(true);
+      try {
+        await network
+          .call('staking', 'delegates', [
+            vestingTeam.value,
+            Number(
+              getStakes.value['dates'][getStakes.value['dates'].length - 2],
+            ),
+          ])
+          .then(res => {
+            setDelegateLoading(false);
+            if (
+              res.toString().toLowerCase() !== vestingTeam.value.toLowerCase()
+            ) {
+              setDelegate(res);
+            }
+            return false;
+          });
+      } catch (e) {
+        console.error(e);
+        setDelegateLoading(false);
+      }
+    }
+    if (unlockTeamDate !== '') {
+      getDelegate();
+    }
+  }, [vestingTeam.value, unlockTeamDate, delegate, getStakes.value]);
 
   const locked =
     Number(unlockTeamDate) > Math.round(new Date().getTime() / 1e3); //check if date is locked
@@ -92,14 +125,26 @@ export function VestingTeamTable() {
                 </p>
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
+                {delegate.length > 0 && (
+                  <>
+                    Delegated to{' '}
+                    <LinkToExplorer
+                      isAddress={true}
+                      txHash={delegate}
+                      className={`text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal ${
+                        delegateLoading && 'skeleton'
+                      }`}
+                    />
+                  </>
+                )}
+                {!delegate.length && <p>No delegate</p>}
+              </td>
+              <td className="text-left hidden lg:table-cell font-normal">
                 <p className={`${!stakingPeriodTeamStart && 'skeleton'}`}>
                   {moment(
                     new Date(parseInt(stakingPeriodTeamStart) * 1e3),
                   ).format('DD/MM/YYYY - h:mm:ss a')}
                 </p>
-              </td>
-              <td className="text-left hidden lg:table-cell font-normal">
-                {numberFromWei(votingPower.value).toLocaleString()}
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 <p className={`${!stakingTeamPeriod && 'skeleton'}`}>
