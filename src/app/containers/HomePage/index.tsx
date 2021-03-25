@@ -29,70 +29,63 @@ export function HomePage() {
         </div>
         <div className="container">
           <div className="bg-gray-light rounded-b shadow">
-            {loading && !items.length ? (
-              <>
-                <div className="rounded-lg border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
-                  <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                  </div>
-                  <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                  </div>
-                  <div className="flex justify-between items-center w-full space-x-4 py-5 px-5">
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                    <div className="w-full skeleton h-4" />
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="rounded-lg bg-gray-lighter border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
-                  <StyledTable className="w-full table-fixed">
-                    <thead>
-                      <tr>
-                        <th className="text-left w-2/3 xl:w-1/5">Title</th>
-                        <th className="text-center hidden xl:table-cell xl:w-1/5">
-                          Start Block
-                        </th>
-                        <th className="text-center hidden xl:table-cell xl:w-1/5">
-                          Vote Weight
-                        </th>
-                        <th className="text-center hidden xl:table-cell xl:w-1/5">
-                          Voting Ends
-                        </th>
-                        <th className="text-center w-1/3 xl:w-1/5">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="mt-5">
-                      {!loading && total === 0 && (
+            <>
+              <div className="rounded-lg bg-gray-lighter border sovryn-table pt-1 pb-3 pr-3 pl-3 mb-5 ">
+                <StyledTable className="w-full table-fixed">
+                  <thead>
+                    <tr>
+                      <th className="text-left w-2/3 xl:w-1/5">Title</th>
+                      <th className="text-center hidden xl:table-cell xl:w-1/5">
+                        Start Block
+                      </th>
+                      <th className="text-center hidden xl:table-cell xl:w-1/5">
+                        Vote Weight
+                      </th>
+                      <th className="text-center hidden xl:table-cell xl:w-1/5">
+                        Voting Ends
+                      </th>
+                      <th className="text-center w-1/3 xl:w-1/5">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="mt-5">
+                    {loading && !items.length && (
+                      <>
                         <tr>
-                          <td colSpan={99}>
-                            <i>No proposals yet.</i>
+                          <td>
+                            <div className="w-full skeleton h-4" />
+                          </td>
+                          <td>
+                            <div className="w-full skeleton h-4" />
+                          </td>
+                          <td>
+                            <div className="w-full skeleton h-4" />
+                          </td>
+                          <td>
+                            <div className="w-full skeleton h-4" />
+                          </td>
+                          <td>
+                            <div className="w-full skeleton h-4" />
                           </td>
                         </tr>
-                      )}
-                      {items.map(item => (
-                        <ProposalRow
-                          key={item.id + item.contractName}
-                          proposal={item}
-                        />
-                      ))}
-                    </tbody>
-                  </StyledTable>
-                </div>
-              </>
-            )}
+                      </>
+                    )}
+                    {!loading && total === 0 && (
+                      <tr>
+                        <td colSpan={99}>
+                          <i>No proposals yet.</i>
+                        </td>
+                      </tr>
+                    )}
+                    {items.map(item => (
+                      <ProposalRow
+                        key={item.id + item.contractName}
+                        proposal={item}
+                      />
+                    ))}
+                  </tbody>
+                </StyledTable>
+              </div>
+            </>
             {total > items.length && (
               <div className="text-center mb-5">
                 <Link

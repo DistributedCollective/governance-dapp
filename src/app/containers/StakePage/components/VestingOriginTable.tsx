@@ -55,6 +55,7 @@ export function VestingOriginTable() {
             )
             .then(res => setUnlockOriginDate(res)),
         ]).then(_ => setOriginLoading(false));
+        setOriginLoading(false);
       } catch (e) {
         console.error(e);
         setOriginLoading(false);

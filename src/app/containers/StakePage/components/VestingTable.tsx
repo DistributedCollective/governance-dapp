@@ -26,9 +26,9 @@ export function VestingTable() {
   const [delegateLoading, setDelegateLoading] = useState(false);
 
   useEffect(() => {
-    setVestLoading(true);
     async function getVestsList() {
       try {
+        setVestLoading(true);
         Promise.all([
           network
             .callCustomContract(
@@ -50,11 +50,13 @@ export function VestingTable() {
             .callCustomContract(vesting.value as any, VestingABI, 'endDate', [])
             .then(res => setUnlockDate(res)),
         ]).then(_ => setVestLoading(false));
+        setVestLoading(false);
       } catch (e) {
         console.error(e);
         setVestLoading(false);
       }
     }
+    setVestLoading(false);
     if (vesting.value !== genesisAddress) {
       getVestsList().catch(console.error);
     }
