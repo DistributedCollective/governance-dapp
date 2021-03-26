@@ -148,7 +148,7 @@ export function VestingTeamTable() {
                 <p className={`${!stakingPeriodTeamStart && 'skeleton'}`}>
                   {moment(
                     new Date(parseInt(stakingPeriodTeamStart) * 1e3),
-                  ).format('DD/MM/YYYY')}
+                  ).format('DD/MM/YYYY - h:mm:ss a')}
                 </p>
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
