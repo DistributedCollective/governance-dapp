@@ -129,7 +129,6 @@ function InnerStakePage(props: Props) {
   useEffect(() => {
     let dates = getStakes.value['dates'];
     let stakes = getStakes.value['stakes'];
-    let cleanupFunction = false;
     async function getStakesEvent() {
       try {
         setStakeLoad(true);
@@ -147,7 +146,7 @@ function InnerStakePage(props: Props) {
           }),
         ).then(result => {
           setStakeLoad(false);
-          if (!cleanupFunction) setStakesArray(result as any);
+          setStakesArray(result as any);
         });
         setStakeLoad(false);
       } catch (e) {
@@ -160,7 +159,7 @@ function InnerStakePage(props: Props) {
     }
 
     return () => {
-      cleanupFunction = true;
+      setStakesArray([]);
     };
   }, [account, getStakes.value, setStakesArray]);
 
@@ -186,7 +185,7 @@ function InnerStakePage(props: Props) {
               <td className="text-left font-normal">
                 {numberFromWei(item[0])} SOV
               </td>
-              <td className="text-left font-normal max-w-15">
+              <td className="text-left hidden lg:table-cell font-normal max-w-15">
                 {item[2].length && (
                   <>
                     Delegated to{' '}
@@ -200,29 +199,23 @@ function InnerStakePage(props: Props) {
                 {!item[2].length && <p>No delegate</p>}
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
-                {moment(new Date(parseInt(item[1]) * 1e3)).format(
-                  'DD/MM/YYYY - h:mm:ss a',
+                {locked && (
+                  <>
+                    <br />
+                    {Math.abs(
+                      moment().diff(
+                        moment(new Date(parseInt(item[1]) * 1e3)),
+                        'days',
+                      ),
+                    )}{' '}
+                    days
+                  </>
                 )}
-              </td>
-              <td className="text-left hidden lg:table-cell font-normal">
-                4 weeks
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 <p>
                   {moment(new Date(parseInt(item[1]) * 1e3)).format(
                     'DD/MM/YYYY',
-                  )}
-                  {locked && (
-                    <>
-                      <br />
-                      {Math.abs(
-                        moment().diff(
-                          moment(new Date(parseInt(item[1]) * 1e3)),
-                          'days',
-                        ),
-                      )}{' '}
-                      days
-                    </>
                   )}
                 </p>
               </td>
@@ -592,9 +585,6 @@ function InnerStakePage(props: Props) {
                       <th className="text-left">Locked Amount</th>
                       <th className="text-left font-normal hidden lg:table-cell">
                         Voting Power:
-                      </th>
-                      <th className="text-left hidden lg:table-cell">
-                        Staking Date
                       </th>
                       <th className="text-left hidden lg:table-cell">
                         Staking Period

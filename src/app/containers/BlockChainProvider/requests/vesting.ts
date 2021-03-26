@@ -16,3 +16,14 @@ export function vesting_delegate(
     },
   );
 }
+
+export function vesting_withdraw(address: string, account: string) {
+  return network.send(
+    'vestingRegistry',
+    'withdrawTokens',
+    [address, { from: account }],
+    {
+      type: 'withdraw',
+    },
+  );
+}
