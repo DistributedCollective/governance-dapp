@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { numberFromWei, genesisAddress } from 'utils/helpers';
 import logoSvg from 'assets/images/sovryn-icon.svg';
@@ -8,10 +8,11 @@ import VestingABI from '../../BlockChainProvider/abi/Vesting.json';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
 import { LinkToExplorer } from '../../../components/LinkToExplorer';
-import { vesting_withdraw } from '../../BlockChainProvider/requests/vesting';
 import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
 import { useStaking_getStakes } from '../../../hooks/staking/useStaking_getStakes';
 import { useVesting_getVesting } from '../../../hooks/vesting-registry/useVesting_getVesting';
+import { Modal } from '../../../components/Modal';
+import { WithdrawVesting } from './WithdrawVesting';
 
 export function VestingTable() {
   const account = useAccount();
@@ -25,6 +26,8 @@ export function VestingTable() {
   const [locked, setLocked] = useState(true);
   const [delegate, setDelegate] = useState<any>([]);
   const [delegateLoading, setDelegateLoading] = useState(false);
+
+  const [showWithdraw, setShowWithdraw] = useState(false);
 
   useEffect(() => {
     async function getVestsList() {
@@ -83,18 +86,6 @@ export function VestingTable() {
       setLocked(Number(unlockDate) > Math.round(new Date().getTime() / 1e3));
     }
   }, [vesting.value, unlockDate, delegate, getStakes.value]);
-
-  const handleWithdrawSubmit = useCallback(
-    async e => {
-      e.preventDefault();
-      try {
-        await vesting_withdraw(vesting.value.toLowerCase(), account);
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    [vesting.value, account],
-  );
 
   return (
     <>
@@ -176,19 +167,29 @@ export function VestingTable() {
                   </button>
                   <button
                     type="button"
-                    disabled={locked}
-                    className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
-                      locked &&
-                      'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
-                    }`}
-                    onClick={handleWithdrawSubmit}
+                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                    onClick={() => setShowWithdraw(true)}
+                    disabled={
+                      !vesting.value || vesting.value === genesisAddress
+                    }
                   >
-                    Unstake
+                    Withdraw
                   </button>
                 </div>
               </td>
             </tr>
           )}
+          <Modal
+            show={showWithdraw}
+            content={
+              <>
+                <WithdrawVesting
+                  vesting={vesting.value}
+                  onCloseModal={() => setShowWithdraw(false)}
+                />
+              </>
+            }
+          />
         </>
       )}
     </>

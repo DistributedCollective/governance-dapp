@@ -17,14 +17,48 @@ export function vesting_delegate(
   );
 }
 
-export function vesting_withdraw(address: string, account: string) {
+export function vesting_withdraw(
+  vestingAddress: string,
+  receiver: string,
+  owner: string,
+) {
   return network.sendCustomContract(
-    address,
+    vestingAddress,
     VestingABI,
     'withdrawTokens',
-    [address, { from: account }],
+    [receiver, { from: owner }],
     {
       type: 'withdraw',
     },
+  );
+}
+
+export function vesting_getCliff(vestingAddress: string) {
+  return network.callCustomContract(vestingAddress, VestingABI, 'cliff', []);
+}
+
+export function vesting_getDuration(vestingAddress: string) {
+  return network.callCustomContract(vestingAddress, VestingABI, 'duration', []);
+}
+
+export function vesting_getStartDate(vestingAddress: string) {
+  return network.callCustomContract(
+    vestingAddress,
+    VestingABI,
+    'startDate',
+    [],
+  );
+}
+
+export function vesting_getEndDate(vestingAddress: string) {
+  return network.callCustomContract(vestingAddress, VestingABI, 'endDate', []);
+}
+
+export function vesting_getFOUR_WEEKS(vestingAddress: string) {
+  return network.callCustomContract(
+    vestingAddress,
+    VestingABI,
+    'FOUR_WEEKS',
+    [],
   );
 }

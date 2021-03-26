@@ -128,3 +128,15 @@ export function staking_delegate(address: string, lockDate: number, account) {
     },
   );
 }
+
+export function staking_getPriorUserStakeByDate(
+  address: string,
+  date: number,
+  blockNumber: number,
+) {
+  return network.call('staking', 'getPriorUserStakeByDate', [
+    address,
+    date,
+    blockNumber,
+  ]);
+}

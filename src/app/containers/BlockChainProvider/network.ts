@@ -89,6 +89,10 @@ class Network {
     return this.web3.eth.getTransactionCount(address);
   }
 
+  public async blockNumber(): Promise<number> {
+    return this.web3.eth.getBlockNumber();
+  }
+
   public async call(
     contractName: ContractName,
     methodName: string,

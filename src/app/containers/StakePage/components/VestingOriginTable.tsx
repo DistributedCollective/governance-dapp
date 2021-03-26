@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { numberFromWei, genesisAddress } from 'utils/helpers';
 import logoSvg from 'assets/images/sovryn-icon.svg';
@@ -8,10 +8,11 @@ import { actions } from 'app/containers/BlockChainProvider/slice';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
 import { LinkToExplorer } from '../../../components/LinkToExplorer';
-import { vesting_withdraw } from '../../BlockChainProvider/requests/vesting';
 import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
 import { useStaking_getStakes } from '../../../hooks/staking/useStaking_getStakes';
 import { useVesting_getOriginVesting } from '../../../hooks/vesting-registry/useVesting_getOriginVesting';
+import { Modal } from '../../../components/Modal';
+import { WithdrawVesting } from './WithdrawVesting';
 
 export function VestingOriginTable() {
   const account = useAccount();
@@ -25,6 +26,8 @@ export function VestingOriginTable() {
   const [unlockOriginDate, setUnlockOriginDate] = useState('');
   const [delegate, setDelegate] = useState<any>([]);
   const [delegateLoading, setDelegateLoading] = useState(false);
+
+  // useGetUnlockedVesting(vestingOrigin.value);
 
   useEffect(() => {
     setOriginLoading(true);
@@ -92,17 +95,7 @@ export function VestingOriginTable() {
     }
   }, [vestingOrigin.value, unlockOriginDate, delegate, getStakes.value]);
 
-  const handleWithdrawSubmit = useCallback(
-    async e => {
-      e.preventDefault();
-      try {
-        await vesting_withdraw(vestingOrigin.value.toLowerCase(), account);
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    [vestingOrigin.value, account],
-  );
+  const [showWithdraw, setShowWithdraw] = useState(false);
 
   return (
     <>
@@ -120,7 +113,7 @@ export function VestingOriginTable() {
                     <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
                   </div>
                   <div className="text-sm font-normal hidden xl:block">
-                    CSOV Origin
+                    SOV Origin
                   </div>
                 </div>
               </td>
@@ -128,7 +121,7 @@ export function VestingOriginTable() {
                 className={`text-left font-normal
                 ${!lockedAmountOrigin.value && 'skeleton'}`}
               >
-                {numberFromWei(lockedAmountOrigin.value)} CSOV
+                {numberFromWei(lockedAmountOrigin.value)} SOV
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 {delegate.length > 0 && (
@@ -189,14 +182,10 @@ export function VestingOriginTable() {
                   </button>
                   <button
                     type="button"
-                    disabled={locked}
-                    className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
-                      locked &&
-                      'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
-                    }`}
-                    onClick={handleWithdrawSubmit}
+                    onClick={() => setShowWithdraw(true)}
+                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
                   >
-                    Unstake
+                    Withdraw
                   </button>
                 </div>
               </td>
@@ -204,6 +193,17 @@ export function VestingOriginTable() {
           )}
         </>
       )}
+      <Modal
+        show={showWithdraw}
+        content={
+          <>
+            <WithdrawVesting
+              vesting={vestingOrigin.value}
+              onCloseModal={() => setShowWithdraw(false)}
+            />
+          </>
+        }
+      />
     </>
   );
 }
