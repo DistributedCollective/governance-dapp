@@ -128,7 +128,7 @@ export function VestingOriginTable() {
                 className={`text-left font-normal
                 ${!lockedAmountOrigin.value && 'skeleton'}`}
               >
-                {numberFromWei(lockedAmountOrigin.value)} CSOV
+                {numberFromWei(lockedAmountOrigin.value)} SOV
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 {delegate.length > 0 && (
