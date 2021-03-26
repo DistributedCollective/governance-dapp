@@ -148,13 +148,11 @@ export function HistoryEventsTable() {
                   <div>
                     <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
                   </div>
-                  <div className="text-sm font-normal hidden xl:block">
-                    CSOV
-                  </div>
+                  <div className="text-sm font-normal hidden xl:block">SOV</div>
                 </div>
               </td>
               <td className="text-left font-normal">
-                {numberFromWei(item.returnValues.amount)} CSOV
+                {numberFromWei(item.returnValues.amount)} SOV
                 <br />
               </td>
               <td className="text-left hidden lg:table-cell font-normal relative">
@@ -172,7 +170,7 @@ export function HistoryEventsTable() {
                 </div>
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
-                {numberFromWei(item.returnValues.totalStaked)} CSOV
+                {numberFromWei(item.returnValues.totalStaked)} SOV
               </td>
             </tr>
           );
