@@ -20,42 +20,14 @@ interface Props {
   proposal: MergedProposal;
 }
 
-const StyledBar = styled.div`
-  width: 100%;
-  max-width: 100px;
-  display: flex;
-  height: 10px;
-  flex-wrap: nowrap;
-  margin: 5px 0 5px auto;
-  border-radius: 8px;
-  overflow: hidden;
-  .progress__blue {
-    width: 50%;
-    background: rgb(78, 205, 196);
-    background: linear-gradient(
-      90deg,
-      rgba(78, 205, 196, 1) 0%,
-      rgba(0, 0, 0, 1) 100%
-    );
-  }
-  .progress__red {
-    width: 50%;
-    background: rgb(0, 0, 0);
-    background: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(205, 78, 78, 1) 100%
-    );
-  }
-`;
-
 export function ProposalRow({ proposal }: Props) {
-  const { loading: loadingCreated, value: created } = useGetProposalCreateEvent(
-    proposal,
-  );
+  const {
+    loading: loadingCreated,
+    value: created,
+    event,
+  } = useGetProposalCreateEvent(proposal);
   const { loading: loadingState, state } = useGetProposalState(proposal);
   const location = useLocation();
-
   const [wasLoaded, setWasLoaded] = useState(false);
 
   useEffect(() => {
@@ -171,7 +143,7 @@ export function ProposalRow({ proposal }: Props) {
             <td className="text-center hidden xl:table-cell tracking-normal truncate">
               {dateByBlocks(
                 proposal.startTime,
-                proposal.startBlock,
+                event?.blockNumber,
                 proposal.endBlock,
               )}
             </td>
@@ -192,3 +164,32 @@ export function ProposalRow({ proposal }: Props) {
     </>
   );
 }
+
+const StyledBar = styled.div`
+  width: 100%;
+  max-width: 100px;
+  display: flex;
+  height: 10px;
+  flex-wrap: nowrap;
+  margin: 5px 0 5px auto;
+  border-radius: 8px;
+  overflow: hidden;
+  .progress__blue {
+    width: 50%;
+    background: rgb(78, 205, 196);
+    background: linear-gradient(
+      90deg,
+      rgba(78, 205, 196, 1) 0%,
+      rgba(0, 0, 0, 1) 100%
+    );
+  }
+  .progress__red {
+    width: 50%;
+    background: rgb(0, 0, 0);
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(205, 78, 78, 1) 100%
+    );
+  }
+`;

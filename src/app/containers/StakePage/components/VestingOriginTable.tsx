@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { numberFromWei, genesisAddress } from 'utils/helpers';
 import logoSvg from 'assets/images/sovryn-icon.svg';
 import moment from 'moment';
 import VestingABI from '../../BlockChainProvider/abi/Vesting.json';
+import { actions } from 'app/containers/BlockChainProvider/slice';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
 import { LinkToExplorer } from '../../../components/LinkToExplorer';
-import { actions } from 'app/containers/BlockChainProvider/slice';
+import { vesting_withdraw } from '../../BlockChainProvider/requests/vesting';
 import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
 import { useStaking_getStakes } from '../../../hooks/staking/useStaking_getStakes';
 import { useVesting_getOriginVesting } from '../../../hooks/vesting-registry/useVesting_getOriginVesting';
@@ -19,8 +20,8 @@ export function VestingOriginTable() {
   const getStakes = useStaking_getStakes(vestingOrigin.value);
   const lockedAmountOrigin = useStaking_balanceOf(vestingOrigin.value);
   const [originLoading, setOriginLoading] = useState(false);
+  const [locked, setLocked] = useState(true);
   const [stakingPeriodOriginStart, setStakingPeriodOriginStart] = useState('');
-  const [stakingOriginPeriod, setStakingOriginPeriod] = useState('');
   const [unlockOriginDate, setUnlockOriginDate] = useState('');
   const [delegate, setDelegate] = useState<any>([]);
   const [delegateLoading, setDelegateLoading] = useState(false);
@@ -38,14 +39,6 @@ export function VestingOriginTable() {
               [],
             )
             .then(res => setStakingPeriodOriginStart(res)),
-          network
-            .callCustomContract(
-              vestingOrigin.value as any,
-              VestingABI,
-              'duration',
-              [],
-            )
-            .then(res => setStakingOriginPeriod(res)),
           network
             .callCustomContract(
               vestingOrigin.value as any,
@@ -93,11 +86,23 @@ export function VestingOriginTable() {
     }
     if (unlockOriginDate !== '') {
       getDelegate();
+      setLocked(
+        Number(unlockOriginDate) > Math.round(new Date().getTime() / 1e3),
+      );
     }
   }, [vestingOrigin.value, unlockOriginDate, delegate, getStakes.value]);
 
-  const locked =
-    Number(unlockOriginDate) > Math.round(new Date().getTime() / 1e3); //check if date is locked
+  const handleWithdrawSubmit = useCallback(
+    async e => {
+      e.preventDefault();
+      try {
+        await vesting_withdraw(vestingOrigin.value.toLowerCase(), account);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [vestingOrigin.value, account],
+  );
 
   return (
     <>
@@ -148,12 +153,18 @@ export function VestingOriginTable() {
                   new Date(parseInt(stakingPeriodOriginStart) * 1e3),
                 ).format('DD/MM/YYYY - h:mm:ss a')}
               </td>
-              <td
-                className={`text-left hidden lg:table-cell font-normal
-                ${!stakingOriginPeriod && 'skeleton'}`}
-              >
-                {moment(new Date(parseInt(stakingOriginPeriod))).format('d')}{' '}
-                weeks
+              <td className="text-left hidden lg:table-cell font-normal">
+                {locked && (
+                  <p className={`${!unlockOriginDate && 'skeleton'}`}>
+                    {Math.abs(
+                      moment().diff(
+                        moment(new Date(parseInt(unlockOriginDate) * 1e3)),
+                        'days',
+                      ),
+                    )}{' '}
+                    days
+                  </p>
+                )}
               </td>
               <td
                 className={`text-left hidden lg:table-cell font-normal
@@ -162,18 +173,6 @@ export function VestingOriginTable() {
                 <p>
                   {moment(new Date(parseInt(unlockOriginDate) * 1e3)).format(
                     'DD/MM/YYYY',
-                  )}
-                  {locked && (
-                    <>
-                      <br />
-                      {Math.abs(
-                        moment().diff(
-                          moment(new Date(parseInt(unlockOriginDate) * 1e3)),
-                          'days',
-                        ),
-                      )}{' '}
-                      days
-                    </>
                   )}
                 </p>
               </td>
@@ -190,9 +189,12 @@ export function VestingOriginTable() {
                   </button>
                   <button
                     type="button"
-                    disabled
-                    className="opacity-30 text-gold tracking-normal hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                    onClick={() => {}}
+                    disabled={locked}
+                    className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
+                      locked &&
+                      'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
+                    }`}
+                    onClick={handleWithdrawSubmit}
                   >
                     Unstake
                   </button>
