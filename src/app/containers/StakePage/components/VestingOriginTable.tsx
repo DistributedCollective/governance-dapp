@@ -138,13 +138,12 @@ export function VestingOriginTable() {
                 )}
                 {!delegate.length && <p>No delegate</p>}
               </td>
-              <td
-                className={`text-left hidden lg:table-cell font-normal
-                ${!stakingPeriodOriginStart && 'skeleton'}`}
-              >
-                {moment(
-                  new Date(parseInt(stakingPeriodOriginStart) * 1e3),
-                ).format('DD/MM/YYYY - h:mm:ss a')}
+              <td className="text-left hidden lg:table-cell font-normal">
+                <p className={`${!stakingPeriodOriginStart && 'skeleton'}`}>
+                  {moment(
+                    new Date(parseInt(stakingPeriodOriginStart) * 1e3),
+                  ).format('DD/MM/YYYY - h:mm:ss a')}
+                </p>
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 {locked && (
@@ -159,11 +158,8 @@ export function VestingOriginTable() {
                   </p>
                 )}
               </td>
-              <td
-                className={`text-left hidden lg:table-cell font-normal
-                ${!unlockOriginDate && 'skeleton'}`}
-              >
-                <p>
+              <td className="text-left hidden lg:table-cell font-normal">
+                <p className={`${!unlockOriginDate && 'skeleton'}`}>
                   {moment(new Date(parseInt(unlockOriginDate) * 1e3)).format(
                     'DD/MM/YYYY',
                   )}
