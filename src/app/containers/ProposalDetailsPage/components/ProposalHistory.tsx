@@ -79,7 +79,7 @@ export function ProposalHistory(props: Props) {
                 <p className="text-sm tracking-normal">
                   {dateByBlocks(
                     props.proposal.startTime,
-                    props.proposal.startBlock,
+                    props.createdEvent?.blockNumber,
                     props.createdEvent.blockNumber,
                   )}
                 </p>
@@ -99,12 +99,12 @@ export function ProposalHistory(props: Props) {
                   <p className="text-sm tracking-normal">
                     {dateByBlocks(
                       props.proposal.startTime,
-                      props.proposal.startBlock,
+                      props.createdEvent?.blockNumber,
                       props.proposal.endBlock,
                     )}
                   </p>
                   <p className="text-gold tracking-normal text-sm leading-3">
-                    {props.proposal.endBlock}
+                    #{props.proposal.endBlock}
                   </p>
                 </div>
               </div>
