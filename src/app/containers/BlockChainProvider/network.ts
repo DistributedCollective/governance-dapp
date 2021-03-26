@@ -20,6 +20,7 @@ interface SendTxOptions {
 
 class Network {
   public web3: Web3 = null as any;
+  public wsWeb3: Web3 = null as any;
   public writeWeb3: Web3 = null as any;
   public contracts: {} = {};
   public writeContracts: {} = {};
@@ -27,11 +28,7 @@ class Network {
   private _network: NetworkName = null as any;
   private _writeNetwork: NetworkName = null as any;
 
-  public setWeb3(
-    web3: Web3,
-    network: NetworkName,
-    isWebsocket: boolean = false,
-  ) {
+  public setWeb3(web3: Web3, network: NetworkName) {
     this.web3 = web3;
     if (this._network !== network) {
       this._network = network;
@@ -45,15 +42,21 @@ class Network {
         });
       }
     }
+  }
+
+  public setWsWeb3(
+    web3: Web3,
+    network: NetworkName,
+    isWebsocket: boolean = false,
+  ) {
+    this.wsWeb3 = web3;
 
     if (isWebsocket) {
-      const provider = this.web3.currentProvider as any;
+      const provider = this.wsWeb3.currentProvider as any;
 
       provider.on('end', () => {
         provider.removeAllListeners('end');
-        this.contracts = {};
-        this.web3 = undefined as any;
-        store.dispatch(actions.setup(CHAIN_ID));
+        this.wsWeb3 = undefined as any;
       });
     }
   }

@@ -125,7 +125,6 @@ function InnerStakePage(props: Props) {
   useEffect(() => {
     let dates = getStakes.value['dates'];
     let stakes = getStakes.value['stakes'];
-    console.log('hello', dates, stakes, getStakes);
     async function getStakesEvent() {
       try {
         Promise.all(

@@ -36,7 +36,8 @@ function* setupSaga({ payload }: PayloadAction<ChainId>) {
   }
   const web3 = new Web3(web3Provider);
 
-  network.setWeb3(web3, payload === 30 ? 'mainnet' : 'testnet', isWebsocket);
+  network.setWeb3(web3, payload === 30 ? 'mainnet' : 'testnet');
+  network.setWsWeb3(web3, payload === 30 ? 'mainnet' : 'testnet', isWebsocket);
   walletConnection.init(payload);
 
   // const threshold = yield call(governance_proposalThreshold);
@@ -93,7 +94,7 @@ function createBlockPollChannel({ interval, web3 }) {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function* callCreateBlockPollChannel() {
-  const web3 = network.web3;
+  const web3 = network.wsWeb3;
   const blockChannel = yield call(createBlockPollChannel, {
     web3,
     interval: 10000,
@@ -204,7 +205,7 @@ function createBlockChannels({ web3 }) {
 }
 
 function* callCreateBlockChannels() {
-  const web3 = network.web3;
+  const web3 = network.wsWeb3;
   const blockChannel = yield call(createBlockChannels, { web3 });
 
   try {
