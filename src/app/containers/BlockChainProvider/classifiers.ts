@@ -1,7 +1,7 @@
 import { ChainId } from './types';
 
 export const rpcNodes = {
-  30: 'https://mainnet.sovryn.app/rpc',
+  30: 'https://public-node.rsk.co',
   31: 'https://testnet.sovryn.app/rpc',
 };
 

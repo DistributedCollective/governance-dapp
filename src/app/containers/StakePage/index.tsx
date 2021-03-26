@@ -45,19 +45,15 @@ import { ExtendStakeForm } from './components/ExtendStakeForm';
 import { IncreaseStakeForm } from './components/IncreaseStakeForm';
 import { HistoryEventsTable } from './components/HistoryEventsTable';
 import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
-import { VestingTable } from './components/VestingTable';
-import { VestingTeamTable } from './components/VestingTeamTable';
-import { VestingOriginTable } from './components/VestingOriginTable';
-import { VestingEmptyTable } from './components/VestingEmptyTable';
 // import {
 //   governance_proposalCount,
 //   governance_propose,
 // } from '../BlockChainProvider/requests/governance';
 // import { Icon, Button } from '@blueprintjs/core';
 // import { Popover2 } from '@blueprintjs/popover2';
-import styled from 'styled-components/macro';
 import logoSvg from 'assets/images/sovryn-icon.svg';
-import { media } from '../../../styles/media';
+import { CurrentVests } from './components/CurrentVests';
+import { StyledTable } from './components/StyledTable';
 interface Props {}
 
 const now = new Date();
@@ -129,9 +125,9 @@ function InnerStakePage(props: Props) {
   useEffect(() => {
     let dates = getStakes.value['dates'];
     let stakes = getStakes.value['stakes'];
+    console.log('hello', dates, stakes, getStakes);
     async function getStakesEvent() {
       try {
-        setStakeLoad(true);
         Promise.all(
           dates.map(async (value, index) => {
             const delegate = await network
@@ -145,162 +141,23 @@ function InnerStakePage(props: Props) {
             return [stakes[index], value, delegate];
           }),
         ).then(result => {
-          setStakeLoad(false);
           setStakesArray(result as any);
         });
         setStakeLoad(false);
       } catch (e) {
         console.error(e);
-        setStakeLoad(false);
       }
     }
     if (dates !== undefined) {
-      getStakesEvent();
+      setStakeLoad(true);
+      getStakesEvent().finally(() => setStakeLoad(false));
     }
 
     return () => {
       setStakesArray([]);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, getStakes.value, setStakesArray]);
-
-  interface Stakes {
-    stakes: any[] | any;
-  }
-
-  const StakesOverview: React.FC<Stakes> = ({ stakes }) => {
-    return stakes.length ? (
-      <>
-        {stakes.map((item, i: string) => {
-          const locked = Number(item[1]) > Math.round(now.getTime() / 1e3); //check if date is locked
-          return (
-            <tr key={i}>
-              <td>
-                <div className="username flex items-center">
-                  <div>
-                    <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
-                  </div>
-                  <div className="text-sm font-normal hidden xl:block">SOV</div>
-                </div>
-              </td>
-              <td className="text-left font-normal">
-                {numberFromWei(item[0])} SOV
-              </td>
-              <td className="text-left hidden lg:table-cell font-normal max-w-15">
-                {item[2].length && (
-                  <>
-                    Delegated to{' '}
-                    <LinkToExplorer
-                      isAddress={true}
-                      txHash={item[2]}
-                      className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                    />
-                  </>
-                )}
-                {!item[2].length && <p>No delegate</p>}
-              </td>
-              <td className="text-left hidden lg:table-cell font-normal">
-                {locked && (
-                  <>
-                    <br />
-                    {Math.abs(
-                      moment().diff(
-                        moment(new Date(parseInt(item[1]) * 1e3)),
-                        'days',
-                      ),
-                    )}{' '}
-                    days
-                  </>
-                )}
-              </td>
-              <td className="text-left hidden lg:table-cell font-normal">
-                <p>
-                  {moment(new Date(parseInt(item[1]) * 1e3)).format(
-                    'DD/MM/YYYY',
-                  )}
-                </p>
-              </td>
-              <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
-                <div className="flex flex-nowrap">
-                  <button
-                    type="button"
-                    className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
-                      !locked &&
-                      'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
-                    }`}
-                    onClick={() => {
-                      setTimestamp(item[1]);
-                      setAmount(numberFromWei(item[0]).toString());
-                      setUntil(item[1]);
-                      setStakeForm(false);
-                      setExtendForm(false);
-                      setIncreaseForm(true);
-                      setWithdrawForm(false);
-                    }}
-                    disabled={!locked}
-                  >
-                    Increase
-                  </button>
-                  <button
-                    type="button"
-                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                    onClick={() => {
-                      setPrevTimestamp(item[1]);
-                      setTimestamp(item[1]);
-                      setAmount(numberFromWei(item[0]).toString());
-                      setStakeForm(false);
-                      setExtendForm(true);
-                      setIncreaseForm(false);
-                      setWithdrawForm(false);
-                    }}
-                  >
-                    Extend
-                  </button>
-                  <button
-                    type="button"
-                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                    onClick={() => {
-                      setAmount(numberFromWei(item[0]).toString());
-                      setWithdrawAmount(0);
-                      setTimestamp(item[1]);
-                      setUntil(item[1]);
-                      setStakeForm(false);
-                      setExtendForm(false);
-                      setIncreaseForm(false);
-                      setWithdrawForm(true);
-                    }}
-                  >
-                    Unstake
-                  </button>
-                  <button
-                    className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
-                      !locked &&
-                      'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
-                    }`}
-                    onClick={() => {
-                      setTimestamp(item[1]);
-                      setDelegateForm(!delegateForm);
-                    }}
-                    disabled={!locked}
-                  >
-                    Delegate
-                  </button>
-                </div>
-              </td>
-            </tr>
-          );
-        })}
-      </>
-    ) : (
-      <tr>
-        <td
-          colSpan={7}
-          className={`text-center font-normal ${stakeLoad && 'skeleton'}`}
-        >
-          No stakes yet
-        </td>
-      </tr>
-    );
-  };
 
   useEffect(() => {
     if (timestamp && weiAmount && (stakeForm || increaseForm || extendForm)) {
@@ -598,7 +455,42 @@ function InnerStakePage(props: Props) {
                     </tr>
                   </thead>
                   <tbody className="mt-5 font-montserrat text-xs">
-                    <StakesOverview stakes={stakesArray} />
+                    <StakesOverview
+                      stakes={stakesArray}
+                      loading={stakeLoad || getStakes.loading}
+                      onDelegate={a => {
+                        setTimestamp(a);
+                        setDelegateForm(!delegateForm);
+                      }}
+                      onExtend={(a, b) => {
+                        setPrevTimestamp(b);
+                        setTimestamp(b);
+                        setAmount(numberFromWei(a).toString());
+                        setStakeForm(false);
+                        setExtendForm(true);
+                        setIncreaseForm(false);
+                        setWithdrawForm(false);
+                      }}
+                      onIncrease={(a, b) => {
+                        setTimestamp(b);
+                        setAmount(numberFromWei(a).toString());
+                        setUntil(b);
+                        setStakeForm(false);
+                        setExtendForm(false);
+                        setIncreaseForm(true);
+                        setWithdrawForm(false);
+                      }}
+                      onUnstake={(a, b) => {
+                        setAmount(numberFromWei(a).toString());
+                        setWithdrawAmount(0);
+                        setTimestamp(b);
+                        setUntil(b);
+                        setStakeForm(false);
+                        setExtendForm(false);
+                        setIncreaseForm(false);
+                        setWithdrawForm(true);
+                      }}
+                    />
                   </tbody>
                 </StyledTable>
                 <Modal
@@ -618,42 +510,7 @@ function InnerStakePage(props: Props) {
               </div>
             </div>
 
-            <p className="font-semibold text-lg ml-6 mb-4 mt-6">
-              Current Vests
-            </p>
-            <div className="bg-gray-light rounded-b shadow">
-              <div className="rounded-lg border sovryn-table pt-1 pb-0 pr-5 pl-5 mb-5 max-h-96 overflow-y-auto">
-                <StyledTable className="w-full">
-                  <thead>
-                    <tr>
-                      <th className="text-left assets">Asset</th>
-                      <th className="text-left">Locked Amount</th>
-                      <th className="text-left hidden lg:table-cell">
-                        Voting Power
-                      </th>
-                      <th className="text-left hidden lg:table-cell">
-                        Staking Date
-                      </th>
-                      <th className="text-left hidden lg:table-cell">
-                        Staking Period
-                      </th>
-                      <th className="text-left hidden lg:table-cell">
-                        Unlock Date
-                      </th>
-                      <th className="text-left hidden md:table-cell max-w-15 min-w-15">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="mt-5 font-montserrat text-xs">
-                    <VestingTable />
-                    <VestingTeamTable />
-                    <VestingOriginTable />
-                    <VestingEmptyTable />
-                  </tbody>
-                </StyledTable>
-              </div>
-            </div>
+            <CurrentVests />
 
             <p className="font-normal text-lg ml-6 mb-1 mt-16">
               Staking History
@@ -759,129 +616,128 @@ function InnerStakePage(props: Props) {
   );
 }
 
-const StyledTable = styled.table`
-  font-weight: 100;
-  width: 100%;
-  font-size: 14px;
-  font-family: 'Work Sans';
+interface Stakes {
+  stakes: any[] | any;
+  loading: boolean;
+  onIncrease: (a: number, b: number) => void;
+  onExtend: (a: number, b: number) => void;
+  onUnstake: (a: number, b: number) => void;
+  onDelegate: (a: number) => void;
+}
 
-  &.sovryn-table-mobile {
-    font-size: 12px;
-    @media (max-width: 335px) {
-      font-size: 11px;
-    }
-  }
-  .table-header div {
-    font-weight: 300;
-    color: white;
-    font-size: 16px;
-    padding: 0 22px;
-    height: 45px;
-  }
-  thead tr,
-  .table-header:not(.sub-header) {
-    height: 40px;
-    th {
-      font-weight: 300;
-      color: white;
-      font-size: 14px;
-      padding: 0 5px;
-      height: 45px;
-    }
-  }
-  tbody {
-    tr {
-      &:nth-child(odd) {
-        td {
-          background-color: #282828;
-        }
-      }
-      td {
-        &:first-child {
-          border-radius: 6px 0 0 6px;
-        }
-
-        &:last-child {
-          border-radius: 0 6px 6px 0;
-        }
-
-        &:only-child {
-          border-radius: 6px;
-        }
-      }
-    }
-  }
-  &.table-small {
-    thead tr {
-      height: 30px;
-      th {
-        height: 30px;
-        padding: 0 20px;
-      }
-    }
-    tbody tr {
-      height: 30px;
-      td {
-        padding: 0 20px;
-      }
-      &:nth-child(even) {
-        td {
-          background-color: #101010;
-          &:first-child {
-            border-radius: 6px 0 0 6px;
-          }
-
-          &:last-child {
-            border-radius: 0 6px 6px 0;
-          }
-
-          &:only-child {
-            border-radius: 6px;
-          }
-        }
-      }
-    }
-  }
-  tbody tr,
-  .mobile-row {
-    height: 80px;
-
-    td {
-      padding: 0 5px;
-      color: white;
-    }
-
-    &:first-of-type {
-      border-top: none;
-    }
-
-    &.table-header {
-      height: 60%;
-
-      > td {
-        font-weight: 300;
-        color: white;
-        font-size: 16px;
-        height: 45px;
-        padding-top: 20px;
-      }
-    }
-  }
-  .mobile-row {
-    align-content: center;
-  }
-  ${media.xl`
-  thead tr,
-  .table-header:not(.sub-header) {
-    th {
-      padding: 0 15px;
-    }
-  }
-    tbody tr,
-    .mobile-row {
-      td {
-        padding: 0 15px;
-      }
-    }
-  `}
-`;
+const StakesOverview: React.FC<Stakes> = ({
+  stakes,
+  loading,
+  onIncrease,
+  onExtend,
+  onUnstake,
+  onDelegate,
+}) => {
+  return (
+    <>
+      {loading && !stakes.length && (
+        <tr>
+          <td colSpan={99} className="text-center font-normal">
+            Loading, please wait...
+          </td>
+        </tr>
+      )}
+      {!loading && !stakes.length && (
+        <tr>
+          <td colSpan={99} className="text-center font-normal">
+            No stakes yet.
+          </td>
+        </tr>
+      )}
+      {stakes.map((item, i: string) => {
+        const locked = Number(item[1]) > Math.round(now.getTime() / 1e3); //check if date is locked
+        return (
+          <tr key={i}>
+            <td>
+              <div className="username flex items-center">
+                <div>
+                  <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
+                </div>
+                <div className="text-sm font-normal hidden xl:block">SOV</div>
+              </div>
+            </td>
+            <td className="text-left font-normal">
+              {numberFromWei(item[0])} SOV
+            </td>
+            <td className="text-left hidden lg:table-cell font-normal max-w-15">
+              {item[2].length && (
+                <>
+                  Delegated to{' '}
+                  <LinkToExplorer
+                    isAddress={true}
+                    txHash={item[2]}
+                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                  />
+                </>
+              )}
+              {!item[2].length && <p>No delegate</p>}
+            </td>
+            <td className="text-left hidden lg:table-cell font-normal">
+              {locked && (
+                <>
+                  <br />
+                  {Math.abs(
+                    moment().diff(
+                      moment(new Date(parseInt(item[1]) * 1e3)),
+                      'days',
+                    ),
+                  )}{' '}
+                  days
+                </>
+              )}
+            </td>
+            <td className="text-left hidden lg:table-cell font-normal">
+              <p>
+                {moment(new Date(parseInt(item[1]) * 1e3)).format('DD/MM/YYYY')}
+              </p>
+            </td>
+            <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
+              <div className="flex flex-nowrap">
+                <button
+                  type="button"
+                  className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
+                    !locked &&
+                    'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
+                  }`}
+                  onClick={() => onIncrease(item[0], item[1])}
+                  disabled={!locked}
+                >
+                  Increase
+                </button>
+                <button
+                  type="button"
+                  className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                  onClick={() => onExtend(item[0], item[0])}
+                >
+                  Extend
+                </button>
+                <button
+                  type="button"
+                  className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                  onClick={() => onUnstake(item[0], item[1])}
+                >
+                  Unstake
+                </button>
+                <button
+                  className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-7 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
+                    !locked &&
+                    'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
+                  }`}
+                  onClick={() => onDelegate(item[1])}
+                  disabled={!locked}
+                >
+                  Delegate
+                </button>
+              </div>
+            </td>
+          </tr>
+        );
+      })}
+    </>
+  );
+};
