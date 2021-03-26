@@ -119,7 +119,7 @@ export function VestingTeamTable() {
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 <p className={`${!lockedAmountTeam.value && 'skeleton'}`}>
-                  {numberFromWei(lockedAmountTeam.value)} CSOV
+                  {numberFromWei(lockedAmountTeam.value)} SOV
                 </p>
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
