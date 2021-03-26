@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { numberFromWei, genesisAddress } from 'utils/helpers';
 import logoSvg from 'assets/images/sovryn-icon.svg';
@@ -8,6 +8,7 @@ import VestingABI from '../../BlockChainProvider/abi/Vesting.json';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
 import { LinkToExplorer } from '../../../components/LinkToExplorer';
+import { vesting_withdraw } from '../../BlockChainProvider/requests/vesting';
 import { useStaking_balanceOf } from '../../../hooks/staking/useStaking_balanceOf';
 import { useStaking_getStakes } from '../../../hooks/staking/useStaking_getStakes';
 import { useVesting_getVesting } from '../../../hooks/vesting-registry/useVesting_getVesting';
@@ -19,9 +20,9 @@ export function VestingTable() {
   const getStakes = useStaking_getStakes(vesting.value);
   const lockedAmount = useStaking_balanceOf(vesting.value as string);
   const [stakingPeriodStart, setStakingPeriodStart] = useState('');
-  const [stakingPeriod, setStakingPeriod] = useState('');
   const [unlockDate, setUnlockDate] = useState('');
   const [vestLoading, setVestLoading] = useState(false);
+  const [locked, setLocked] = useState(true);
   const [delegate, setDelegate] = useState<any>([]);
   const [delegateLoading, setDelegateLoading] = useState(false);
 
@@ -38,14 +39,6 @@ export function VestingTable() {
               [],
             )
             .then(res => setStakingPeriodStart(res)),
-          network
-            .callCustomContract(
-              vesting.value as any,
-              VestingABI,
-              'duration',
-              [],
-            )
-            .then(res => setStakingPeriod(res)),
           network
             .callCustomContract(vesting.value as any, VestingABI, 'endDate', [])
             .then(res => setUnlockDate(res)),
@@ -87,10 +80,21 @@ export function VestingTable() {
     }
     if (unlockDate !== '') {
       getDelegate();
+      setLocked(Number(unlockDate) > Math.round(new Date().getTime() / 1e3));
     }
   }, [vesting.value, unlockDate, delegate, getStakes.value]);
 
-  const locked = Number(unlockDate) > Math.round(new Date().getTime() / 1e3); //check if date is locked
+  const handleWithdrawSubmit = useCallback(
+    async e => {
+      e.preventDefault();
+      try {
+        await vesting_withdraw(vesting.value.toLowerCase(), account);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [vesting.value, account],
+  );
 
   return (
     <>
@@ -140,26 +144,22 @@ export function VestingTable() {
                 </p>
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
-                <p className={`${!stakingPeriod && 'skeleton'}`}>
-                  {moment(new Date(parseInt(stakingPeriod))).format('d')} weeks
-                </p>
+                {locked && (
+                  <p className={`${!unlockDate && 'skeleton'}`}>
+                    {Math.abs(
+                      moment().diff(
+                        moment(new Date(parseInt(unlockDate) * 1e3)),
+                        'days',
+                      ),
+                    )}{' '}
+                    days
+                  </p>
+                )}
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 <p className={`${!unlockDate && 'skeleton'}`}>
                   {moment(new Date(parseInt(unlockDate) * 1e3)).format(
                     'DD/MM/YYYY',
-                  )}
-                  {locked && (
-                    <>
-                      <br />
-                      {Math.abs(
-                        moment().diff(
-                          moment(new Date(parseInt(unlockDate) * 1e3)),
-                          'days',
-                        ),
-                      )}{' '}
-                      days
-                    </>
                   )}
                 </p>
               </td>
@@ -176,9 +176,12 @@ export function VestingTable() {
                   </button>
                   <button
                     type="button"
-                    disabled
-                    className="opacity-30 text-gold tracking-normal hover:text-gold hover:no-underline mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                    onClick={() => {}}
+                    disabled={locked}
+                    className={`text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-12 px-4 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat ${
+                      locked &&
+                      'bg-transparent hover:bg-opacity-0 opacity-50 cursor-not-allowed hover:bg-transparent'
+                    }`}
+                    onClick={handleWithdrawSubmit}
                   >
                     Unstake
                   </button>

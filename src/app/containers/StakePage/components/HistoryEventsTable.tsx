@@ -19,7 +19,6 @@ export function HistoryEventsTable() {
   >();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    let cleanupFunction = false;
     async function getHistoryEvent() {
       try {
         const stakes = await network.getPastEvents(
@@ -44,11 +43,9 @@ export function HistoryEventsTable() {
           0,
           'latest',
         );
-        if (!cleanupFunction) {
-          setEventsHistory(stakes);
-          setEventsHistoryVesting(stakesVesting);
-          setEventsHistoryVestingTeam(stakesVestingTeam);
-        }
+        setEventsHistory(stakes);
+        setEventsHistoryVesting(stakesVesting);
+        setEventsHistoryVestingTeam(stakesVestingTeam);
       } catch (e) {
         console.error(e);
         setLoading(false);
@@ -56,7 +53,9 @@ export function HistoryEventsTable() {
     }
     getHistoryEvent();
     return () => {
-      cleanupFunction = true;
+      setEventsHistory('');
+      setEventsHistoryVesting('');
+      setEventsHistoryVestingTeam('');
     };
   }, [account, vestingTeam.value, vesting.value]);
 
