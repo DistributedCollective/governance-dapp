@@ -20,6 +20,7 @@ export function VestingOriginTable() {
   const getStakes = useStaking_getStakes(vestingOrigin.value);
   const lockedAmountOrigin = useStaking_balanceOf(vestingOrigin.value);
   const [originLoading, setOriginLoading] = useState(false);
+  const [locked, setLocked] = useState(true);
   const [stakingPeriodOriginStart, setStakingPeriodOriginStart] = useState('');
   const [unlockOriginDate, setUnlockOriginDate] = useState('');
   const [delegate, setDelegate] = useState<any>([]);
@@ -85,11 +86,11 @@ export function VestingOriginTable() {
     }
     if (unlockOriginDate !== '') {
       getDelegate();
+      setLocked(
+        Number(unlockOriginDate) > Math.round(new Date().getTime() / 1e3),
+      );
     }
   }, [vestingOrigin.value, unlockOriginDate, delegate, getStakes.value]);
-
-  const locked =
-    Number(unlockOriginDate) > Math.round(new Date().getTime() / 1e3); //check if date is locked
 
   const handleWithdrawSubmit = useCallback(
     async e => {
@@ -154,7 +155,7 @@ export function VestingOriginTable() {
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 {locked && (
-                  <>
+                  <p className={`${!unlockOriginDate && 'skeleton'}`}>
                     {Math.abs(
                       moment().diff(
                         moment(new Date(parseInt(unlockOriginDate) * 1e3)),
@@ -162,7 +163,7 @@ export function VestingOriginTable() {
                       ),
                     )}{' '}
                     days
-                  </>
+                  </p>
                 )}
               </td>
               <td

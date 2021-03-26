@@ -22,6 +22,7 @@ export function VestingTable() {
   const [stakingPeriodStart, setStakingPeriodStart] = useState('');
   const [unlockDate, setUnlockDate] = useState('');
   const [vestLoading, setVestLoading] = useState(false);
+  const [locked, setLocked] = useState(true);
   const [delegate, setDelegate] = useState<any>([]);
   const [delegateLoading, setDelegateLoading] = useState(false);
 
@@ -79,10 +80,9 @@ export function VestingTable() {
     }
     if (unlockDate !== '') {
       getDelegate();
+      setLocked(Number(unlockDate) > Math.round(new Date().getTime() / 1e3));
     }
   }, [vesting.value, unlockDate, delegate, getStakes.value]);
-
-  const locked = Number(unlockDate) > Math.round(new Date().getTime() / 1e3); //check if date is locked
 
   const handleWithdrawSubmit = useCallback(
     async e => {
@@ -145,7 +145,7 @@ export function VestingTable() {
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
                 {locked && (
-                  <>
+                  <p className={`${!unlockDate && 'skeleton'}`}>
                     {Math.abs(
                       moment().diff(
                         moment(new Date(parseInt(unlockDate) * 1e3)),
@@ -153,7 +153,7 @@ export function VestingTable() {
                       ),
                     )}{' '}
                     days
-                  </>
+                  </p>
                 )}
               </td>
               <td className="text-left hidden lg:table-cell font-normal">
