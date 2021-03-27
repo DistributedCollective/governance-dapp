@@ -12,7 +12,6 @@ import { contracts } from './contracts';
 import { store } from '../../../store/store';
 import { actions } from './slice';
 import { getContract } from '../../../utils/helpers';
-import { CHAIN_ID } from './classifiers';
 
 interface SendTxOptions {
   type?: TransactionType;
