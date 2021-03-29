@@ -118,7 +118,7 @@ export function VestingContract(props: Props) {
             </p>
           </td>
           <td className="text-left hidden lg:table-cell font-normal">
-            <p className={`${!delegateLoading && 'skeleton'}`}>
+            <p className={`${delegateLoading && 'skeleton'}`}>
               {delegate.length > 0 && (
                 <>
                   Delegated to{' '}
