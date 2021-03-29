@@ -3,13 +3,19 @@ import { LinkToExplorer } from '../../../components/LinkToExplorer';
 import { numberFromWei } from 'utils/helpers';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
+import { useStaking_getStakes } from '../../../hooks/staking/useStaking_getStakes';
 import logoSvg from 'assets/images/sovryn-icon.svg';
 import moment from 'moment';
 import { useVesting_getVesting } from '../../../hooks/vesting-registry/useVesting_getVesting';
 import { useVesting_getTeamVesting } from '../../../hooks/vesting-registry/useVesting_getTeamVesting';
 
-export function HistoryEventsTable() {
+interface Props {
+  stakeHistory: boolean;
+}
+
+export function HistoryEventsTable(props: Props) {
   const account = useAccount();
+  const getStakes = useStaking_getStakes(account);
   const vesting = useVesting_getVesting(account);
   const vestingTeam = useVesting_getTeamVesting(account);
   const [eventsHistory, setEventsHistory] = useState<any>();
@@ -17,54 +23,55 @@ export function HistoryEventsTable() {
   const [eventsHistoryVestingTeam, setEventsHistoryVestingTeam] = useState<
     any
   >();
-  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     async function getHistoryEvent() {
       try {
-        const stakes = await network.getPastEvents(
-          'staking',
-          'TokensStaked',
-          { staker: account },
-          0,
-          'latest',
-        );
-        setLoading(false);
-        const stakesVesting = await network.getPastEvents(
-          'staking',
-          'TokensStaked',
-          { staker: vesting.value },
-          0,
-          'latest',
-        );
-        const stakesVestingTeam = await network.getPastEvents(
-          'staking',
-          'TokensStaked',
-          { staker: vestingTeam.value },
-          0,
-          'latest',
-        );
-        setEventsHistory(stakes);
-        setEventsHistoryVesting(stakesVesting);
-        setEventsHistoryVestingTeam(stakesVestingTeam);
+        await network
+          .getPastEvents('staking', 'TokensStaked', { staker: account }, 0)
+          .then(res => setEventsHistory(res));
+        // await network
+        //   .getPastEvents(
+        //     'staking',
+        //     'TokensStaked',
+        //     { staker: vesting.value },
+        //     0,
+        //   )
+        //   .then(res => setEventsHistoryVesting(res));
+        // await network
+        //   .getPastEvents(
+        //     'staking',
+        //     'TokensStaked',
+        //     { staker: vestingTeam.value },
+        //     0,
+        //   )
+        //   .then(res => setEventsHistoryVestingTeam(res));
       } catch (e) {
         console.error(e);
-        setLoading(false);
       }
     }
-    getHistoryEvent();
+    if (props.stakeHistory) {
+      getHistoryEvent();
+    }
+
     return () => {
       setEventsHistory('');
       setEventsHistoryVesting('');
       setEventsHistoryVestingTeam('');
     };
-  }, [account, vestingTeam.value, vesting.value]);
+  }, [
+    account,
+    vestingTeam.value,
+    vesting.value,
+    getStakes.value,
+    props.stakeHistory,
+  ]);
 
   return (eventsHistory && eventsHistory.length > 0) ||
     (eventsHistoryVesting && eventsHistoryVesting.length > 0) ||
     (eventsHistoryVestingTeam && eventsHistoryVestingTeam.length > 0) ? (
     <>
       {eventsHistory &&
-        !loading &&
         eventsHistory.map((item, i: string) => {
           return (
             <tr key={i}>
@@ -99,8 +106,7 @@ export function HistoryEventsTable() {
             </tr>
           );
         })}
-      {eventsHistoryVesting &&
-        !loading &&
+      {/* {eventsHistoryVesting &&
         eventsHistoryVesting.map(item => {
           return (
             <tr key={item.id}>
@@ -139,7 +145,6 @@ export function HistoryEventsTable() {
           );
         })}
       {eventsHistoryVestingTeam &&
-        !loading &&
         eventsHistoryVestingTeam.map(item => {
           return (
             <tr key={item.id}>
@@ -174,7 +179,7 @@ export function HistoryEventsTable() {
               </td>
             </tr>
           );
-        })}
+        })} */}
     </>
   ) : (
     <>

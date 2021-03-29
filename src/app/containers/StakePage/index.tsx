@@ -5,17 +5,12 @@
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Header } from 'app/components/Header';
 import Rsk3 from '@rsksmart/rsk3';
 import moment from 'moment';
 import { bignumber } from 'mathjs';
-import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
-import { stakePageSaga } from './saga';
-import { selectStakePage } from './selectors';
-import { reducer, sliceKey } from './slice';
 import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
 import { useAccount } from '../../hooks/useAccount';
@@ -54,11 +49,10 @@ import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
 import logoSvg from 'assets/images/sovryn-icon.svg';
 import { CurrentVests } from './components/CurrentVests';
 import { StyledTable } from './components/StyledTable';
-interface Props {}
 
 const now = new Date();
 
-export function StakePage(props: Props) {
+export function StakePage() {
   const isConnected = useIsConnected();
   if (isConnected) {
     return <InnerStakePage />;
@@ -84,14 +78,7 @@ export function StakePage(props: Props) {
   );
 }
 
-function InnerStakePage(props: Props) {
-  useInjectReducer({ key: sliceKey, reducer: reducer });
-  useInjectSaga({ key: sliceKey, saga: stakePageSaga });
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const stakePage = useSelector(selectStakePage);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const dispatch = useDispatch();
+function InnerStakePage() {
   const account = useAccount();
   const balanceOf = useStaking_balanceOf(account);
   const WEIGHT_FACTOR = useStaking_WEIGHT_FACTOR();
@@ -122,9 +109,12 @@ function InnerStakePage(props: Props) {
   );
   const [stakesArray, setStakesArray] = useState([]);
   const [stakeLoad, setStakeLoad] = useState(false);
+  const [getHistory, setGetHistory] = useState(false);
+
+  const dates = getStakes.value['dates'];
+  const stakes = getStakes.value['stakes'];
+
   useEffect(() => {
-    let dates = getStakes.value['dates'];
-    let stakes = getStakes.value['stakes'];
     async function getStakesEvent() {
       try {
         Promise.all(
@@ -141,19 +131,23 @@ function InnerStakePage(props: Props) {
           }),
         ).then(result => {
           setStakesArray(result as any);
+          setGetHistory(true);
         });
         setStakeLoad(false);
       } catch (e) {
         console.error(e);
       }
     }
-    if (dates !== undefined) {
+    if (dates && stakes !== undefined) {
       setStakeLoad(true);
-      getStakesEvent().finally(() => setStakeLoad(false));
+      getStakesEvent().finally(() => {
+        setStakeLoad(false);
+      });
     }
 
     return () => {
       setStakesArray([]);
+      setGetHistory(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, getStakes.value, setStakesArray]);
@@ -530,7 +524,7 @@ function InnerStakePage(props: Props) {
                     </tr>
                   </thead>
                   <tbody className="mt-5 font-montserrat text-xs">
-                    <HistoryEventsTable />
+                    <HistoryEventsTable stakeHistory={getHistory} />
                   </tbody>
                 </StyledTable>
               </div>
