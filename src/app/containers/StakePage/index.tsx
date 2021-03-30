@@ -109,7 +109,6 @@ function InnerStakePage() {
   );
   const [stakesArray, setStakesArray] = useState([]);
   const [stakeLoad, setStakeLoad] = useState(false);
-  const [getHistory, setGetHistory] = useState(false);
 
   const dates = getStakes.value['dates'];
   const stakes = getStakes.value['stakes'];
@@ -131,7 +130,6 @@ function InnerStakePage() {
           }),
         ).then(result => {
           setStakesArray(result as any);
-          setGetHistory(true);
         });
         setStakeLoad(false);
       } catch (e) {
@@ -147,7 +145,6 @@ function InnerStakePage() {
 
     return () => {
       setStakesArray([]);
-      setGetHistory(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, getStakes.value, setStakesArray]);
@@ -200,12 +197,12 @@ function InnerStakePage() {
 
   const validateWithdrawForm = useCallback(
     amount => {
-      if (loading) return false;
+      // if (loading) return false;
       const num = Number(withdrawAmount);
       if (!num || isNaN(num) || num <= 0) return false;
       return num <= Number(amount);
     },
-    [loading, withdrawAmount],
+    [withdrawAmount],
   );
 
   const validateExtendTimeForm = useCallback(() => {
@@ -502,33 +499,8 @@ function InnerStakePage() {
                 />
               </div>
             </div>
-
             <CurrentVests />
-
-            <p className="font-normal text-lg ml-6 mb-1 mt-16">
-              Staking History
-            </p>
-            <div className="bg-gray-light rounded-b shadow max-h-96 overflow-y-auto mb-10">
-              <div className="rounded-lg border sovryn-table pt-1 pb-0 pr-5 pl-5 max-h-96 overflow-y-auto">
-                <StyledTable className="w-full">
-                  <thead>
-                    <tr>
-                      <th className="text-left assets">Asset</th>
-                      <th className="text-left">Staked Amount</th>
-                      <th className="text-left hidden lg:table-cell">
-                        Staking Date
-                      </th>
-                      <th className="text-left hidden lg:table-cell">
-                        Total Staked
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="mt-5 font-montserrat text-xs">
-                    <HistoryEventsTable stakeHistory={getHistory} />
-                  </tbody>
-                </StyledTable>
-              </div>
-            </div>
+            <HistoryEventsTable />
           </div>
           <>
             {balanceOf.value !== '0' && (
@@ -686,7 +658,9 @@ const StakesOverview: React.FC<Stakes> = ({
             </td>
             <td className="text-left hidden lg:table-cell font-normal">
               <p>
-                {moment(new Date(parseInt(item[1]) * 1e3)).format('DD/MM/YYYY')}
+                {moment(new Date(parseInt(item[1]) * 1e3)).format(
+                  'DD/MM/YYYY - h:mm:ss a',
+                )}
               </p>
             </td>
             <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">

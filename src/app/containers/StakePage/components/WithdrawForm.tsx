@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useCallback, useState } from 'react';
+import React, { FormEvent, useCallback, useState } from 'react';
 import { handleNumberInput, numberFromWei, toWei } from 'utils/helpers';
 import { ContractCallResponse } from 'app/hooks/useContractCall';
 import { network } from '../../BlockChainProvider/network';
@@ -20,39 +20,35 @@ export function WithdrawForm(props: Props) {
   const account = useAccount();
   const [forfeitWithdraw, setForfeitWithdraw] = useState<number>(0);
   const [forfeitPercent, setForfeitPercent] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
-  const getEvent = useCallback(async () => {
-    setLoading(true);
-    await network
-      .call(
-        'staking',
-        'getWithdrawAmounts',
-        [toWei(props.withdrawAmount), Number(props.until)],
-        account,
-      )
-      .then(res => {
-        setForfeitWithdraw(res[1]);
-        setForfeitPercent(
-          Number(
-            (
-              (Number(forfeitWithdraw) / Number(toWei(props.withdrawAmount))) *
-              100
-            ).toFixed(1),
-          ),
-        );
-        setLoading(false);
-      })
-      .catch(error => {
-        setLoading(false);
-        setForfeitWithdraw(0);
-        setForfeitPercent(0);
-        return false;
-      });
-  }, [account, props.until, props.withdrawAmount, forfeitWithdraw]);
-
-  useEffect(() => {
-    getEvent();
-  }, [getEvent]);
+  const [loadingWithdraw, setLoadingWithdraw] = useState(false);
+  const getEvent = useCallback(
+    async amount => {
+      setLoadingWithdraw(true);
+      await network
+        .call(
+          'staking',
+          'getWithdrawAmounts',
+          [toWei(amount), Number(props.until)],
+          account,
+        )
+        .then(res => {
+          setTimeout(() => {
+            setLoadingWithdraw(false);
+            setForfeitWithdraw(res[1]);
+            setForfeitPercent(
+              Number(
+                ((Number(res[1]) / Number(toWei(amount))) * 100).toFixed(1),
+              ),
+            );
+          }, 10);
+        })
+        .catch(error => {
+          setLoadingWithdraw(false);
+          return false;
+        });
+    },
+    [account, props.until],
+  );
 
   return (
     <>
@@ -91,7 +87,10 @@ export function WithdrawForm(props: Props) {
               type="text"
               placeholder="Enter amount"
               value={props.withdrawAmount}
-              onChange={e => props.onChangeAmount(handleNumberInput(e))}
+              onChange={e => {
+                props.onChangeAmount(handleNumberInput(e));
+                getEvent(handleNumberInput(e));
+              }}
             />
             <span className="text-black text-md font-semibold absolute top-3 right-5 leading-4">
               SOV
@@ -99,33 +98,46 @@ export function WithdrawForm(props: Props) {
           </div>
           <div className="flex rounded border border-theme-blue mt-4">
             <div
-              onClick={() => props.onChangeAmount(Number(props.amount) / 10)}
+              onClick={() => {
+                props.onChangeAmount(Number(props.amount) / 10);
+                getEvent(Number(props.amount) / 10);
+              }}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
               10%
             </div>
             <div
-              onClick={() => props.onChangeAmount(Number(props.amount) / 4)}
+              onClick={() => {
+                props.onChangeAmount(Number(props.amount) / 4);
+                getEvent(Number(props.amount) / 4);
+              }}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
               25%
             </div>
             <div
-              onClick={() => props.onChangeAmount(Number(props.amount) / 2)}
+              onClick={() => {
+                props.onChangeAmount(Number(props.amount) / 2);
+                getEvent(Number(props.amount) / 2);
+              }}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
               50%
             </div>
             <div
-              onClick={() =>
-                props.onChangeAmount((Number(props.amount) / 4) * 3)
-              }
+              onClick={() => {
+                props.onChangeAmount((Number(props.amount) / 4) * 3);
+                getEvent((Number(props.amount) / 4) * 3);
+              }}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
               75%
             </div>
             <div
-              onClick={() => props.onChangeAmount(Number(props.amount))}
+              onClick={() => {
+                props.onChangeAmount(Number(props.amount));
+                getEvent(Number(props.amount));
+              }}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center text-sm text-theme-blue tracking-tighter"
             >
               100%
@@ -159,7 +171,7 @@ export function WithdrawForm(props: Props) {
                 <input
                   readOnly
                   className={`border text-theme-white appearance-none text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-3 bg-transparent tracking-normal focus:outline-none focus:shadow-outline ${
-                    loading && 'skeleton'
+                    loadingWithdraw && 'skeleton'
                   }`}
                   id="unstake"
                   type="text"

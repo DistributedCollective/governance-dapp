@@ -157,7 +157,7 @@ export function VestingContract(props: Props) {
           <td className="text-left hidden lg:table-cell font-normal">
             <p className={`${!unlockDate && 'skeleton'}`}>
               {moment(new Date(parseInt(unlockDate) * 1e3)).format(
-                'DD/MM/YYYY',
+                'DD/MM/YYYY - h:mm:ss a',
               )}
             </p>
           </td>
