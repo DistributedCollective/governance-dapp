@@ -15,6 +15,7 @@ import * as serviceWorker from 'serviceWorker';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/select/lib/css/blueprint-select.css';
 import 'styles/tailwind.css';
+import '@sovryn/react-wallet/index.css';
 
 // Import root app
 import { App } from 'app';

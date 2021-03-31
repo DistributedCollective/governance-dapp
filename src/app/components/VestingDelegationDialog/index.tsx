@@ -12,7 +12,7 @@ import { useVestedStaking_balanceOf } from '../../hooks/staking/useVestedStaking
 import { vesting_delegate } from '../../containers/BlockChainProvider/requests/vesting';
 
 export function VestingDelegationDialog() {
-  const { showDelegationDialog, address, vestingType } = useSelector(
+  const { showDelegationDialog, vestingType } = useSelector(
     selectBlockChainProvider,
   );
   const dispatch = useDispatch();
@@ -72,7 +72,7 @@ export function VestingDelegationDialog() {
             readOnly
             className="appearance-none border border-gray-800 text-sm font-normal text-center h-10 rounded-lg w-full py-2 px-2 bg-black text-theme-white tracking-normal focus:outline-none focus:shadow-outline"
             type="text"
-            defaultValue={address}
+            defaultValue={account}
           />
         </div>
         <div className="text-center">

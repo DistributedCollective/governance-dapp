@@ -9,7 +9,7 @@ export function useStaking_computeWeightByDate(
     'computeWeightByDate',
     '0',
     !!lockDate && !!currentDate,
-    lockDate,
-    currentDate,
+    Number(lockDate),
+    Number(currentDate),
   );
 }
