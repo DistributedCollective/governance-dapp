@@ -1,50 +1,45 @@
 import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import styled from 'styled-components/macro';
+import logoSvg from 'assets/images/sovryn-icon.svg';
+import { numberFromWei, genesisAddress } from 'utils/helpers';
+import { StyledTable } from './StyledTable';
 import { LinkToExplorer } from '../../../components/LinkToExplorer';
-import { numberFromWei } from 'utils/helpers';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
-import { StyledTable } from './StyledTable';
-import { genesisAddress } from '../../../../utils/helpers';
 import { useStaking_getStakes } from '../../../hooks/staking/useStaking_getStakes';
-import logoSvg from 'assets/images/sovryn-icon.svg';
-import moment from 'moment';
 import { useVesting_getVesting } from '../../../hooks/vesting-registry/useVesting_getVesting';
 import { useVesting_getTeamVesting } from '../../../hooks/vesting-registry/useVesting_getTeamVesting';
+import { useVesting_getOriginVesting } from '../../../hooks/vesting-registry/useVesting_getOriginVesting';
 
 export function HistoryEventsTable() {
   const account = useAccount();
   const getStakes = useStaking_getStakes(account);
   const vesting = useVesting_getVesting(account);
   const vestingTeam = useVesting_getTeamVesting(account);
-  const [eventsHistory, setEventsHistory] = useState<any>();
-  const [eventsHistoryVesting, setEventsHistoryVesting] = useState<any>();
-  const [eventsHistoryVestingTeam, setEventsHistoryVestingTeam] = useState<
+  const vestingOrigin = useVesting_getOriginVesting(account);
+  const [eventsHistory, setEventsHistory] = useState<any>([]);
+  const [eventsHistoryVesting, setEventsHistoryVesting] = useState<any>([]);
+  const [eventsHistoryVestingTeam, setEventsHistoryVestingTeam] = useState<any>(
+    [],
+  );
+  const [eventsHistoryVestingOrigin, setEventsHistoryVestingOrigin] = useState<
     any
-  >();
+  >([]);
   const [viewHistory, setViewHistory] = useState(false);
-  const [viewVestingHistory, setViewVestingHistory] = useState(false);
-  const [viewVestingTeamHistory, setViewVestingTeamHistory] = useState(false);
 
   useEffect(() => {
-    async function getHistoryEvent() {
-      try {
-        await network
-          .getPastEvents('staking', 'TokensStaked', { staker: account }, 0)
-          .then(res => {
-            setEventsHistory(res);
-            if (vesting.value !== genesisAddress) {
-              setViewVestingHistory(true);
-            }
-            setViewHistory(false);
-          });
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    async function getHistoryEventVesting() {
-      try {
-        await network
+    async function getHistory() {
+      let genesys: void, team: void, origin: void;
+      const stake = await network
+        .getPastEvents('staking', 'TokensStaked', { staker: account }, 0)
+        .then(res => {
+          console.log('stake done');
+          setEventsHistory(res);
+        });
+
+      if (vesting.value !== genesisAddress) {
+        genesys = await network
           .getPastEvents(
             'staking',
             'TokensStaked',
@@ -53,18 +48,10 @@ export function HistoryEventsTable() {
           )
           .then(res => {
             setEventsHistoryVesting(res);
-            if (vestingTeam.value !== genesisAddress) {
-              setViewVestingTeamHistory(true);
-            }
-            setViewVestingHistory(false);
           });
-      } catch (e) {
-        console.error(e);
       }
-    }
-    async function getHistoryEventVestingTeam() {
-      try {
-        await network
+      if (vestingTeam.value !== genesisAddress) {
+        team = await network
           .getPastEvents(
             'staking',
             'TokensStaked',
@@ -73,29 +60,39 @@ export function HistoryEventsTable() {
           )
           .then(res => {
             setEventsHistoryVestingTeam(res);
-            setViewVestingTeamHistory(false);
           });
+      }
+      if (vestingOrigin.value !== genesisAddress) {
+        origin = await network
+          .getPastEvents(
+            'staking',
+            'TokensStaked',
+            { staker: vestingOrigin.value },
+            0,
+          )
+          .then(res => {
+            setEventsHistoryVestingOrigin(res);
+          });
+      }
+      try {
+        Promise.all([stake, genesys, team, origin]).then(_ =>
+          setViewHistory(false),
+        );
+        setViewHistory(false);
       } catch (e) {
         console.error(e);
+        setViewHistory(false);
       }
     }
-    if (viewHistory) {
-      getHistoryEvent();
-    }
-    if (viewVestingHistory) {
-      getHistoryEventVesting();
-    }
-    if (viewVestingTeamHistory) {
-      getHistoryEventVestingTeam();
-    }
+
+    if (viewHistory) getHistory();
   }, [
     account,
     viewHistory,
     vestingTeam.value,
+    vestingOrigin.value,
     vesting.value,
     getStakes.value,
-    viewVestingHistory,
-    viewVestingTeamHistory,
   ]);
 
   return (
@@ -113,139 +110,19 @@ export function HistoryEventsTable() {
               </tr>
             </thead>
             <tbody className="mt-5 font-montserrat text-xs">
-              {eventsHistory &&
-                eventsHistory.length > 0 &&
-                eventsHistory.map((item, i: string) => {
-                  return (
-                    <tr key={i}>
-                      <td>
-                        <div className="username flex items-center">
-                          <div>
-                            <img
-                              src={logoSvg}
-                              className="ml-3 mr-3"
-                              alt="sov"
-                            />
-                          </div>
-                          <div className="text-sm font-normal hidden xl:block">
-                            SOV
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left font-normal">
-                        {numberFromWei(item.returnValues.amount)} SOV
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal relative">
-                        <div className="flex items-center">
-                          <div>
-                            {moment(
-                              new Date(
-                                parseInt(item.returnValues.lockedUntil) * 1e3,
-                              ),
-                            ).format('DD/MM/YYYY - h:mm:ss a')}
-                            <br />
-                            <LinkToExplorer
-                              txHash={item.transactionHash}
-                              className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        {numberFromWei(item.returnValues.totalStaked)} SOV
-                      </td>
-                    </tr>
-                  );
-                })}
-              {eventsHistoryVesting &&
-                eventsHistoryVesting.map(item => {
-                  return (
-                    <tr key={item.id}>
-                      <td>
-                        <div className="username flex items-center">
-                          <div>
-                            <img
-                              src={logoSvg}
-                              className="ml-3 mr-3"
-                              alt="sov"
-                            />
-                          </div>
-                          <div className="text-sm font-normal hidden xl:block">
-                            CSOV
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left font-normal">
-                        {numberFromWei(item.returnValues.amount)} CSOV
-                        <br />
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal relative">
-                        <div className="flex items-center">
-                          <div>
-                            {moment(
-                              new Date(
-                                parseInt(item.returnValues.lockedUntil) * 1e3,
-                              ),
-                            ).format('DD/MM/YYYY - h:mm:ss a')}
-                            <br />
-                            <LinkToExplorer
-                              txHash={item.transactionHash}
-                              className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        {numberFromWei(item.returnValues.totalStaked)} CSOV
-                      </td>
-                    </tr>
-                  );
-                })}
-              {eventsHistoryVestingTeam &&
-                eventsHistoryVestingTeam.map(item => {
-                  return (
-                    <tr key={item.id}>
-                      <td>
-                        <div className="username flex items-center">
-                          <div>
-                            <img
-                              src={logoSvg}
-                              className="ml-3 mr-3"
-                              alt="sov"
-                            />
-                          </div>
-                          <div className="text-sm font-normal hidden xl:block">
-                            SOV
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left font-normal">
-                        {numberFromWei(item.returnValues.amount)} SOV
-                        <br />
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal relative">
-                        <div className="flex items-center">
-                          <div>
-                            {moment(
-                              new Date(
-                                parseInt(item.returnValues.lockedUntil) * 1e3,
-                              ),
-                            ).format('DD/MM/YYYY - h:mm:ss a')}
-                            <br />
-                            <LinkToExplorer
-                              txHash={item.transactionHash}
-                              className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-left hidden lg:table-cell font-normal">
-                        {numberFromWei(item.returnValues.totalStaked)} SOV
-                      </td>
-                    </tr>
-                  );
-                })}
-              {viewHistory || viewVestingHistory || viewVestingTeamHistory ? (
+              {eventsHistory.length > 0 && (
+                <HistoryTable items={eventsHistory} />
+              )}
+              {eventsHistoryVesting.length > 0 && (
+                <HistoryTable items={eventsHistoryVesting} />
+              )}
+              {eventsHistoryVestingTeam.length > 0 && (
+                <HistoryTable items={eventsHistoryVestingTeam} />
+              )}
+              {eventsHistoryVestingOrigin.length > 0 && (
+                <HistoryTable items={eventsHistoryVestingOrigin} />
+              )}
+              {viewHistory ? (
                 <tr>
                   <td colSpan={4} className="text-center font-normal">
                     <StyledLoading className="loading">
@@ -264,9 +141,10 @@ export function HistoryEventsTable() {
                 </tr>
               ) : (
                 <>
-                  {!eventsHistory &&
-                    !eventsHistoryVesting &&
-                    !eventsHistoryVestingTeam && (
+                  {eventsHistory.length === 0 &&
+                    eventsHistoryVesting.length === 0 &&
+                    eventsHistoryVestingTeam.length === 0 &&
+                    eventsHistoryVestingOrigin.length === 0 && (
                       <tr>
                         <td colSpan={4} className="text-center font-normal">
                           <button
@@ -288,6 +166,52 @@ export function HistoryEventsTable() {
     </>
   );
 }
+
+interface History {
+  items: any;
+}
+
+const HistoryTable: React.FC<History> = ({ items }) => {
+  return (
+    <>
+      {items.map(item => {
+        return (
+          <tr key={item.id}>
+            <td>
+              <div className="username flex items-center">
+                <div>
+                  <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
+                </div>
+                <div className="text-sm font-normal hidden xl:block">SOV</div>
+              </div>
+            </td>
+            <td className="text-left font-normal">
+              {numberFromWei(item.returnValues.amount)} SOV
+              <br />
+            </td>
+            <td className="text-left hidden lg:table-cell font-normal relative">
+              <div className="flex items-center">
+                <div>
+                  {moment(
+                    new Date(parseInt(item.returnValues.lockedUntil) * 1e3),
+                  ).format('DD/MM/YYYY - h:mm:ss a')}
+                  <br />
+                  <LinkToExplorer
+                    txHash={item.transactionHash}
+                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
+                  />
+                </div>
+              </div>
+            </td>
+            <td className="text-left hidden lg:table-cell font-normal">
+              {numberFromWei(item.returnValues.totalStaked)} SOV
+            </td>
+          </tr>
+        );
+      })}
+    </>
+  );
+};
 
 const StyledLoading = styled.div`
   display: flex;
