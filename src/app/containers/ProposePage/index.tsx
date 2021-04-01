@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
-import { governance_propose } from '../BlockChainProvider/requests/governance';
+import {
+  governance_proposalThreshold,
+  governance_propose,
+  governorType,
+} from '../BlockChainProvider/requests/governance';
 import { isAddress } from 'web3-utils';
 import { useHistory } from 'react-router-dom';
 import { Icon } from '@blueprintjs/core';
 import { useAccount } from 'app/hooks/useAccount';
+import { FormSelect } from 'app/components/FormSelect';
+import { useStaking_getCurrentVotes } from 'app/hooks/staking/useStaking_getCurrentVotes';
+import { bignumber } from 'mathjs';
+import { fromWei } from '../../../utils/helpers';
+import { toastError } from 'utils/toaster';
 
 const initRow = {
   target: '',
@@ -15,7 +24,9 @@ export function ProposePage() {
   const history = useHistory();
   const [rows, setRows] = useState([initRow]);
   const [description, setDescription] = useState('');
+  const [governor, setGovernor] = useState<governorType>('governorAdmin');
   const account = useAccount();
+  const votes = useStaking_getCurrentVotes(account);
 
   const updateRow = (value, field, rowIndex) => {
     const newRows = [...rows.map(row => ({ ...row }))];
@@ -47,6 +58,21 @@ export function ProposePage() {
     if (invalidForm()) return;
 
     try {
+      const threshold = await governance_proposalThreshold(governor);
+      if (bignumber(votes.value).lessThan(`${threshold}`)) {
+        const minVotingPower = Number(fromWei(threshold)).toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 4,
+          },
+        );
+        toastError(
+          `Your voting power must be at least ${minVotingPower} to make a proposal`,
+        );
+        return;
+      }
+
       const targets = rows.map(row => row.target);
       const values = rows.map(row => row.value);
       const signatures = rows.map(row => row.signature);
@@ -59,15 +85,37 @@ export function ProposePage() {
         calldatas,
         description,
         account,
+        governor,
       );
       history.goBack();
     } catch (error) {
       console.error(error);
     }
   };
+
+  const options = [
+    { label: 'Governor Admin', key: 'governorAdmin' },
+    { label: 'Governor Owner', key: 'governorOwner' },
+  ];
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
+        <div className="flex flex-col md:flex-row items-start md:items-center">
+          <label className="text-sm md:text-base">
+            Send proposal to contract:
+          </label>
+
+          <FormSelect
+            onChange={value => {
+              setGovernor(value.key);
+            }}
+            value={governor}
+            items={options}
+            innerClasses=""
+          />
+        </div>
+
         <textarea
           className="mb-2 appearance-none border text-md font-semibold text-left rounded-lg w-full p-4 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
           placeholder="Description..."
@@ -75,6 +123,7 @@ export function ProposePage() {
           value={description}
           onChange={e => setDescription(e.target.value)}
         ></textarea>
+
         {rows.map((row, i) => {
           return (
             <div
@@ -91,32 +140,32 @@ export function ProposePage() {
                 iconSize={15}
                 color="white"
               />
-              <div className="flex items-center mb-2">
+              <div className="flex flex-col md:flex-row items-center mb-2 px-2 md:px-0">
                 <input
-                  className="mx-2 appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-14 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
+                  className="mx-2 appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full mb-2 md:mb-0 py-2 px-2 md:px-14 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
                   type="text"
                   value={row.target}
                   onChange={e => updateRow(e.target.value, 'target', i)}
                   placeholder="Target"
                 />
                 <input
-                  className="mx-2 appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-14 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
+                  className="mx-2 appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-2 md:px-14 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
                   type="text"
                   value={row.value}
                   onChange={e => updateRow(e.target.value, 'value', i)}
                   placeholder="Value"
                 />
               </div>
-              <div className="flex items-center">
+              <div className="flex flex-col md:flex-row items-center px-2 md:px-0">
                 <input
-                  className="mx-2 appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-14 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
+                  className="mx-2 appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full mb-2 md:mb-0 py-2 px-2 md:px-14 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
                   type="text"
                   value={row.signature}
                   onChange={e => updateRow(e.target.value, 'signature', i)}
                   placeholder="Signature"
                 />
                 <input
-                  className="mx-2 appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-14 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
+                  className="mx-2 appearance-none border text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-2 md:px-14 bg-theme-white text-black tracking-normal focus:outline-none focus:shadow-outline"
                   type="text"
                   value={row.calldata}
                   onChange={e => updateRow(e.target.value, 'calldata', i)}

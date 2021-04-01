@@ -1,5 +1,7 @@
 import { network } from '../network';
 
+export type governorType = 'governorAdmin' | 'governorOwner';
+
 export function governance_propose(
   targets: string[],
   values: string[],
@@ -7,9 +9,10 @@ export function governance_propose(
   calldatas: string[],
   description: string,
   account,
+  governor: governorType | undefined = 'governorAdmin',
 ) {
   return network.send(
-    'governorAdmin',
+    governor,
     'propose',
     [targets, values, signatures, calldatas, description, { from: account }],
     {
@@ -24,8 +27,10 @@ export function governance_cancel(proposalId: number) {}
 
 export function governance_execute(proposalId: number) {}
 
-export function governance_proposalThreshold() {
-  return network.call('governorAdmin', 'proposalThreshold', []);
+export function governance_proposalThreshold(
+  governor: governorType | undefined = 'governorAdmin',
+) {
+  return network.call(governor, 'proposalThreshold', []);
 }
 
 export function governance_quorumVotes() {
