@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import styled from 'styled-components/macro';
 import logoSvg from 'assets/images/sovryn-icon.svg';
 import { numberFromWei, genesisAddress } from 'utils/helpers';
@@ -192,9 +192,12 @@ const HistoryTable: React.FC<History> = ({ items }) => {
             <td className="text-left hidden lg:table-cell font-normal relative">
               <div className="flex items-center">
                 <div>
-                  {moment(
-                    new Date(parseInt(item.returnValues.lockedUntil) * 1e3),
-                  ).format('DD/MM/YYYY - h:mm:ss a')}
+                  {moment
+                    .tz(
+                      new Date(parseInt(item.returnValues.lockedUntil) * 1e3),
+                      'GMT',
+                    )
+                    .format('DD/MM/YYYY - h:mm:ss a z')}
                   <br />
                   <LinkToExplorer
                     txHash={item.transactionHash}

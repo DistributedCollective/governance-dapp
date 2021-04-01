@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { numberFromWei, genesisAddress } from 'utils/helpers';
 import logoSvg from 'assets/images/sovryn-icon.svg';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { actions } from 'app/containers/BlockChainProvider/slice';
 import { network } from '../../BlockChainProvider/network';
 import { useAccount } from '../../../hooks/useAccount';
@@ -100,18 +100,18 @@ export function VestingContract(props: Props) {
       ) : (
         <tr>
           <td>
-            <div className="username flex items-center">
+            <div className="assetname flex items-center">
               <div>
                 <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
               </div>
-              <div className="text-sm font-normal hidden xl:block">
+              <div className="text-sm font-normal hidden xl:block pl-3">
                 {props.type === 'genesis' && 'CSOV Genesis'}
                 {props.type === 'origin' && 'SOV Origin'}
                 {props.type === 'team' && 'SOV Team'}
               </div>
             </div>
           </td>
-          <td className="text-left hidden lg:table-cell font-normal">
+          <td className="text-left font-normal">
             <p className={`${lockedAmount.loading && 'skeleton'}`}>
               {numberFromWei(lockedAmount.value)}{' '}
               {props.type === 'genesis' ? 'CSOV' : 'SOV'}
@@ -135,10 +135,10 @@ export function VestingContract(props: Props) {
             </p>
           </td>
           <td className="text-left hidden lg:table-cell font-normal">
-            <p className={`${!stakingPeriodStart && 'skeleton'}`}>
-              {moment(new Date(parseInt(stakingPeriodStart) * 1e3)).format(
-                'DD/MM/YYYY - h:mm:ss a',
-              )}
+            <p>
+              {moment
+                .tz(new Date(parseInt(stakingPeriodStart) * 1e3), 'GMT')
+                .format('DD/MM/YYYY - h:mm:ss a z')}
             </p>
           </td>
           <td className="text-left hidden lg:table-cell font-normal">
@@ -156,9 +156,9 @@ export function VestingContract(props: Props) {
           </td>
           <td className="text-left hidden lg:table-cell font-normal">
             <p className={`${!unlockDate && 'skeleton'}`}>
-              {moment(new Date(parseInt(unlockDate) * 1e3)).format(
-                'DD/MM/YYYY - h:mm:ss a',
-              )}
+              {moment
+                .tz(new Date(parseInt(unlockDate) * 1e3), 'GMT')
+                .format('DD/MM/YYYY - h:mm:ss a z')}
             </p>
           </td>
           <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
