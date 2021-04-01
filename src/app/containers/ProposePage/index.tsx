@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   governance_proposalThreshold,
   governance_propose,
-  governorType,
 } from '../BlockChainProvider/requests/governance';
 import { isAddress } from 'web3-utils';
 import { useHistory } from 'react-router-dom';
@@ -13,6 +12,7 @@ import { useStaking_getCurrentVotes } from 'app/hooks/staking/useStaking_getCurr
 import { bignumber } from 'mathjs';
 import { fromWei } from '../../../utils/helpers';
 import { toastError } from 'utils/toaster';
+import { ContractName } from '../BlockChainProvider/types';
 
 const initRow = {
   target: '',
@@ -24,7 +24,7 @@ export function ProposePage() {
   const history = useHistory();
   const [rows, setRows] = useState([initRow]);
   const [description, setDescription] = useState('');
-  const [governor, setGovernor] = useState<governorType>('governorAdmin');
+  const [governor, setGovernor] = useState<ContractName>('governorAdmin');
   const account = useAccount();
   const votes = useStaking_getCurrentVotes(account);
 
