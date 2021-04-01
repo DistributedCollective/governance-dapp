@@ -299,6 +299,21 @@ export function ProposalDetailsPage() {
             >
               Proposal id: {String(data?.id).padStart(3, '0')}
             </p>
+
+            <div className="flex mt-5 items-center justify-around">
+              <button
+                type="button"
+                className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+              >
+                Queue
+              </button>
+              <button
+                type="button"
+                className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+              >
+                Execute
+              </button>
+            </div>
           </div>
         </div>
       </div>
