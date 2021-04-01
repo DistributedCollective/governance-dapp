@@ -1,3 +1,4 @@
+import { INetworkToContract } from './../types';
 import { network } from '../network';
 
 export function governance_propose(
@@ -18,11 +19,21 @@ export function governance_propose(
   );
 }
 
-export function governance_queue(proposalId: number) {}
+export function governance_queue(
+  governor: keyof INetworkToContract,
+  proposalId: number,
+) {
+  return network.send(governor, 'queue', [proposalId]);
+}
 
 export function governance_cancel(proposalId: number) {}
 
-export function governance_execute(proposalId: number) {}
+export function governance_execute(
+  governor: keyof INetworkToContract,
+  proposalId: number,
+) {
+  return network.send(governor, 'execute', [proposalId]);
+}
 
 export function governance_proposalThreshold() {
   return network.call('governorAdmin', 'proposalThreshold', []);
