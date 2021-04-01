@@ -36,7 +36,10 @@ export function ProposePage() {
   const invalidRows = () =>
     !!rows.find(
       row =>
-        !isAddress(row.target) || !row.value || !row.signature || !row.calldata,
+        !isAddress(String(row.target).toLowerCase()) ||
+        !row.value ||
+        !row.signature ||
+        !row.calldata,
     );
   const addRow = () => {
     if (invalidRows()) return;
