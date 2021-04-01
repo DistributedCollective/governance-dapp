@@ -27,6 +27,7 @@ import { useGetProposalState } from '../../hooks/useGetProposalState';
 import { Proposal, ProposalState } from '../../../types/Proposal';
 import { selectBlockChainProvider } from '../BlockChainProvider/selectors';
 import { MergedProposal } from '../../hooks/useProposalList';
+import { governance_queue } from '../../containers/BlockChainProvider/requests/governance';
 
 export function ProposalDetailsPage() {
   const { id, contractName } = useParams<any>();
@@ -45,7 +46,6 @@ export function ProposalDetailsPage() {
         numberFromWei(data?.againstVotes || 0))) *
     100;
   const votesAgainstProgressPercents = 100 - votesForProgressPercents;
-
   useEffect(() => {
     setLoading(true);
     const get = async () => {
@@ -94,6 +94,12 @@ export function ProposalDetailsPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(data), syncBlockNumber]);
+
+  const governanceQueue = async () => {
+    try {
+      await governance_queue(contractName, data.id);
+    } catch (error) {}
+  };
 
   const { state } = useGetProposalState(data);
 
@@ -192,7 +198,7 @@ export function ProposalDetailsPage() {
             <div className="tracking-normal vote__success rounded-xl bg-opacity-30 bg-turquoise mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
               {kFormatter(numberFromWei(data?.forVotes || 0))} Votes For
             </div>
-            <div className="tracking-normal vote__danger rounded-xl bg-opacity-30 bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
+            <div className="tracking-normal vote__danger rounded-xl bg-opacity-30 bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-white border-red">
               {kFormatter(numberFromWei(data?.againstVotes || 0))} Votes Against
             </div>
           </div>
@@ -301,18 +307,24 @@ export function ProposalDetailsPage() {
             </p>
 
             <div className="flex mt-5 items-center justify-around">
-              <button
-                type="button"
-                className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-              >
-                Queue
-              </button>
-              <button
-                type="button"
-                className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-              >
-                Execute
-              </button>
+              {data?.id && isConnected && state === ProposalState.Succeeded && (
+                <button
+                  onClick={governanceQueue}
+                  type="button"
+                  className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                >
+                  Queue
+                </button>
+              )}
+
+              {data?.id && isConnected && state === ProposalState.Queued && (
+                <button
+                  type="button"
+                  className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                >
+                  Execute
+                </button>
+              )}
             </div>
           </div>
         </div>

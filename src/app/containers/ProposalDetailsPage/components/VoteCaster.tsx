@@ -80,7 +80,7 @@ export function VoteCaster(props: Props) {
             You Voted {kFormatter(numberFromWei(d.votes))}
           </div>
         ) : (
-          <div className="tracking-normal vote__danger rounded-xl bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
+          <div className="tracking-normal vote__danger rounded-xl bg-red bg-opacity-30 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
             {kFormatter(numberFromWei(d.votes))} Votes Against
           </div>
         )}
