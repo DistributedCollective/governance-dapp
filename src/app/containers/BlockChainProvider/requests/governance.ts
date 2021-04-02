@@ -20,11 +20,29 @@ export function governance_propose(
   );
 }
 
-export function governance_queue(proposalId: number) {}
+export function governance_queue(
+  contractName: ContractName,
+  proposalId: number,
+  account,
+) {
+  return network.send(contractName, 'queue', [proposalId, { from: account }]);
+}
 
-export function governance_cancel(proposalId: number) {}
+export function governance_cancel(
+  contractName: ContractName,
+  proposalId: number,
+  account,
+) {
+  return network.send(contractName, 'cancel', [proposalId, { from: account }]);
+}
 
-export function governance_execute(proposalId: number) {}
+export function governance_execute(
+  contractName: ContractName,
+  proposalId: number,
+  account,
+) {
+  return network.send(contractName, 'execute', [proposalId, { from: account }]);
+}
 
 export function governance_proposalThreshold(
   contractName: ContractName | undefined = 'governorAdmin',
