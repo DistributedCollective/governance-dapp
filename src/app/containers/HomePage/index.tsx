@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { Footer } from '../../components/Footer/Loadable';
 import { ProposalRow } from '../ProposalRow/Loadable';
@@ -9,6 +9,7 @@ import { useProposalList } from '../../hooks/useProposalList';
 
 export function HomePage() {
   const { items, total, loading } = useProposalList(1, 3);
+  const location = useLocation();
   return (
     <>
       <Helmet>
@@ -22,9 +23,21 @@ export function HomePage() {
             <h2 className="text-white text-center pt-5 pb-8 tracking-normal">
               SOVRYN Bitocracy
             </h2>
-            <h2 className="font-semibold mb-2 tracking-normal">
-              Governance Proposals
-            </h2>
+            <div className="flex justify-between items-center">
+              <h2 className="font-semibold mb-2 tracking-normal">
+                Governance Proposals
+              </h2>
+              <button></button>
+              <Link
+                to={{
+                  pathname: '/proposals/propose',
+                  state: { background: location },
+                }}
+                className="inline-block text-center px-3 py-2 text-lg font-light hover:text-gold hover:no-underline tracking-normal"
+              >
+                Propose
+              </Link>
+            </div>
           </div>
         </div>
         <div className="container">

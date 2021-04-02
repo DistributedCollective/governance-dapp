@@ -1,3 +1,4 @@
+import { ContractName } from './../types';
 import { network } from '../network';
 
 export function governance_propose(
@@ -7,9 +8,10 @@ export function governance_propose(
   calldatas: string[],
   description: string,
   account,
+  contractName: ContractName | undefined = 'governorAdmin',
 ) {
   return network.send(
-    'governorAdmin',
+    contractName,
     'propose',
     [targets, values, signatures, calldatas, description, { from: account }],
     {
@@ -24,16 +26,22 @@ export function governance_cancel(proposalId: number) {}
 
 export function governance_execute(proposalId: number) {}
 
-export function governance_proposalThreshold() {
-  return network.call('governorAdmin', 'proposalThreshold', []);
+export function governance_proposalThreshold(
+  contractName: ContractName | undefined = 'governorAdmin',
+) {
+  return network.call(contractName, 'proposalThreshold', []);
 }
 
-export function governance_quorumVotes() {
-  return network.call('governorAdmin', 'quorumVotes', []);
+export function governance_quorumVotes(
+  contractName: ContractName | undefined = 'governorAdmin',
+) {
+  return network.call(contractName, 'quorumVotes', []);
 }
 
-export function governance_proposalCount() {
+export function governance_proposalCount(
+  contractName: ContractName | undefined = 'governorAdmin',
+) {
   return network
-    .call('governorAdmin', 'proposalCount', [])
+    .call(contractName, 'proposalCount', [])
     .then(result => Number(result));
 }
