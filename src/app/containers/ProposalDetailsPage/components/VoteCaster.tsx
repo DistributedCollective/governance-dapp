@@ -8,6 +8,7 @@ import { numberFromWei, kFormatter } from 'utils/helpers';
 import { ContractName } from '../../BlockChainProvider/types';
 import { Proposal } from 'types/Proposal';
 import { useStaking_getPriorVotes } from '../../../hooks/staking/useStaking_getPriorVotes';
+import { Popover2 } from '@blueprintjs/popover2';
 
 interface Props {
   proposalId: number;
@@ -77,11 +78,11 @@ export function VoteCaster(props: Props) {
       <div className="xl:flex items-center justify-between mt-20">
         {d.support ? (
           <div className="tracking-normal vote__success rounded-xl bg-turquoise bg-opacity-30 bg-opacity-30 mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
-            You Voted {kFormatter(numberFromWei(d.votes))}
+            You Voted {kFormatter(numberFromWei(d.votes))} for
           </div>
         ) : (
-          <div className="tracking-normal vote__danger rounded-xl bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
-            {kFormatter(numberFromWei(d.votes))} Votes Against
+          <div className="tracking-normal vote__danger rounded-xl bg-opacity-30 bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
+            You Voted {kFormatter(numberFromWei(d.votes))} against
           </div>
         )}
       </div>
@@ -90,20 +91,50 @@ export function VoteCaster(props: Props) {
 
   return (
     <div className="xl:flex items-center justify-between mt-10">
-      <button
-        className="tracking-normal vote__success w-full xl:w-auto bg-turquoise focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-30 rounded-xl mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise"
-        type="button"
-        onClick={() => handleVote(true)}
+      <Popover2
+        interactionKind="hover"
+        minimal={true}
+        placement="top"
+        popoverClassName="bp3-tooltip2"
+        content={
+          <>
+            You will cast {kFormatter(numberFromWei(votesCurrent.value || 0))}{' '}
+            votes for
+          </>
+        }
       >
-        {kFormatter(numberFromWei(votesCurrent.value || 0))} Votes For
-      </button>
-      <button
-        className="tracking-normal vote__danger w-full xl:w-auto bg-red focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-30 rounded-xl border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red"
-        type="button"
-        onClick={() => handleVote(false)}
+        <p className="text-gold p-0 m-0 duration-300 hover:opacity-70 transition cursor-pointer">
+          <button
+            className="tracking-normal vote__success w-full xl:w-auto bg-turquoise focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-30 rounded-xl mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise"
+            type="button"
+            onClick={() => handleVote(true)}
+          >
+            Vote For
+          </button>
+        </p>
+      </Popover2>
+      <Popover2
+        interactionKind="hover"
+        minimal={true}
+        placement="top"
+        popoverClassName="bp3-tooltip2"
+        content={
+          <>
+            You will cast {kFormatter(numberFromWei(votesCurrent.value || 0))}{' '}
+            votes agaist
+          </>
+        }
       >
-        {kFormatter(numberFromWei(votesCurrent.value || 0))} Votes Against
-      </button>
+        <p className="text-gold p-0 m-0 duration-300 hover:opacity-70 transition cursor-pointer">
+          <button
+            className="tracking-normal vote__danger w-full xl:w-auto bg-red focus:bg-opacity-50 hover:bg-opacity-40 focus:outline-none transition duration-500 ease-in-out bg-opacity-30 rounded-xl border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red"
+            type="button"
+            onClick={() => handleVote(false)}
+          >
+            Vote Against
+          </button>
+        </p>
+      </Popover2>
     </div>
   );
 }

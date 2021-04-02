@@ -187,16 +187,21 @@ export function ProposalDetailsPage() {
             </Tooltip2>
           </div>
         </div>
-        {data?.id && isConnected && state !== ProposalState.Active && (
-          <div className="xl:flex items-center justify-between mt-16">
-            <div className="tracking-normal vote__success rounded-xl bg-opacity-30 bg-turquoise mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
-              {kFormatter(numberFromWei(data?.forVotes || 0))} Votes For
+
+        {data?.id &&
+          isConnected &&
+          state !== ProposalState.Active &&
+          !votesLoading && (
+            <div className="xl:flex items-center justify-between mt-16">
+              <div className="tracking-normal vote__success rounded-xl bg-opacity-30 bg-turquoise mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
+                {kFormatter(numberFromWei(data?.forVotes || 0))} Votes For
+              </div>
+              <div className="tracking-normal vote__danger rounded-xl bg-opacity-30 bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
+                {kFormatter(numberFromWei(data?.againstVotes || 0))} Votes
+                Against
+              </div>
             </div>
-            <div className="tracking-normal vote__danger rounded-xl bg-opacity-30 bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-red border-red">
-              {kFormatter(numberFromWei(data?.againstVotes || 0))} Votes Against
-            </div>
-          </div>
-        )}
+          )}
 
         {data?.id && isConnected && state === ProposalState.Active && (
           <VoteCaster
