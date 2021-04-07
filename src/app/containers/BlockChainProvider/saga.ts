@@ -36,6 +36,7 @@ function* setupSaga({ payload }: PayloadAction<ChainId>) {
   }
   const web3 = new Web3(web3Provider);
 
+  network.initDatabaseWeb3(payload);
   network.setWeb3(web3, payload === 30 ? 'mainnet' : 'testnet');
   network.setWsWeb3(web3, payload === 30 ? 'mainnet' : 'testnet', isWebsocket);
   walletConnection.init(payload);

@@ -1,5 +1,6 @@
+import { databaseRpcNodes } from './classifiers';
 import Web3 from 'web3';
-import { EventData } from 'web3-eth-contract';
+import { EventData, Contract } from 'web3-eth-contract';
 import { RevertInstructionError } from 'web3-core-helpers';
 import {
   ContractName,
@@ -12,6 +13,7 @@ import { contracts } from './contracts';
 import { store } from '../../../store/store';
 import { actions } from './slice';
 import { getContract } from '../../../utils/helpers';
+import { AbiItem } from 'web3-utils';
 
 interface SendTxOptions {
   type?: TransactionType;
@@ -24,8 +26,48 @@ class Network {
   public contracts: {} = {};
   public writeContracts: {} = {};
 
+  private _databaseWeb3: Web3 = null as any;
+  public databaseContracts: { [key: string]: Contract } = {};
+  public databaseContractList: Contract[] = [];
+
   private _network: NetworkName = null as any;
   private _writeNetwork: NetworkName = null as any;
+
+  public async initDatabaseWeb3(chainId: number) {
+    try {
+      const nodeUrl = databaseRpcNodes[chainId];
+      const web3Provider = new Web3.providers.HttpProvider(nodeUrl, {
+        keepAlive: true,
+      });
+      this._databaseWeb3 = new Web3(web3Provider);
+
+      const netwrokName = chainId === 30 ? 'mainnet' : 'testnet';
+      Array.from(Object.keys(contracts[netwrokName])).forEach(key => {
+        this.addDatabaseContract(key, contracts[netwrokName][key]);
+      });
+    } catch (e) {
+      console.error('init database web3 fails.');
+      console.error(e);
+    }
+  }
+
+  public addDatabaseContract(
+    contractName: string,
+    contractConfig: {
+      address: string;
+      abi: AbiItem | AbiItem[];
+    },
+  ) {
+    if (!this._databaseWeb3) {
+      return;
+    }
+    console.log('contractConfig: ', contractName, contractConfig);
+    const contract = this.makeContract(this._databaseWeb3, contractConfig);
+    // @ts-ignore
+    this.databaseContracts[contractName] = contract;
+    // @ts-ignore
+    this.databaseContractList.push(contract);
+  }
 
   public setWeb3(web3: Web3, network: NetworkName) {
     this.web3 = web3;
@@ -189,7 +231,7 @@ class Network {
     fromBlock: number = 0,
     toBlock: number | 'latest' = 'latest',
   ): Promise<EventData[]> {
-    return this.contracts[contractName].getPastEvents(eventName, {
+    return this.databaseContracts[contractName].getPastEvents(eventName, {
       fromBlock,
       toBlock,
       filter,
