@@ -40,7 +40,7 @@ export function BlockChainProvider(props: Props) {
 
   return (
     <>
-      <WalletProvider chainId={CHAIN_ID} remember>
+      <WalletProvider options={{ chainId: CHAIN_ID, remember: true }}>
         <TransactionHistory />
         {walletService.connected && walletService.address && (
           <VestingDelegationDialog />
