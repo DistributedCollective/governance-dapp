@@ -16,6 +16,8 @@ import { StakePage } from './containers/StakePage/Loadable';
 import { NotFoundPage } from './components/NotFoundPage/Loadable';
 import { CustomDialog } from './components/CustomDialog';
 import { ProposalsPage } from './containers/ProposalsPage/Loadable';
+import { ProposalDetailsPage } from './containers/ProposalDetailsPage';
+import { ProposePage } from './containers/ProposePage';
 
 export function App() {
   function RouteSwitch() {
@@ -30,12 +32,26 @@ export function App() {
           <Route component={NotFoundPage} />
         </Switch>
 
-        {background && (
+        <Switch location={location}>
+          <Route
+            path="/proposals/propose"
+            exact
+            children={() => (
+              <CustomDialog show={true}>
+                <ProposePage />
+              </CustomDialog>
+            )}
+          />
+
           <Route
             path="/proposals/:id/:contractName?"
-            children={<CustomDialog show={true} />}
+            children={() => (
+              <CustomDialog show={true}>
+                <ProposalDetailsPage />
+              </CustomDialog>
+            )}
           />
-        )}
+        </Switch>
       </div>
     );
   }

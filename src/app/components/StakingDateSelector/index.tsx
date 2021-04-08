@@ -77,8 +77,10 @@ export function StakingDateSelector(props: Props) {
         item => item.getTime() > ((props.startTs as unknown) as number),
       );
     } else {
-      const now = Date.now();
-      filtered = dates.filter(item => item.getTime() > now);
+      const now = Date.now() + 1.21e9; // added 14 days in ms
+      filtered = dates.filter(item => {
+        return item.getTime() > now;
+      });
     }
 
     setFilteredDates(
