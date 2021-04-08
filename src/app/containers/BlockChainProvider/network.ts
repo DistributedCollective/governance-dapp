@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { TransactionConfig } from 'web3-core';
 import { EventData } from 'web3-eth-contract';
 import { RevertInstructionError } from 'web3-core-helpers';
 import {
@@ -12,6 +13,7 @@ import { contracts } from './contracts';
 import { store } from '../../../store/store';
 import { actions } from './slice';
 import { getContract } from '../../../utils/helpers';
+import { gas } from './gas-price';
 
 interface SendTxOptions {
   type?: TransactionType;
@@ -198,6 +200,22 @@ class Network {
 
   protected makeContract(web3: Web3, contractConfig: IContract) {
     return new web3.eth.Contract(contractConfig.abi, contractConfig.address);
+  }
+
+  public async estimateGas(
+    contractName: ContractName,
+    methodName: string,
+    args: Array<any>,
+    options: TransactionConfig = {},
+  ): Promise<string | RevertInstructionError> {
+    if (!options.gasPrice) {
+      options.gasPrice = gas.get();
+    }
+    return new Promise<string | RevertInstructionError>((resolve, reject) => {
+      return this.writeContracts[contractName].methods[methodName](...args)
+        .estimateGas(options)
+        .then(value => resolve(value));
+    });
   }
 }
 
