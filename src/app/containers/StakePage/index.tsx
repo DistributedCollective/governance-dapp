@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Header } from 'app/components/Header';
 import Rsk3 from '@rsksmart/rsk3';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { bignumber } from 'mathjs';
 import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
@@ -619,17 +619,19 @@ const StakesOverview: React.FC<Stakes> = ({
         return (
           <tr key={i}>
             <td>
-              <div className="username flex items-center">
+              <div className="assetname flex items-center">
                 <div>
                   <img src={logoSvg} className="ml-3 mr-3" alt="sov" />
                 </div>
-                <div className="text-sm font-normal hidden xl:block">SOV</div>
+                <div className="text-sm font-normal hidden xl:block pl-3">
+                  SOV
+                </div>
               </div>
             </td>
             <td className="text-left font-normal">
               {numberFromWei(item[0])} SOV
             </td>
-            <td className="text-left hidden lg:table-cell font-normal max-w-15">
+            <td className="text-left hidden lg:table-cell font-normal">
               {item[2].length && (
                 <>
                   Delegated to{' '}
@@ -658,9 +660,9 @@ const StakesOverview: React.FC<Stakes> = ({
             </td>
             <td className="text-left hidden lg:table-cell font-normal">
               <p>
-                {moment(new Date(parseInt(item[1]) * 1e3)).format(
-                  'DD/MM/YYYY - h:mm:ss a',
-                )}
+                {moment
+                  .tz(new Date(parseInt(item[1]) * 1e3), 'GMT')
+                  .format('DD/MM/YYYY - h:mm:ss a z')}
               </p>
             </td>
             <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
