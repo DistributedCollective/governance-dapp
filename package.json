@@ -10,7 +10,7 @@
     "@craco/craco": "6.1.1",
     "@reduxjs/toolkit": "1.3.2",
     "@rsksmart/rsk3": "0.3.4",
-    "@sovryn/react-wallet": "~1.0.8",
+    "@sovryn/react-wallet": "~1.0.9",
     "@tailwindcss/postcss7-compat": "2.0.3",
     "@testing-library/jest-dom": "5.1.1",
     "@testing-library/react": "10.0.1",
