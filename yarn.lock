@@ -2446,13 +2446,13 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@sovryn/react-wallet@~1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@sovryn/react-wallet/-/react-wallet-1.0.6.tgz#c775f6c8be085cdda12e85a947848927a3e1b2ea"
-  integrity sha512-ZVPRv8y3jO+9ltqN3n7VjBlt9rhTuwDSrb0Plr7IG84iVgBF0yBXJYOk5tKNyZJULgqj6/tZse77oXkDZQap8A==
+"@sovryn/react-wallet@~1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@sovryn/react-wallet/-/react-wallet-1.0.7.tgz#e699accfbc3c01ee324fd89c6f8b8671d5695d11"
+  integrity sha512-FdJrEIbdw/TMc3M4/QrZcfUfpEgWqPaDV24LMDbsg6xy9LaamKxzWGq9BENatTU611Ql5cyQ7PBQulWb2zhgSQ==
   dependencies:
     "@hookstate/core" "^3.0.6"
-    "@sovryn/wallet" "^1.0.0"
+    "@sovryn/wallet" "^1.0.7"
     "@types/classnames" "^2.2.11"
     classnames "^2.2.6"
     detect-browser "^5.2.0"
@@ -2460,10 +2460,10 @@
     storage-factory "^0.2.0"
     styled-components "^5.2.3"
 
-"@sovryn/wallet@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@sovryn/wallet/-/wallet-1.0.0.tgz#9c68a07bd8526d4363b798e6060e0819ae646f16"
-  integrity sha512-god2LW4x+tZeA38EW8HHuquu0e0kqFbW4+0dYdtaVBBDyUjyc6Tk6cVSFRDpfAVuw0RF2OS5J771P/5m4giU3w==
+"@sovryn/wallet@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@sovryn/wallet/-/wallet-1.0.7.tgz#1cda16e19add59d9dc28225e7136b9d415b842b9"
+  integrity sha512-95AA1SPKdg2yuSyM1mjWG9ajfQZ977lRPHmxcb+uVo/JvX2kMdfIlaN6vN7n+HgkseS5SfkRaBI2h1QyvoFFYw==
   dependencies:
     "@ledgerhq/hw-app-eth" "^5.46.0"
     "@ledgerhq/hw-transport" "^5.46.0"
