@@ -7,6 +7,7 @@ import moment from 'moment';
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;
+  fee: string;
   timestamp?: number;
   onChangeTimestamp: (value: number) => void;
   sovBalanceOf: ContractCallResponse;
@@ -80,7 +81,7 @@ export function ExtendStakeForm(props: Props) {
             />
           </div>
           <p className="block text-theme-white text-md font-light mb-2 mt-7">
-            Tx Fee: 0.0006 rBTC
+            Tx Fee: {props.fee} rBTC
           </p>
           <div className="text-gray-700 text-xs mt-3 hidden">
             Balance:{' '}
