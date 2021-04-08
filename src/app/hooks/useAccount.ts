@@ -1,9 +1,6 @@
-// import Rsk from '@rsksmart/rsk3';
-import { useSelector } from 'react-redux';
-import { selectBlockChainProvider } from '../containers/BlockChainProvider/selectors';
+import { useWalletContext } from '@sovryn/react-wallet';
 
 export function useAccount() {
-  const { address } = useSelector(selectBlockChainProvider);
-  return !!address ? address : '';
-  // return !!address ? Rsk.utils.toChecksumAddress(address) : '';
+  const { address, connected } = useWalletContext();
+  return connected && !!address ? address.toLowerCase() : '';
 }

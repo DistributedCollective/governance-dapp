@@ -12,9 +12,6 @@ export const initialState: ContainerState = {
   network: 'testnet',
   chainId: 31,
   setupCompleted: false,
-  connected: false,
-  connecting: false,
-  address: '',
   governanceContractConfig: {
     proposalMaxOperations: 10,
     votingDelay: 1,
@@ -50,22 +47,6 @@ const blockChainProviderSlice = createSlice({
       state.governanceContractConfig.quorumVotes = payload.quorumVotes;
       state.governanceContractConfig.proposalThreshold =
         payload.proposalThreshold;
-    },
-    connect(state) {
-      state.connecting = true;
-    },
-    connected(state, { payload }: PayloadAction<{ address: string }>) {
-      state.connecting = false;
-      state.connected = true;
-    },
-    disconnect() {},
-    disconnected(state) {
-      state.connecting = false;
-      state.connected = false;
-      state.address = '';
-    },
-    accountChanged(state, { payload }: PayloadAction<string>) {
-      state.address = payload || '';
     },
     chainChanged(
       state,

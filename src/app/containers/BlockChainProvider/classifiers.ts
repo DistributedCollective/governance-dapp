@@ -24,3 +24,4 @@ export const blockExplorers = {
 export const blockTime = 30;
 
 export const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID || 31) as ChainId;
+export const CHAIN_NAME = CHAIN_ID === 30 ? 'mainnet' : 'testnet';
