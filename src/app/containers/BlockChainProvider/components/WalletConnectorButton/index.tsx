@@ -1,36 +1,27 @@
-import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import { prettyTx } from 'utils/helpers';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/macro';
 import { Icon, Spinner } from '@blueprintjs/core';
-import { selectBlockChainProvider } from '../../selectors';
-import { walletConnection } from '../../web3-modal';
 import { translations } from 'locales/i18n';
 import { media } from '../../../../../styles/media';
+import { useWalletContext } from '@sovryn/react-wallet';
 
 export function WalletConnectorButton() {
-  const { connected, connecting, address } = useSelector(
-    selectBlockChainProvider,
-  );
+  const {
+    connected,
+    loading: connecting,
+    address,
+    connect,
+    disconnect,
+  } = useWalletContext();
   const { t } = useTranslation();
-  const handleWalletConnection = useCallback(() => {
-    walletConnection
-      .connect()
-      .then(() => {})
-      .catch(console.error);
-  }, []);
-
-  const handleDisconnect = () => {
-    walletConnection.disconnect().then(() => {});
-  };
-
   return (
     <>
       <div className="justify-center items-center hidden md:flex">
         {!connected && !address ? (
           <StyledButton
-            onClick={handleWalletConnection}
+            onClick={() => connect()}
             className="flex justify-center items-center"
           >
             {connecting && <Spinner size={22} />}
@@ -51,7 +42,7 @@ export function WalletConnectorButton() {
                 <Icon
                   icon="log-out"
                   className="logout"
-                  onClick={handleDisconnect}
+                  onClick={() => disconnect()}
                 />
               </span>
             </StyledButtonAuth>

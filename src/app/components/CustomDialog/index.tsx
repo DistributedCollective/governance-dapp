@@ -8,10 +8,10 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Dialog, Icon } from '@blueprintjs/core';
 import styled from 'styled-components/macro';
-import { ProposalDetailsPage } from '../../containers/ProposalDetailsPage';
 
 interface Props {
   show: boolean;
+  children: React.ReactNode;
 }
 
 export function CustomDialog(props: Props) {
@@ -42,7 +42,7 @@ export function CustomDialog(props: Props) {
           <Icon icon="cross" iconSize={35} color="white" />
         </StyledClose>
       </div>
-      <ProposalDetailsPage />
+      {props.children}
     </Dialog>
   );
 }

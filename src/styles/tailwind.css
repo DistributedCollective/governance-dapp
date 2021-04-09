@@ -275,7 +275,7 @@
 }
 .slick-dots li {
     margin: 0 2px;
-    list-style: 16px;
+    list-style: none;
 }
 .slick-dots li button {
     font-size: 0;
