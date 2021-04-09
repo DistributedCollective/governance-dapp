@@ -234,7 +234,7 @@ class Network {
             .once('transactionHash', tx => {
               store.dispatch(
                 actions.addTransaction({
-                  transactionHash: signedTxOrTransactionHash,
+                  transactionHash: tx,
                   to: contractAddress,
                   type: sendTxOptions?.type,
                 }),
