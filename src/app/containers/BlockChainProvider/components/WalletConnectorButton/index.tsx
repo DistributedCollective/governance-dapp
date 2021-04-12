@@ -30,7 +30,6 @@ export function WalletConnectorButton() {
                 <span className="hidden xl:inline">
                   {t(translations.wallet.connect_btn)}
                 </span>
-                <Icon icon="log-in" className="xl:hidden" />
               </>
             )}
           </StyledButton>
