@@ -9,13 +9,13 @@ import styled from 'styled-components/macro';
 
 import logoSvg from 'assets/images/sovryn-logo-white.svg';
 import { translations } from 'locales/i18n';
-
+import { Container } from 'react-bootstrap';
 import { media } from '../../../styles/media';
 import { CHAIN_ID } from '../../containers/BlockChainProvider/classifiers';
 import { WalletConnectorButton } from '../../containers/BlockChainProvider/components/WalletConnectorButton';
 import { selectBlockChainProvider } from '../../containers/BlockChainProvider/selectors';
 import { LanguageToggle } from '../LanguageToggle';
-
+import './index.scss';
 export function Header() {
   const { chainId, network } = useSelector(selectBlockChainProvider);
   const { t } = useTranslation();
@@ -23,9 +23,6 @@ export function Header() {
   const history = useHistory();
   const location = useLocation();
   const node = useRef(null as any);
-  interface StyledProps {
-    open: boolean;
-  }
   const StyledMenu = styled.nav.attrs(_ => ({ open: open }))`
     display: flex;
     flex-direction: column;
@@ -58,7 +55,7 @@ export function Header() {
       text-align: center;
     }
   `;
-  const StyledBurger = styled.button`
+  const StyledBurger = styled.button.attrs(_ => ({ open: open }))`
     position: absolute;
     top: 1.3rem;
     display: flex;
@@ -83,8 +80,7 @@ export function Header() {
       position: relative;
       transform-origin: 1px;
       :first-child {
-        transform: ${({ open }: StyledProps) =>
-          open ? 'rotate(45deg)' : 'rotate(0)'};
+        transform: ${({ open }) => (open ? 'rotate(45deg)' : 'rotate(0)')};
       }
       :nth-child(2) {
         opacity: ${({ open }) => (open ? '0' : '1')};
@@ -96,18 +92,7 @@ export function Header() {
       }
     }
   `;
-  const StyledLogo = styled.img.attrs(_ => ({
-    alt: '',
-  }))`
-    width: 130px;
-    height: 50px;
-    margin: 0 0 0 1rem;
-    ${media.xl`
-      width: 284px;
-      height: 48px;
-      margin: 0;
-    `}
-  `;
+
   const Menu = ({ open, setOpen }) => {
     return <StyledMenu open={open}>{menuItems}</StyledMenu>;
   };
@@ -154,16 +139,35 @@ export function Header() {
 
   const pages = [
     {
-      to: 'https://sovryn-1.gitbook.io/sovryn/',
-      title: t(translations.mainMenu.faqs),
+      to: '/',
+      title: t(translations.mainMenu.swap),
     },
     {
       to: '/',
-      title: t(translations.mainMenu.vote),
+      title: t(translations.mainMenu.marginTrade),
     },
     {
-      to: '/stake',
-      title: t(translations.mainMenu.stake),
+      to: '/lend',
+      title: t(translations.mainMenu.lend),
+    },
+    {
+      to: '/lend',
+      title: t(translations.mainMenu.borrow),
+    },
+    { to: '/liquidity', title: t(translations.mainMenu.liquidity) },
+    {
+      to: '/',
+      title: t(translations.mainMenu.staking),
+    },
+    {
+      to: 'https://bitocracy.sovryn.app',
+      title: t(translations.mainMenu.governance),
+    },
+    { to: '/wallet', title: t(translations.mainMenu.wallet) },
+    { to: '/stats', title: t(translations.mainMenu.stats) },
+    {
+      to: 'https://wiki.sovryn.app/en/sovryn-dapp/faq-dapp',
+      title: t(translations.mainMenu.help),
     },
   ];
 
@@ -220,27 +224,22 @@ export function Header() {
           with bitocracy.
         </div>
       )}
-      <header className="bg-black mb-2">
-        <div className="container min-h-header flex justify-between items-center mb-3 pt-2 pb-2">
-          <div className="xl:hidden">
+      <header>
+        <Container className="d-flex justify-content-between align-items-center mb-3 pt-2 pb-2">
+          <div className="d-xl-none">
             <div ref={node}>
               <Burger open={open} setOpen={setOpen} />
               <Menu open={open} setOpen={setOpen} />
             </div>
           </div>
-          <div className="xl:flex flex-row items-center">
+          <div className="d-xl-flex flex-row align-items-center">
             <div className="mr-3">
               <Link to="/">
                 <StyledLogo src={logoSvg} />
               </Link>
             </div>
             <div className="d-none d-xl-block font-family-montserrat">
-              <NavLink
-                className="nav-item mr-4 font-light uppercase text-white no-underline hover:no-underline font-montserrat hover:text-gold"
-                to="/"
-                exact
-                activeStyle={{ fontWeight: 'bold' }}
-              >
+              <NavLink className="nav-item mr-4 " to="/" exact>
                 {t(translations.mainMenu.buySov)}
               </NavLink>
               <NavPopover
@@ -263,11 +262,7 @@ export function Header() {
                   </BPMenu>
                 }
               >
-                <div
-                  className={`${
-                    isSectionOpen(SECTION_TYPE.TRADE) && 'font-weight-bold'
-                  }`}
-                >
+                <div className={`${isSectionOpen(SECTION_TYPE.TRADE)}`}>
                   <span className="mr-1">{t(translations.mainMenu.trade)}</span>
                   <FontAwesomeIcon icon={faChevronDown} size="xs" />
                 </div>
@@ -346,8 +341,20 @@ export function Header() {
             </div>
             <WalletConnectorButton />
           </div>
-        </div>
+        </Container>
       </header>
     </>
   );
 }
+const StyledLogo = styled.img.attrs(_ => ({
+  alt: '',
+}))`
+  width: 130px;
+  height: 50px;
+  margin: 0 0 0 1rem;
+  ${media.xl`
+    width: 284px;
+    height: 48px;
+    margin: 0;
+  `}
+`;

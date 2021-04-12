@@ -12,10 +12,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import * as serviceWorker from 'serviceWorker';
-import '@blueprintjs/core/lib/css/blueprint.css';
-import '@blueprintjs/select/lib/css/blueprint-select.css';
 import 'styles/tailwind.css';
-import '@sovryn/react-wallet/index.css';
 
 // Import root app
 import { App } from 'app';
@@ -26,6 +23,7 @@ import { store } from 'store/store';
 
 // Initialize languages
 import './locales/i18n';
+import './styles/sass/styles.scss';
 
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
 
