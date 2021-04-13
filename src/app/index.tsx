@@ -8,16 +8,18 @@
 
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Switch, Route, BrowserRouter, useLocation } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, useLocation } from 'react-router-dom';
+
 import { GlobalStyle } from 'styles/global-styles';
+
+import { CustomDialog } from './components/CustomDialog';
+import { NotFoundPage } from './components/NotFoundPage/Loadable';
 import { BlockChainProvider } from './containers/BlockChainProvider';
 import { HomePage } from './containers/HomePage/Loadable';
-import { StakePage } from './containers/StakePage/Loadable';
-import { NotFoundPage } from './components/NotFoundPage/Loadable';
-import { CustomDialog } from './components/CustomDialog';
-import { ProposalsPage } from './containers/ProposalsPage/Loadable';
 import { ProposalDetailsPage } from './containers/ProposalDetailsPage';
+import { ProposalsPage } from './containers/ProposalsPage/Loadable';
 import { ProposePage } from './containers/ProposePage';
+import { StakePage } from './containers/StakePage/Loadable';
 
 export function App() {
   function RouteSwitch() {
@@ -27,6 +29,7 @@ export function App() {
       <div>
         <Switch location={background || location}>
           <Route exact path="/" component={HomePage} />
+          <Route exact path="/home" component={HomePage} />
           <Route exact path="/proposals" component={ProposalsPage} />
           <Route exact path="/stake" component={StakePage} />
           <Route component={NotFoundPage} />

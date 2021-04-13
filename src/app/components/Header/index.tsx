@@ -1,22 +1,101 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink, useHistory } from 'react-router-dom';
+import { Menu as BPMenu, MenuItem, Popover, Position } from '@blueprintjs/core';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useRef, useState } from 'react';
+import { Container } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { Link, NavLink, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components/macro';
+
 import logoSvg from 'assets/images/sovryn-logo-white.svg';
 import { translations } from 'locales/i18n';
+
 import { media } from '../../../styles/media';
-import { MenuItem } from '@blueprintjs/core';
-import { WalletConnectorButton } from '../../containers/BlockChainProvider/components/WalletConnectorButton';
-import { useSelector } from 'react-redux';
-import { selectBlockChainProvider } from '../../containers/BlockChainProvider/selectors';
 import { CHAIN_ID } from '../../containers/BlockChainProvider/classifiers';
+import { WalletConnectorButton } from '../../containers/BlockChainProvider/components/WalletConnectorButton';
+import { selectBlockChainProvider } from '../../containers/BlockChainProvider/selectors';
+import { LanguageToggle } from '../LanguageToggle';
+
+import './index.scss';
 
 export function Header() {
   const { chainId, network } = useSelector(selectBlockChainProvider);
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const history = useHistory();
+  const location = useLocation();
   const node = useRef(null as any);
+  const StyledMenu = styled.nav.attrs(_ => ({ open: open }))`
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: black;
+    transform: ${({ open }) => (open ? 'translateX(0)' : 'translateX(-100%)')};
+    height: 100%;
+    text-align: left;
+    padding: 4rem 2rem 2rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    transition: transform 0.3s ease-in-out;
+    z-index: 9;
+    width: 100%;
+    li {
+      list-style-type: none;
+    }
+    a {
+      font-size: 1.2rem;
+      padding: 1.5rem 0;
+      font-weight: bold;
+      letter-spacing: 0.5rem;
+      color: white;
+      text-decoration: none;
+      transition: color 0.3s linear;
+      text-align: center;
+    }
+  `;
+  const StyledBurger = styled.button.attrs(_ => ({ open: open }))`
+    position: absolute;
+    top: 1.3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10;
+    &:focus {
+      outline: none;
+    }
+    div {
+      width: 2rem;
+      height: 0.25rem;
+      background: white;
+      border-radius: 10px;
+      transition: all 0.3s linear;
+      position: relative;
+      transform-origin: 1px;
+      :first-child {
+        transform: ${({ open }) => (open ? 'rotate(45deg)' : 'rotate(0)')};
+      }
+      :nth-child(2) {
+        opacity: ${({ open }) => (open ? '0' : '1')};
+        transform: ${({ open }) =>
+          open ? 'translateX(20px)' : 'translateX(0)'};
+      }
+      :nth-child(3) {
+        transform: ${({ open }) => (open ? 'rotate(-45deg)' : 'rotate(0)')};
+      }
+    }
+  `;
+
   const Menu = ({ open, setOpen }) => {
     return <StyledMenu open={open}>{menuItems}</StyledMenu>;
   };
@@ -30,19 +109,77 @@ export function Header() {
       </StyledBurger>
     );
   };
+  const StyledPopover = styled(Popover)`
+    &:hover {
+      color: #fec006;
+    }
+  `;
+  const NavPopover = ({ content, children }) => {
+    return (
+      <StyledPopover
+        className="mr-4 cursor-pointer"
+        minimal={true}
+        popoverClassName="header-nav-popover"
+        content={content}
+        position={Position.BOTTOM_LEFT}
+      >
+        {children}
+      </StyledPopover>
+    );
+  };
+  const SECTION_TYPE = {
+    TRADE: 'trade',
+    FINANCE: 'finance',
+  };
+
+  const isSectionOpen = (section: string) => {
+    const paths = {
+      [SECTION_TYPE.TRADE]: ['/'],
+      [SECTION_TYPE.FINANCE]: ['/lend', '/liquidity'],
+    };
+    return section && paths[section].includes(location.pathname);
+  };
 
   const pages = [
     {
-      to: 'https://sovryn-1.gitbook.io/sovryn/',
-      title: t(translations.mainMenu.faqs),
+      to: 'https://live.sovryn.app/',
+      title: t(translations.mainMenu.swap),
     },
     {
-      to: '/',
-      title: t(translations.mainMenu.vote),
+      to: 'https://live.sovryn.app/',
+      title: t(translations.mainMenu.marginTrade),
+    },
+    {
+      to: 'https://live.sovryn.app/lend',
+      title: t(translations.mainMenu.lend),
+    },
+    {
+      to: 'https://live.sovryn.app/lend',
+      title: t(translations.mainMenu.borrow),
+    },
+    {
+      to: 'https://live.sovryn.app/liquidity',
+      title: t(translations.mainMenu.liquidity),
     },
     {
       to: '/stake',
-      title: t(translations.mainMenu.stake),
+      title: t(translations.mainMenu.staking),
+    },
+    {
+      to: '/',
+      title: t(translations.mainMenu.governance),
+    },
+    {
+      to: 'https://live.sovryn.app/wallet',
+      title: t(translations.mainMenu.wallet),
+    },
+    {
+      to: 'https://live.sovryn.app/stats',
+      title: t(translations.mainMenu.stats),
+    },
+    {
+      to: 'https://wiki.sovryn.app/en/sovryn-dapp/faq-dapp',
+      title: t(translations.mainMenu.help),
     },
   ];
 
@@ -99,121 +236,126 @@ export function Header() {
           with bitocracy.
         </div>
       )}
-      <header className="bg-black mb-2">
-        <div className="container min-h-header flex justify-between items-center mb-3 pt-2 pb-2">
-          <div className="xl:hidden">
+      <header>
+        <Container className="d-flex justify-content-between align-items-center mb-3 pt-2 pb-2">
+          <div className="d-xl-none">
             <div ref={node}>
               <Burger open={open} setOpen={setOpen} />
               <Menu open={open} setOpen={setOpen} />
             </div>
           </div>
-          <div className="xl:flex flex-row items-center">
+          <div className="d-xl-flex flex-row align-items-center">
             <div className="mr-3">
-              <Link to="/">
+              <Link to="/home">
                 <StyledLogo src={logoSvg} />
               </Link>
             </div>
-            <div className="hidden xl:block">
-              <NavLink
-                className="nav-item mr-4 font-light uppercase text-white no-underline hover:no-underline font-montserrat hover:text-gold"
-                to="/"
-                exact
-                activeStyle={{ fontWeight: 'bold' }}
+            <div className="d-none d-xl-block font-family-montserrat">
+              <a
+                href="https://live.sovryn.app/"
+                // eslint-disable-next-line react/jsx-no-target-blank
+                target="_blank"
+                className="nav-item mr-4 active"
               >
-                {t(translations.mainMenu.vote)}
-              </NavLink>
-              <NavLink
-                className="nav-item mr-4 font-light uppercase text-white no-underline hover:no-underline font-montserrat hover:text-gold"
-                to="/stake"
-                activeStyle={{ fontWeight: 'bold' }}
+                {t(translations.mainMenu.buySov)}
+              </a>
+              <NavPopover
+                content={
+                  <BPMenu>
+                    <MenuItem
+                      text={t(translations.mainMenu.swap)}
+                      className="bp3-popover-dismiss"
+                      href="https://live.sovryn.app/"
+                      target="_blank"
+                    ></MenuItem>
+                    <MenuItem
+                      text={t(translations.mainMenu.marginTrade)}
+                      className="bp3-popover-dismiss"
+                      href="https://live.sovryn.app/"
+                    ></MenuItem>
+                  </BPMenu>
+                }
               >
-                {t(translations.mainMenu.stake)}
+                <div className={`${isSectionOpen(SECTION_TYPE.TRADE)}`}>
+                  <span className="mr-1">{t(translations.mainMenu.trade)}</span>
+                  <FontAwesomeIcon icon={faChevronDown} size="xs" />
+                </div>
+              </NavPopover>
+              <NavPopover
+                content={
+                  <BPMenu>
+                    <MenuItem
+                      text={t(translations.mainMenu.lend)}
+                      className="bp3-popover-dismiss"
+                      href="https://live.sovryn.app/lend"
+                    ></MenuItem>
+                    <MenuItem
+                      text={t(translations.mainMenu.borrow)}
+                      className="bp3-popover-dismiss"
+                      href="https://live.sovryn.app/lend"
+                    ></MenuItem>
+                    <MenuItem
+                      text={t(translations.mainMenu.liquidity)}
+                      className="bp3-popover-dismiss"
+                      href="https://live.sovryn.app/liquidity"
+                    ></MenuItem>
+                  </BPMenu>
+                }
+              >
+                <div
+                  className={`${
+                    isSectionOpen(SECTION_TYPE.FINANCE) && 'font-weight-bold'
+                  }`}
+                >
+                  <span className="mr-1">
+                    {t(translations.mainMenu.finance)}
+                  </span>
+                  <FontAwesomeIcon icon={faChevronDown} size="xs" />
+                </div>
+              </NavPopover>
+              <NavLink className="nav-item mr-4 text-capitalize" to="/stake">
+                {t(translations.mainMenu.staking)}
               </NavLink>
+              <NavLink className="nav-item mr-4 text-capitalize" to="/home">
+                {t(translations.mainMenu.governance)}
+              </NavLink>
+              <a
+                href="https://live.sovryn.app/wallet"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-item mr-4 text-capitalize"
+              >
+                {t(translations.mainMenu.wallet)}
+              </a>
+              <a
+                href="https://live.sovryn.app/stats"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-item mr-4 text-capitalize"
+              >
+                {t(translations.mainMenu.stats)}
+              </a>
             </div>
           </div>
           <div className="flex justify-start items-center">
+            <a
+              href="https://wiki.sovryn.app/en/sovryn-dapp/faq-dapp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-item mr-2 text-capitalize d-none d-xl-block"
+            >
+              {t(translations.mainMenu.help)}
+            </a>
+            <div className="mr-2">
+              <LanguageToggle />
+            </div>
             <WalletConnectorButton />
           </div>
-        </div>
+        </Container>
       </header>
     </>
   );
 }
-
-interface StyledProps {
-  open: boolean;
-}
-
-const StyledMenu = styled.nav`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  background: black;
-  transform: ${({ open }: StyledProps) =>
-    open ? 'translateX(0)' : 'translateX(-100%)'};
-  height: 100%;
-  text-align: left;
-  padding: 4rem 2rem 2rem;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  transition: transform 0.3s ease-in-out;
-  z-index: 9;
-  width: 100%;
-  li {
-    list-style-type: none;
-  }
-  a {
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    padding: 1.5rem 0;
-    font-weight: bold;
-    letter-spacing: 0.5rem;
-    color: white;
-    text-decoration: none;
-    transition: color 0.3s linear;
-    text-align: center;
-  }
-`;
-const StyledBurger = styled.button`
-  position: absolute;
-  top: 1.3rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  width: 2rem;
-  height: 2rem;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 10;
-  &:focus {
-    outline: none;
-  }
-
-  div {
-    width: 2rem;
-    height: 0.25rem;
-    background: white;
-    border-radius: 10px;
-    transition: all 0.3s linear;
-    position: relative;
-    transform-origin: 1px;
-    :first-child {
-      transform: ${({ open }: StyledProps) =>
-        open ? 'rotate(45deg)' : 'rotate(0)'};
-    }
-    :nth-child(2) {
-      opacity: ${({ open }) => (open ? '0' : '1')};
-      transform: ${({ open }) => (open ? 'translateX(20px)' : 'translateX(0)')};
-    }
-    :nth-child(3) {
-      transform: ${({ open }) => (open ? 'rotate(-45deg)' : 'rotate(0)')};
-    }
-  }
-`;
 const StyledLogo = styled.img.attrs(_ => ({
   alt: '',
 }))`
