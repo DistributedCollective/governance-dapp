@@ -29,6 +29,7 @@ export function App() {
       <div>
         <Switch location={background || location}>
           <Route exact path="/" component={HomePage} />
+          <Route exact path="/home" component={HomePage} />
           <Route exact path="/proposals" component={ProposalsPage} />
           <Route exact path="/stake" component={StakePage} />
           <Route component={NotFoundPage} />

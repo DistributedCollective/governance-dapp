@@ -1,5 +1,26 @@
 @import '../../../styles/sass/custom-variables';
+
 .nav-item {
+  color: white;
+  font-weight: 100;
+  font-family: $font-family-montserrat;
+
+  &.active {
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      color: white;
+    }
+  }
+
+  &:hover,
+  &:active {
+    color: #fec006;
+    text-decoration: none;
+  }
+}
+.nav-item-gov {
   color: white;
   font-weight: 100;
   font-family: $font-family-montserrat;

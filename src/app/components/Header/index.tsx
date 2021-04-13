@@ -2,6 +2,7 @@ import { Menu as BPMenu, MenuItem, Popover, Position } from '@blueprintjs/core';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
+import { Container } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, NavLink, useHistory, useLocation } from 'react-router-dom';
@@ -9,13 +10,15 @@ import styled from 'styled-components/macro';
 
 import logoSvg from 'assets/images/sovryn-logo-white.svg';
 import { translations } from 'locales/i18n';
-import { Container } from 'react-bootstrap';
+
 import { media } from '../../../styles/media';
 import { CHAIN_ID } from '../../containers/BlockChainProvider/classifiers';
 import { WalletConnectorButton } from '../../containers/BlockChainProvider/components/WalletConnectorButton';
 import { selectBlockChainProvider } from '../../containers/BlockChainProvider/selectors';
 import { LanguageToggle } from '../LanguageToggle';
+
 import './index.scss';
+
 export function Header() {
   const { chainId, network } = useSelector(selectBlockChainProvider);
   const { t } = useTranslation();
@@ -139,32 +142,41 @@ export function Header() {
 
   const pages = [
     {
-      to: '/',
+      to: 'https://live.sovryn.app/',
       title: t(translations.mainMenu.swap),
     },
     {
-      to: '/',
+      to: 'https://live.sovryn.app/',
       title: t(translations.mainMenu.marginTrade),
     },
     {
-      to: '/lend',
+      to: 'https://live.sovryn.app/lend',
       title: t(translations.mainMenu.lend),
     },
     {
-      to: '/lend',
+      to: 'https://live.sovryn.app/lend',
       title: t(translations.mainMenu.borrow),
     },
-    { to: '/liquidity', title: t(translations.mainMenu.liquidity) },
     {
-      to: '/',
+      to: 'https://live.sovryn.app/liquidity',
+      title: t(translations.mainMenu.liquidity),
+    },
+    {
+      to: '/stake',
       title: t(translations.mainMenu.staking),
     },
     {
-      to: 'https://bitocracy.sovryn.app',
+      to: '/',
       title: t(translations.mainMenu.governance),
     },
-    { to: '/wallet', title: t(translations.mainMenu.wallet) },
-    { to: '/stats', title: t(translations.mainMenu.stats) },
+    {
+      to: 'https://live.sovryn.app/wallet',
+      title: t(translations.mainMenu.wallet),
+    },
+    {
+      to: 'https://live.sovryn.app/stats',
+      title: t(translations.mainMenu.stats),
+    },
     {
       to: 'https://wiki.sovryn.app/en/sovryn-dapp/faq-dapp',
       title: t(translations.mainMenu.help),
@@ -234,30 +246,32 @@ export function Header() {
           </div>
           <div className="d-xl-flex flex-row align-items-center">
             <div className="mr-3">
-              <Link to="/">
+              <Link to="/home">
                 <StyledLogo src={logoSvg} />
               </Link>
             </div>
             <div className="d-none d-xl-block font-family-montserrat">
-              <NavLink className="nav-item mr-4 " to="/" exact>
+              <a
+                href="https://live.sovryn.app/"
+                // eslint-disable-next-line react/jsx-no-target-blank
+                target="_blank"
+                className="nav-item mr-4 active"
+              >
                 {t(translations.mainMenu.buySov)}
-              </NavLink>
+              </a>
               <NavPopover
                 content={
                   <BPMenu>
                     <MenuItem
                       text={t(translations.mainMenu.swap)}
                       className="bp3-popover-dismiss"
-                      onClick={() => {
-                        history.push('/');
-                      }}
+                      href="https://live.sovryn.app/"
+                      target="_blank"
                     ></MenuItem>
                     <MenuItem
                       text={t(translations.mainMenu.marginTrade)}
                       className="bp3-popover-dismiss"
-                      onClick={() => {
-                        history.push('/');
-                      }}
+                      href="https://live.sovryn.app/"
                     ></MenuItem>
                   </BPMenu>
                 }
@@ -273,21 +287,17 @@ export function Header() {
                     <MenuItem
                       text={t(translations.mainMenu.lend)}
                       className="bp3-popover-dismiss"
-                      onClick={() => {
-                        history.push('/lend');
-                      }}
+                      href="https://live.sovryn.app/lend"
                     ></MenuItem>
                     <MenuItem
                       text={t(translations.mainMenu.borrow)}
                       className="bp3-popover-dismiss"
-                      onClick={() => {
-                        history.push('/lend');
-                      }}
+                      href="https://live.sovryn.app/lend"
                     ></MenuItem>
                     <MenuItem
                       text={t(translations.mainMenu.liquidity)}
                       className="bp3-popover-dismiss"
-                      onClick={() => history.push('/liquidity')}
+                      href="https://live.sovryn.app/liquidity"
                     ></MenuItem>
                   </BPMenu>
                 }
@@ -303,28 +313,28 @@ export function Header() {
                   <FontAwesomeIcon icon={faChevronDown} size="xs" />
                 </div>
               </NavPopover>
-              <a
-                href="https://bitocracy.sovryn.app/stake"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="nav-item mr-4 text-capitalize"
-              >
+              <NavLink className="nav-item mr-4 text-capitalize" to="/stake">
                 {t(translations.mainMenu.staking)}
-              </a>
+              </NavLink>
+              <NavLink className="nav-item mr-4 text-capitalize" to="/home">
+                {t(translations.mainMenu.governance)}
+              </NavLink>
               <a
-                href="https://bitocracy.sovryn.app/"
+                href="https://live.sovryn.app/wallet"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="nav-item mr-4 text-capitalize"
               >
-                {t(translations.mainMenu.governance)}
-              </a>
-              <NavLink className="nav-item mr-4 text-capitalize" to="/wallet">
                 {t(translations.mainMenu.wallet)}
-              </NavLink>
-              <NavLink className="nav-item mr-4 text-capitalize" to="/stats">
+              </a>
+              <a
+                href="https://live.sovryn.app/stats"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-item mr-4 text-capitalize"
+              >
                 {t(translations.mainMenu.stats)}
-              </NavLink>
+              </a>
             </div>
           </div>
           <div className="flex justify-start items-center">
