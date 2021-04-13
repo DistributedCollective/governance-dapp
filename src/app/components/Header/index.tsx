@@ -255,7 +255,7 @@ export function Header() {
                 href="https://live.sovryn.app/"
                 // eslint-disable-next-line react/jsx-no-target-blank
                 target="_blank"
-                className="nav-item mr-4 active"
+                className="nav-item mr-4"
               >
                 {t(translations.mainMenu.buySov)}
               </a>
