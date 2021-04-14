@@ -187,7 +187,7 @@ export function StakingDateSelector(props: Props) {
                   getDatesByYear(year);
                   setSelectedYear(year);
                 }}
-                className={`leading-7 rounded border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
+                className={`leading-7 rounded border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 pd py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
                   selectedYear === year && 'bg-opacity-30 bg-theme-blue'
                 }`}
               >
@@ -214,7 +214,7 @@ export function StakingDateSelector(props: Props) {
                             setSelectedDay(moment(item.date).format('D'));
                             setSelectedMonth(moment(item.date).format('MMM'));
                           }}
-                          className={`flex items-center justify-center mr-1 mb-1 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
+                          className={`flex items-center justify-center mr-1 mb-1 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 pd py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
                             selectedDay === moment(item.date).format('D') &&
                             selectedMonth === moment(item.date).format('MMM') &&
                             'bg-opacity-30 bg-theme-blue'
