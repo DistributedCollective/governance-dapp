@@ -237,7 +237,7 @@ export function Header() {
         </div>
       )}
       <header>
-        <Container className="d-flex justify-content-between align-items-center mb-3 pt-2 pb-2">
+        <div className="d-flex container justify-content-between align-items-center mb-3 pt-2 pb-2">
           <div className="d-xl-none">
             <div ref={node}>
               <Burger open={open} setOpen={setOpen} />
@@ -351,7 +351,7 @@ export function Header() {
             </div>
             <WalletConnectorButton />
           </div>
-        </Container>
+        </div>
       </header>
     </>
   );
