@@ -2,7 +2,6 @@ import { Menu as BPMenu, MenuItem, Popover, Position } from '@blueprintjs/core';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
-import { Container } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, NavLink, useHistory, useLocation } from 'react-router-dom';
@@ -117,7 +116,7 @@ export function Header() {
   const NavPopover = ({ content, children }) => {
     return (
       <StyledPopover
-        className="mr-4 cursor-pointer"
+        className="mr-6 cursor-pointer"
         minimal={true}
         popoverClassName="header-nav-popover"
         content={content}
@@ -236,26 +235,26 @@ export function Header() {
           with bitocracy.
         </div>
       )}
-      <header>
-        <div className="d-flex container justify-content-between align-items-center mb-3 pt-2 pb-2">
-          <div className="d-xl-none">
+      <header className="bg-black mb-2">
+        <div className="flex min-h justify-between items-center mb-4 px-4 pt-2 pb-2">
+          <div className="xl:hidden">
             <div ref={node}>
               <Burger open={open} setOpen={setOpen} />
               <Menu open={open} setOpen={setOpen} />
             </div>
           </div>
-          <div className="d-xl-flex flex-row align-items-center">
-            <div className="mr-3">
+          <div className="xl:flex flex-row items-center">
+            <div className="mr-4">
               <Link to="/home">
                 <StyledLogo src={logoSvg} />
               </Link>
             </div>
-            <div className="d-none d-xl-block font-family-montserrat">
+            <div className="hidden xl:block font-family-montserrat">
               <a
                 href="https://live.sovryn.app/"
                 // eslint-disable-next-line react/jsx-no-target-blank
                 target="_blank"
-                className="nav-item mr-4"
+                className="nav-item mr-6"
               >
                 {t(translations.mainMenu.buySov)}
               </a>
@@ -313,17 +312,23 @@ export function Header() {
                   <FontAwesomeIcon icon={faChevronDown} size="xs" />
                 </div>
               </NavPopover>
-              <NavLink className="nav-item mr-4 text-capitalize" to="/stake">
+              <NavLink
+                className="nav-item mr-6 font-light text-white no-underline hover:no-underline font-montserrat hover:text-gold"
+                to="/stake"
+              >
                 {t(translations.mainMenu.staking)}
               </NavLink>
-              <NavLink className="nav-item mr-4 text-capitalize" to="/home">
+              <NavLink
+                className="nav-item mr-6 font-light text-white no-underline hover:no-underline font-montserrat hover:text-gold"
+                to="/home"
+              >
                 {t(translations.mainMenu.governance)}
               </NavLink>
               <a
                 href="https://live.sovryn.app/wallet"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="nav-item mr-4 text-capitalize"
+                className="nav-item mr-6 font-light text-white no-underline hover:no-underline font-montserrat hover:text-gold"
               >
                 {t(translations.mainMenu.wallet)}
               </a>
@@ -331,7 +336,7 @@ export function Header() {
                 href="https://live.sovryn.app/stats"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="nav-item mr-4 text-capitalize"
+                className="nav-item mr-6 font-light text-white no-underline hover:no-underline font-montserrat hover:text-gold"
               >
                 {t(translations.mainMenu.stats)}
               </a>
@@ -342,7 +347,7 @@ export function Header() {
               href="https://wiki.sovryn.app/en/sovryn-dapp/faq-dapp"
               target="_blank"
               rel="noopener noreferrer"
-              className="nav-item mr-2 text-capitalize d-none d-xl-block"
+              className="nav-item mr-2 hidden xl:block"
             >
               {t(translations.mainMenu.help)}
             </a>

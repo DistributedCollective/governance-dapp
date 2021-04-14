@@ -73,7 +73,7 @@ module.exports = {
       theme: {
         white: '#E9EAE9',
         blue: '#2274A5',
-      },
+      }
     },
     extend: {
       minHeight: {

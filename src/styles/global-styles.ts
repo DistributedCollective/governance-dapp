@@ -100,12 +100,6 @@ input[type=number] {
     font-weight: 600;
     padding: 0.23rem 4.2%4.2%;
   }
-  .active {
-    border-bottom: 1px solid var(--Teal);
-    h4 {
-      color: var(--Teal);
-    }
-  }
   .bordered {
     border: 1px solid var(--Grey_text);
   }
