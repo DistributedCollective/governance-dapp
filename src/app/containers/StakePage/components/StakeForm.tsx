@@ -2,7 +2,7 @@ import React, { FormEvent } from 'react';
 import { fromWei, handleNumberInput, numberFromWei } from 'utils/helpers';
 import { ContractCallResponse } from 'app/hooks/useContractCall';
 import { StakingDateSelector } from '../../../components/StakingDateSelector';
-
+import '../../../components/Header/index.scss';
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;
@@ -124,7 +124,7 @@ export function StakeForm(props: Props) {
         <div className="grid grid-rows-1 grid-flow-col gap-4">
           <button
             type="submit"
-            className={`uppercase w-full text-black bg-gold text-xl font-extrabold px-4 hover:bg-opacity-80 py-2 rounded-lg transition duration-500 ease-in-out ${
+            className={`uppercase w-full text-black bg-gold bg-opacity-1 text-xl font-extrabold px-4 hover:bg-opacity-80 py-2 rounded-lg transition duration-500 ease-in-out ${
               !props.isValid &&
               'opacity-50 cursor-not-allowed hover:bg-opacity-100'
             }`}

@@ -150,15 +150,15 @@ export function StakingDateSelector(props: Props) {
     );
   };
 
-  const settingsSliderYear = {
-    dots: false,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
-  };
+  // const settingsSliderYear = {
+  //   dots: false,
+  //   infinite: false,
+  //   speed: 500,
+  //   slidesToShow: 3,
+  //   slidesToScroll: 1,
+  //   nextArrow: <SampleNextArrow />,
+  //   prevArrow: <SamplePrevArrow />,
+  // };
 
   const settingsSliderMonth = {
     dots: true,
@@ -177,10 +177,10 @@ export function StakingDateSelector(props: Props) {
           {props.delegate ? <>Choose delegate period:</> : <>Select Year:</>}
         </label>
       )}
-      <Slider {...settingsSliderYear}>
+      <div className="flex flex-row">
         {avaliableYears.map((year, i) => {
           return (
-            <div className="mr-6" key={i}>
+            <div className="mr-4" key={i}>
               <button
                 type="button"
                 onClick={() => {
@@ -196,7 +196,7 @@ export function StakingDateSelector(props: Props) {
             </div>
           );
         })}
-      </Slider>
+      </div>
       <div className="sliderMonth mt-5">
         <Slider {...settingsSliderMonth}>
           {avaliableMonth.map((monthName: React.ReactNode, i) => {

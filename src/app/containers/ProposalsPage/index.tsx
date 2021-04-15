@@ -2,10 +2,12 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
-import { Footer } from '../../components/Footer/Loadable';
-import { ProposalRow } from '../ProposalRow/Loadable';
+
 import { Header } from 'app/components/Header';
+
+import { Footer } from '../../components/Footer/Loadable';
 import { useProposalList } from '../../hooks/useProposalList';
+import { ProposalRow } from '../ProposalRow/Loadable';
 
 export function ProposalsPage() {
   const { items, loading, total } = useProposalList(1, 25);
@@ -20,7 +22,7 @@ export function ProposalsPage() {
           <div className="container">
             <div className="block text-white pt-8 pb-6">
               <Link
-                to="/"
+                to="/home"
                 className="text-white hover:no-underline hover:text-gold"
               >
                 &lt; Proposals

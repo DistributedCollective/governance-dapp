@@ -1,0 +1,72 @@
+.font-family-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+body.genesis-sale-page {
+  background: #282828;
+  letter-spacing: 0;
+  & h1, h2, h3, h4, h5, h6 {
+    letter-spacing: 0;
+  }
+}
+.sovryn-border {
+  border: 1px;
+  border-radius: 8px;
+  border-style: solid;
+  border-color: #D9D9D9;
+}
+.bp3-dialog {
+  // @extend .sovryn-border;
+  background-color: black;
+  padding: 1rem;
+  font-family: 'Work Sans', sans-serif;
+}
+.bp3-popover {
+  &.bp3-select-popover {
+    & .bp3-popover-content {
+      @extend .sovryn-border;
+      background-color: black;
+
+      & .bp3-input-group {
+        & input {
+          background-color: transparent;
+          border: 1px solid #D9D9D9;
+          color: #fff;
+        }
+      }
+    }
+
+    & .bp3-popover-arrow-fill {
+      fill: #fff;
+    }
+  }
+
+  &,
+  &.bp3-tooltip {
+    & .bp3-popover-content {
+      @extend .sovryn-border;
+      background-color: black;
+    }
+
+    & .bp3-popover-arrow {
+      width: 30px;
+      height: 30px;
+    }
+
+    & .bp3-popover-arrow-fill {
+      fill: #fff;
+    }
+  }
+
+  & .bp3-menu {
+    background-color: transparent;
+
+    & .bp3-menu-item {
+      color: #fff;
+      font-family: 'Work Sans', sans-serif;
+
+      &.bp3-active {
+        background-color: #656565;
+      }
+    }
+  }
+}

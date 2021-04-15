@@ -49,7 +49,6 @@ import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
 import logoSvg from 'assets/images/sovryn-icon.svg';
 import { CurrentVests } from './components/CurrentVests';
 import { StyledTable } from './components/StyledTable';
-
 const now = new Date();
 
 export function StakePage() {

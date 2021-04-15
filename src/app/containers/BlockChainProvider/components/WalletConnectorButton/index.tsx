@@ -1,11 +1,13 @@
+import { Icon, Spinner } from '@blueprintjs/core';
+import { useWalletContext } from '@sovryn/react-wallet';
 import React from 'react';
-import { prettyTx } from 'utils/helpers';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/macro';
-import { Icon, Spinner } from '@blueprintjs/core';
+
 import { translations } from 'locales/i18n';
+import { prettyTx } from 'utils/helpers';
+
 import { media } from '../../../../../styles/media';
-import { useWalletContext } from '@sovryn/react-wallet';
 
 export function WalletConnectorButton() {
   const {
@@ -30,7 +32,6 @@ export function WalletConnectorButton() {
                 <span className="hidden xl:inline">
                   {t(translations.wallet.connect_btn)}
                 </span>
-                <Icon icon="log-in" className="xl:hidden" />
               </>
             )}
           </StyledButton>
