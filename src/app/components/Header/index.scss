@@ -3,12 +3,11 @@
 .nav-item {
   color: white;
   font-weight: 100;
-  font-family: $font-family-montserrat;
 
   &.active {
     font-weight: 600;
     text-decoration: none;
-
+    
     &:hover {
       color: white;
     }
@@ -43,8 +42,8 @@
 
 .bp3-popover.header-nav-popover .bp3-popover-content {
     border: none;
-    background-color: black !important;
     overflow: hidden;
+    background-color: black !important;
     & .bp3-menu {
       padding: 0;
       & a {
@@ -52,15 +51,7 @@
       }
     }
   }
-.bg-gold {
-    --tw-bg-opacity: 0.1;
-    background-color: rgba(254, 192, 4, var(--tw-bg-opacity))!important;
-}
-.bg-gold-full {
-  --tw-bg-opacity: 1;
-  background-color: rgba(254, 192, 4, var(--tw-bg-opacity))!important;
-}
-.pd {
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-}
+
+  .min-h {
+    min-height: 70px;
+  }

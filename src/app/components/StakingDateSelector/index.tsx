@@ -150,15 +150,15 @@ export function StakingDateSelector(props: Props) {
     );
   };
 
-  const settingsSliderYear = {
-    dots: false,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
-  };
+  // const settingsSliderYear = {
+  //   dots: false,
+  //   infinite: false,
+  //   speed: 500,
+  //   slidesToShow: 3,
+  //   slidesToScroll: 1,
+  //   nextArrow: <SampleNextArrow />,
+  //   prevArrow: <SamplePrevArrow />,
+  // };
 
   const settingsSliderMonth = {
     dots: true,
@@ -177,17 +177,17 @@ export function StakingDateSelector(props: Props) {
           {props.delegate ? <>Choose delegate period:</> : <>Select Year:</>}
         </label>
       )}
-      <Slider {...settingsSliderYear}>
+      <div className="flex flex-row">
         {avaliableYears.map((year, i) => {
           return (
-            <div className="mr-6" key={i}>
+            <div className="mr-4" key={i}>
               <button
                 type="button"
                 onClick={() => {
                   getDatesByYear(year);
                   setSelectedYear(year);
                 }}
-                className={`leading-7 rounded border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 pd py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
+                className={`leading-7 rounded border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
                   selectedYear === year && 'bg-opacity-30 bg-theme-blue'
                 }`}
               >
@@ -196,7 +196,7 @@ export function StakingDateSelector(props: Props) {
             </div>
           );
         })}
-      </Slider>
+      </div>
       <div className="sliderMonth mt-5">
         <Slider {...settingsSliderMonth}>
           {avaliableMonth.map((monthName: React.ReactNode, i) => {
@@ -214,7 +214,7 @@ export function StakingDateSelector(props: Props) {
                             setSelectedDay(moment(item.date).format('D'));
                             setSelectedMonth(moment(item.date).format('MMM'));
                           }}
-                          className={`flex items-center justify-center mr-1 mb-1 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 pd py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
+                          className={`flex items-center justify-center mr-1 mb-1 h-10 leading-10 rounded-lg border border-theme-blue cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 px-5 py-0 text-center border-r text-md text-theme-blue tracking-tighter ${
                             selectedDay === moment(item.date).format('D') &&
                             selectedMonth === moment(item.date).format('MMM') &&
                             'bg-opacity-30 bg-theme-blue'
