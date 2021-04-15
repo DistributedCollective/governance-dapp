@@ -191,14 +191,7 @@ export function Header() {
     } = item as any;
 
     if (link.to.startsWith('http')) {
-      return (
-        <MenuItem
-          key={index}
-          text={link.title}
-          href={link.to}
-          target="_blank"
-        />
-      );
+      return <MenuItem key={index} text={link.title} href={link.to} />;
     }
 
     return (
@@ -253,7 +246,6 @@ export function Header() {
               <a
                 href="https://live.sovryn.app/"
                 // eslint-disable-next-line react/jsx-no-target-blank
-                target="_blank"
                 className="nav-item mr-6"
               >
                 {t(translations.mainMenu.buySov)}
@@ -265,7 +257,6 @@ export function Header() {
                       text={t(translations.mainMenu.swap)}
                       className="bp3-popover-dismiss"
                       href="https://live.sovryn.app/"
-                      target="_blank"
                     ></MenuItem>
                     <MenuItem
                       text={t(translations.mainMenu.marginTrade)}
@@ -326,7 +317,6 @@ export function Header() {
               </NavLink>
               <a
                 href="https://live.sovryn.app/wallet"
-                target="_blank"
                 rel="noopener noreferrer"
                 className="nav-item mr-6 font-light text-white no-underline hover:no-underline font-montserrat hover:text-gold"
               >
@@ -334,7 +324,6 @@ export function Header() {
               </a>
               <a
                 href="https://live.sovryn.app/stats"
-                target="_blank"
                 rel="noopener noreferrer"
                 className="nav-item mr-6 font-light text-white no-underline hover:no-underline font-montserrat hover:text-gold"
               >
@@ -345,7 +334,6 @@ export function Header() {
           <div className="flex justify-start items-center">
             <a
               href="https://wiki.sovryn.app/en/sovryn-dapp/faq-dapp"
-              target="_blank"
               rel="noopener noreferrer"
               className="nav-item mr-2 hidden xl:block"
             >

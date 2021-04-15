@@ -68,6 +68,13 @@ input[type=number] {
     letter-spacing: 1.7px;
     font-weight: 500;
   }
+  h2 {
+    text-transform: inherit;
+    font-weight: 600;
+    font-size: 1.75rem;
+    margin: 0;
+    font-family: "Montserrat",sans-serif;
+  }
   h3 {
     font-size: 18px;
     font-weight: bold;
@@ -99,16 +106,6 @@ input[type=number] {
     text-transform: uppercase;
     font-weight: 600;
     padding: 0.23rem 4.2%4.2%;
-  }
-  .bordered {
-    border: 1px solid var(--Grey_text);
-  }
-  .data-container {
-    background-color: var(--Field_bg);
-    padding: 8px 14px;
-    &.bordered {
-      border: 1px solid var(--Grey_text);
-    }
   }
   .w-100-input{
     width: 100%;
