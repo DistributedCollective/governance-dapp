@@ -44,10 +44,10 @@ export const GlobalStyle = createGlobalStyle`
     font-size: 400;
     background-color: var(--primary);
     color: var(--white);
-    border: none;
-    &::selection {
+    /* border: none; */
+    /* &::selection {
       border: none;
-    }
+    } */
   }
   /* Chrome, Safari, Edge, Opera */
   input::-webkit-outer-spin-button,
