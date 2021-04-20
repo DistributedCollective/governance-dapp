@@ -7,7 +7,7 @@
   &.active {
     font-weight: 600;
     text-decoration: none;
-    
+
     &:hover {
       color: white;
     }
@@ -41,17 +41,20 @@
 }
 
 .bp3-popover.header-nav-popover .bp3-popover-content {
-    border: none;
-    overflow: hidden;
-    background-color: black !important;
-    & .bp3-menu {
-      padding: 0;
-      & a {
-        font-weight: normal;
-      }
+  border: none;
+  overflow: hidden;
+  background-color: black !important;
+  & .bp3-menu {
+    padding: 0;
+    & a {
+      font-weight: normal;
     }
   }
+}
 
-  .min-h {
-    min-height: 70px;
-  }
+.min-h {
+  min-height: 70px;
+}
+.font-weight-bold {
+  font-weight: 700!important;
+}
