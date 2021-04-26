@@ -4,9 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Link, NavLink, useHistory, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components/macro';
-
 import logoSvg from 'assets/images/sovryn-logo-white.svg';
 import { translations } from 'locales/i18n';
 
@@ -121,6 +120,9 @@ export function Header() {
         popoverClassName="header-nav-popover"
         content={content}
         position={Position.BOTTOM_LEFT}
+        interactionKind="hover"
+        hoverOpenDelay={0}
+        hoverCloseDelay={0}
       >
         {children}
       </StyledPopover>
@@ -129,12 +131,14 @@ export function Header() {
   const SECTION_TYPE = {
     TRADE: 'trade',
     FINANCE: 'finance',
+    BITOCRACY: 'bitocracy',
   };
 
   const isSectionOpen = (section: string) => {
     const paths = {
       [SECTION_TYPE.TRADE]: ['/'],
       [SECTION_TYPE.FINANCE]: ['/lend', '/liquidity'],
+      [SECTION_TYPE.BITOCRACY]: ['/stake', '/'],
     };
     return section && paths[section].includes(location.pathname);
   };
@@ -303,18 +307,33 @@ export function Header() {
                   <FontAwesomeIcon icon={faChevronDown} size="xs" />
                 </div>
               </NavPopover>
-              <NavLink
-                className="nav-item mr-6 font-light text-white no-underline hover:no-underline font-montserrat hover:text-gold"
-                to="/stake"
+              <NavPopover
+                content={
+                  <BPMenu>
+                    <MenuItem
+                      href="/stake"
+                      text={t(translations.mainMenu.staking)}
+                      className="bp3-popover-dismiss"
+                    />
+                    <MenuItem
+                      href="/"
+                      text={t(translations.mainMenu.governance)}
+                      className="bp3-popover-dismiss"
+                    />
+                  </BPMenu>
+                }
               >
-                {t(translations.mainMenu.staking)}
-              </NavLink>
-              <NavLink
-                className="nav-item mr-6 font-light text-white no-underline hover:no-underline font-montserrat hover:text-gold"
-                to="/home"
-              >
-                {t(translations.mainMenu.governance)}
-              </NavLink>
+                <div
+                  className={`${
+                    isSectionOpen(SECTION_TYPE.BITOCRACY) && 'font-weight-bold'
+                  }`}
+                >
+                  <span className="mr-1">
+                    {t(translations.mainMenu.bitocracy)}
+                  </span>
+                  <FontAwesomeIcon icon={faChevronDown} size="xs" />
+                </div>
+              </NavPopover>
               <a
                 href="https://live.sovryn.app/wallet"
                 rel="noopener noreferrer"
