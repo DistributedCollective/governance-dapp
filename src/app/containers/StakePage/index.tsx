@@ -13,9 +13,14 @@ import moment from 'moment-timezone';
 import { bignumber } from 'mathjs';
 import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
+import { gas } from '../BlockChainProvider/gas-price';
 import { useAccount } from '../../hooks/useAccount';
 import { useWeiAmount } from '../../hooks/useWeiAmount';
-import { numberFromWei } from '../../../utils/helpers';
+import {
+  genesisAddress,
+  getContract,
+  numberFromWei,
+} from '../../../utils/helpers';
 import { useSoV_balanceOf } from '../../hooks/sov/useSoV_balanceOf';
 import { useStaking_getStakes } from '../../hooks/staking/useStaking_getStakes';
 import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
@@ -49,6 +54,10 @@ import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
 import logoSvg from 'assets/images/sovryn-icon.svg';
 import { CurrentVests } from './components/CurrentVests';
 import { StyledTable } from './components/StyledTable';
+import { isAddress, toWei } from 'web3-utils';
+import { ContractName } from '../BlockChainProvider/types';
+import { walletService } from '@sovryn/react-wallet';
+
 const now = new Date();
 
 export function StakePage() {
@@ -107,6 +116,7 @@ function InnerStakePage() {
     Math.round(now.getTime() / 1e3),
   );
   const [stakesArray, setStakesArray] = useState([]);
+  const [fee, setFee] = useState('');
   const [stakeLoad, setStakeLoad] = useState(false);
 
   const dates = getStakes.value['dates'];
@@ -295,6 +305,63 @@ function InnerStakePage() {
     },
     [prevTimestamp, timestamp, account, extendForm],
   );
+  useEffect(() => {
+    const updateFee = async () => {
+      let contractName: ContractName = 'staking';
+      let contractMethod = '';
+      let args;
+      if (delegateForm) {
+        if (!isAddress(address.toLowerCase())) return;
+        contractMethod = 'delegate';
+        args = [address.toLowerCase(), timestamp];
+      } else if (stakeForm) {
+        contractMethod = 'stake';
+        args = [
+          toWei(amount || '0'),
+          timestamp,
+          genesisAddress,
+          genesisAddress,
+        ];
+      } else if (increaseForm) {
+        contractName = 'sovToken';
+        contractMethod = 'allowance';
+        args = [account, getContract('staking').address];
+      } else if (extendForm) {
+        contractMethod = 'extendStakingDuration';
+        args = [prevTimestamp, timestamp + 86400];
+      } else if (withdrawForm) {
+        contractMethod = 'withdraw';
+        args = [weiWithdrawAmount, until, account];
+      }
+
+      if (!contractMethod) return;
+
+      const nonce = await network.nonce(walletService.address.toLowerCase());
+      const gasEstimate = await network.estimateGas(
+        contractName,
+        contractMethod,
+        args,
+        nonce,
+      );
+      const gasPrice = gas.get();
+      const feePrice = bignumber(gasPrice).mul(numberFromWei(gasEstimate));
+      setFee(feePrice.toFixed(7));
+    };
+    updateFee();
+  }, [
+    timestamp,
+    amount,
+    delegateForm,
+    stakeForm,
+    increaseForm,
+    extendForm,
+    withdrawForm,
+    address,
+    account,
+    prevTimestamp,
+    weiWithdrawAmount,
+    until,
+  ]);
 
   return (
     <>
@@ -324,6 +391,7 @@ function InnerStakePage() {
                         handleSubmit={handleStakeSubmit}
                         amount={amount}
                         timestamp={timestamp}
+                        fee={fee}
                         onChangeAmount={e => setAmount(e)}
                         onChangeTimestamp={e => setTimestamp(e)}
                         sovBalanceOf={sovBalanceOf}
@@ -489,6 +557,7 @@ function InnerStakePage() {
                       <DelegateForm
                         handleSubmit={handleDelegateSubmit}
                         address={address}
+                        fee={fee}
                         onChangeAddress={e => setAddress(e)}
                         isValid={validateDelegateForm()}
                         onCloseModal={() => setDelegateForm(!delegateForm)}
@@ -512,6 +581,7 @@ function InnerStakePage() {
                         <IncreaseStakeForm
                           handleSubmit={handleIncreaseStakeSubmit}
                           amount={amount}
+                          fee={fee}
                           timestamp={timestamp}
                           onChangeAmount={e => setAmount(e)}
                           sovBalanceOf={sovBalanceOf}
@@ -533,6 +603,7 @@ function InnerStakePage() {
                           <ExtendStakeForm
                             handleSubmit={handleExtendTimeSubmit}
                             amount={amount}
+                            fee={fee}
                             timestamp={timestamp}
                             onChangeTimestamp={e => setTimestamp(e)}
                             sovBalanceOf={sovBalanceOf}
@@ -558,6 +629,7 @@ function InnerStakePage() {
                           handleSubmit={handleWithdrawSubmit}
                           withdrawAmount={withdrawAmount}
                           amount={amount}
+                          fee={fee}
                           until={timestamp}
                           onChangeAmount={e => setWithdrawAmount(e)}
                           sovBalanceOf={sovBalanceOf}

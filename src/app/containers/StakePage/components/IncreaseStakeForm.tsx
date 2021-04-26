@@ -5,6 +5,7 @@ import { ContractCallResponse } from 'app/hooks/useContractCall';
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;
+  fee: string;
   timestamp?: number;
   onChangeAmount: (value: string) => void;
   sovBalanceOf: ContractCallResponse;
@@ -127,7 +128,7 @@ export function IncreaseStakeForm(props: Props) {
             />
           </div>
           <p className="block text-theme-white text-md font-light mb-2 mt-7">
-            Tx Fee: 0.0006 rBTC
+            Tx Fee: {props.fee} rBTC
           </p>
         </div>
 

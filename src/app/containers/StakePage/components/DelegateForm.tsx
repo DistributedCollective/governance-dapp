@@ -2,6 +2,7 @@ import React, { FormEvent } from 'react';
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   address: string;
+  fee: string;
   onChangeAddress: (value: string) => void;
   isValid: boolean;
   onCloseModal: () => void;
@@ -31,7 +32,7 @@ export function DelegateForm(props: Props) {
           </div>
 
           <p className="block text-theme-white text-md font-light mb-2 mt-7">
-            Tx Fee: 0.0006 rBTC
+            Tx Fee: {props.fee} rBTC
           </p>
         </div>
         <div className="grid grid-rows-1 grid-flow-col gap-4">

@@ -6,6 +6,7 @@ import '../../../components/Header/index.scss';
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;
+  fee: string;
   timestamp?: number;
   onChangeAmount: (value: string) => void;
   onChangeTimestamp: (value: number) => void;
@@ -118,7 +119,7 @@ export function StakeForm(props: Props) {
             />
           </div>
           <p className="block text-theme-white text-md font-light mb-2 mt-7">
-            Tx Fee: 0.0006 rBTC
+            Tx Fee: {props.fee} rBTC
           </p>
         </div>
         <div className="grid grid-rows-1 grid-flow-col gap-4">
