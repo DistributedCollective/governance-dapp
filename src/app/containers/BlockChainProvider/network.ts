@@ -1,7 +1,10 @@
 import { databaseRpcNodes } from './classifiers';
 import Web3 from 'web3';
-import { EventData, Contract } from 'web3-eth-contract';
+import ContractClass, { EventData, Contract } from 'web3-eth-contract';
 import { RevertInstructionError } from 'web3-core-helpers';
+import { walletService } from '@sovryn/react-wallet';
+import { web3Wallets } from '@sovryn/wallet';
+import { AbiItem, toWei } from 'web3-utils';
 import {
   ContractName,
   IContract,
@@ -13,7 +16,7 @@ import { contracts } from './contracts';
 import { store } from '../../../store/store';
 import { actions } from './slice';
 import { getContract } from '../../../utils/helpers';
-import { AbiItem } from 'web3-utils';
+import { CHAIN_NAME } from './classifiers';
 
 interface SendTxOptions {
   type?: TransactionType;
@@ -24,7 +27,7 @@ class Network {
   public wsWeb3: Web3 = null as any;
   public writeWeb3: Web3 = null as any;
   public contracts: {} = {};
-  public writeContracts: {} = {};
+  public writeContracts: { [key: string]: Contract } = {};
 
   private _databaseWeb3: Web3 = null as any;
   public databaseContracts: { [key: string]: Contract } = {};
@@ -102,6 +105,11 @@ class Network {
     }
   }
 
+  /**
+   * @deprecated
+   * @param web3
+   * @param network
+   */
   public setWriteWeb3(web3: Web3, network: NetworkName) {
     this.writeWeb3 = web3;
 
@@ -158,69 +166,127 @@ class Network {
     return contract.methods[methodName](...args).call();
   }
 
+  public async estimateGas(
+    contractName: ContractName,
+    methodName: string,
+    args: Array<any>,
+    nonce: number,
+  ) {
+    const { address, abi } = getContract(contractName);
+    return this.estimateCustomGas(address, abi, methodName, args, nonce);
+  }
+
+  public async estimateCustomGas(
+    address: string,
+    abi: AbiItem[] | AbiItem,
+    methodName: string,
+    args: Array<any>,
+    nonce: number,
+  ) {
+    let params = args;
+    // let options = {};
+    if (args && args.length && typeof args[args.length - 1] === 'object') {
+      params = args.slice(0, -1);
+      // options = args[args.length - 1]; // contains "from"
+    }
+    const options = {
+      gasPrice: toWei('0.06', 'gwei'),
+      to: address.toLowerCase(),
+      from: walletService.address.toLowerCase(),
+      nonce,
+      data: this.getCustomContract({ address, abi })
+        .methods[methodName](...params)
+        .encodeABI(),
+    };
+    return new Promise<number>(resolve =>
+      this.web3.eth.estimateGas(options).then(value => resolve(value)),
+    );
+  }
+
   public async send(
     contractName: ContractName,
     methodName,
     args: any[],
     sendTxOptions?: SendTxOptions,
   ) {
-    let params = args;
-    let options = {};
-    if (args && args.length && typeof args[args.length - 1] === 'object') {
-      params = args.slice(0, -1);
-      options = args[args.length - 1];
-    }
-    return new Promise<string>((resolve, reject) => {
-      return this.writeContracts[contractName].methods[methodName](...params)
-        .send(options)
-        .once('transactionHash', tx => {
-          store.dispatch(
-            actions.addTransaction({
-              transactionHash: tx,
-              to: getContract(contractName).address,
-              type: sendTxOptions?.type,
-            }),
-          );
-          resolve(tx);
-        })
-        .catch(e => {
-          console.log('rejecting');
-          reject(e);
-        });
-    });
+    const { address, abi } = contracts[CHAIN_NAME][contractName];
+    return this.sendCustomContract(
+      address,
+      abi,
+      methodName,
+      args,
+      sendTxOptions,
+    );
   }
 
   public async sendCustomContract(
     contractAddress: string,
-    abi: any,
+    abi: AbiItem[] | AbiItem | any,
     methodName,
     args: any[],
     sendTxOptions?: SendTxOptions,
   ) {
     let params = args;
-    let options = {};
+    // let options = {};
     if (args && args.length && typeof args[args.length - 1] === 'object') {
       params = args.slice(0, -1);
-      options = args[args.length - 1];
+      // options = args[args.length - 1]; // contains "from"
     }
-    return new Promise<string>((resolve, reject) => {
-      const contract = new this.writeWeb3.eth.Contract(abi, contractAddress);
-      return contract.methods[methodName](...params)
-        .send(options)
-        .once('transactionHash', tx => {
+    return new Promise<string>(async (resolve, reject) => {
+      const data = this.getCustomContract({ address: contractAddress, abi })
+        .methods[methodName](...params)
+        .encodeABI();
+
+      const nonce = await this.nonce(walletService.address.toLowerCase());
+
+      const gasLimit = await this.estimateCustomGas(
+        contractAddress,
+        abi,
+        methodName,
+        params,
+        nonce,
+      );
+
+      try {
+        const signedTxOrTransactionHash = await walletService.signTransaction({
+          to: contractAddress.toLowerCase(),
+          value: '0',
+          data: data,
+          gasPrice: toWei('0.06', 'gwei'),
+          nonce,
+          gasLimit: String(gasLimit),
+          chainId: walletService.chainId,
+        });
+
+        // Browser wallets (extensions) signs and broadcasts transactions themselves
+        if (web3Wallets.includes(walletService.providerType)) {
           store.dispatch(
             actions.addTransaction({
-              transactionHash: tx,
+              transactionHash: signedTxOrTransactionHash,
               to: contractAddress,
               type: sendTxOptions?.type,
             }),
           );
-          resolve(tx);
-        })
-        .catch(e => {
-          console.log('rejecting');
-          reject(e);
-        });
+          resolve(signedTxOrTransactionHash);
+        } else {
+          // Broadcast signed transaction and retrieve txHash.
+          return network.web3.eth
+            .sendSignedTransaction(signedTxOrTransactionHash)
+            .once('transactionHash', tx => {
+              store.dispatch(
+                actions.addTransaction({
+                  transactionHash: tx,
+                  to: contractAddress,
+                  type: sendTxOptions?.type,
+                }),
+              );
+              resolve(tx);
+            })
+            .catch(e => reject(e));
+        }
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
@@ -240,6 +306,20 @@ class Network {
 
   protected makeContract(web3: Web3, contractConfig: IContract) {
     return new web3.eth.Contract(contractConfig.abi, contractConfig.address);
+  }
+
+  protected getContract(contractName: ContractName) {
+    const { address, abi } = contracts[CHAIN_NAME][contractName];
+    return this.getCustomContract({ address, abi });
+  }
+
+  protected getCustomContract({ address, abi }: IContract) {
+    address = address.toLowerCase();
+    if (!this.writeContracts.hasOwnProperty(address)) {
+      // @ts-ignore wrong typings for contract?
+      this.writeContracts[address] = new ContractClass(abi, address);
+    }
+    return this.writeContracts[address];
   }
 }
 

@@ -14,7 +14,6 @@ import { network } from './network';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { ChainId } from './types';
 import { wssNodes } from './classifiers';
-import { walletConnection } from './web3-modal';
 import { selectBlockChainProvider } from './selectors';
 import { TransactionReceipt } from 'web3-core';
 
@@ -39,7 +38,6 @@ function* setupSaga({ payload }: PayloadAction<ChainId>) {
   network.initDatabaseWeb3(payload);
   network.setWeb3(web3, payload === 30 ? 'mainnet' : 'testnet');
   network.setWsWeb3(web3, payload === 30 ? 'mainnet' : 'testnet', isWebsocket);
-  walletConnection.init(payload);
 
   // const threshold = yield call(governance_proposalThreshold);
   // const quorumVotes = yield call(governance_quorumVotes);
@@ -53,14 +51,6 @@ function* setupSaga({ payload }: PayloadAction<ChainId>) {
       quorumVotes: quorumVotes,
     }),
   );
-}
-
-function* connectedSaga({ payload }: PayloadAction<{ address: string }>) {
-  yield put(actions.accountChanged(payload.address));
-}
-
-function* disconnectSaga() {
-  yield call([walletConnection, walletConnection.disconnect]);
 }
 
 // start block watcher
@@ -239,8 +229,6 @@ function* processBlockHeader(event) {
 
 export function* blockChainProviderSaga() {
   yield takeLatest(actions.setup.type, setupSaga);
-  yield takeLatest(actions.connected.type, connectedSaga);
-  yield takeLatest(actions.disconnect.type, disconnectSaga);
   yield takeLatest(actions.setupCompleted.type, callCreateBlockChannels);
   yield takeEvery(actions.blockReceived.type, processBlockHeader);
   // yield takeLatest(actions.setupCompleted.type, callCreateBlockPollChannel);

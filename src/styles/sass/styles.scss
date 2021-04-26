@@ -1,0 +1,17 @@
+@import '_custom-variables.scss';
+
+//@import "~sanitize.css/sanitize.css";
+// @import '~normalize.css';
+@import '~@blueprintjs/icons/lib/css/blueprint-icons.css';
+@import '~@blueprintjs/core/src/blueprint.scss';
+@import '~@blueprintjs/select/lib/css/blueprint-select.css';
+
+// @import '~bootstrap/scss/bootstrap';
+@import 'new-design';
+// @import 'sov-tutorial';
+@import 'fast-btc-tutorial';
+@import 'genesis-sale';
+
+@import '_custom-styles.scss';
+
+@import '~@sovryn/react-wallet/index.css';
