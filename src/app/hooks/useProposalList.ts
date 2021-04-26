@@ -15,8 +15,10 @@ export function useProposalList(page: number, limit: number = 0) {
   useEffect(() => {
     setLoading(true);
     const get = async () => {
-      const admin = await getProposalsOf('governorAdmin', page, limit);
-      const owner = await getProposalsOf('governorOwner', page, limit);
+      const adminPromise = getProposalsOf('governorAdmin', page, limit);
+      const ownerPromise = getProposalsOf('governorOwner', page, limit);
+
+      const [admin, owner] = await Promise.all([adminPromise, ownerPromise]);
 
       const merged = [...admin.items, ...owner.items].sort(
         (a, b) => b.startBlock - a.startBlock,

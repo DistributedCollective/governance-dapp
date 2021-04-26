@@ -10,6 +10,11 @@ export const wssNodes = {
   31: 'wss://testnet.sovryn.app/ws',
 };
 
+export const databaseRpcNodes = {
+  30: 'https://backend.sovryn.app/rpc',
+  31: 'https://testnet.sovryn.app/backend/rpc',
+};
+
 export const rpcBackupNodes = {
   30: 'https://public-node.rsk.co',
   31: 'https://public-node.testnet.rsk.co',
