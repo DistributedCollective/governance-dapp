@@ -56,6 +56,7 @@ import { CurrentVests } from './components/CurrentVests';
 import { StyledTable } from './components/StyledTable';
 import { isAddress, toWei } from 'web3-utils';
 import { ContractName } from '../BlockChainProvider/types';
+import { walletService } from '@sovryn/react-wallet';
 
 const now = new Date();
 
@@ -111,7 +112,7 @@ function InnerStakePage() {
   const [lockDate, setLockDate] = useState<number>(0 as any);
   const [votingPower, setVotingPower] = useState<number>(0 as any);
   const getWeight = useStaking_computeWeightByDate(
-    lockDate,
+    Number(lockDate),
     Math.round(now.getTime() / 1e3),
   );
   const [stakesArray, setStakesArray] = useState([]);
@@ -335,10 +336,12 @@ function InnerStakePage() {
 
       if (!contractMethod) return;
 
+      const nonce = await network.nonce(walletService.address.toLowerCase());
       const gasEstimate = await network.estimateGas(
         contractName,
         contractMethod,
         args,
+        nonce,
       );
       const gasPrice = gas.get();
       const feePrice = bignumber(gasPrice).mul(numberFromWei(gasEstimate));
@@ -749,7 +752,7 @@ const StakesOverview: React.FC<Stakes> = ({
                 <button
                   type="button"
                   className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mr-1 xl:mr-8 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                  onClick={() => onExtend(item[0], item[0])}
+                  onClick={() => onExtend(item[0], item[1])}
                 >
                   Extend
                 </button>

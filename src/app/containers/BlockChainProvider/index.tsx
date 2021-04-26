@@ -6,6 +6,7 @@
 
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { WalletProvider, walletService } from '@sovryn/react-wallet';
 
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import { reducer, sliceKey, actions } from './slice';
@@ -39,11 +40,13 @@ export function BlockChainProvider(props: Props) {
 
   return (
     <>
-      <TransactionHistory />
-      {blockChainProvider.connected && blockChainProvider.address && (
-        <VestingDelegationDialog />
-      )}
-      {props.children}
+      <WalletProvider options={{ chainId: CHAIN_ID, remember: true }}>
+        <TransactionHistory />
+        {walletService.connected && walletService.address && (
+          <VestingDelegationDialog />
+        )}
+        {props.children}
+      </WalletProvider>
     </>
   );
 }

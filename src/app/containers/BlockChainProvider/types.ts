@@ -5,9 +5,6 @@ export interface BlockChainProviderState {
   network: NetworkName;
   chainId: ChainId;
   setupCompleted: boolean;
-  connected: boolean;
-  connecting: boolean;
-  address: string;
   governanceContractConfig: GovernanceContractConfig;
   blockNumber: number;
   syncBlockNumber: number;
