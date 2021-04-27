@@ -31,7 +31,7 @@ export function ProposalsPage() {
             <h2 className="text-white pb-8">Governance Proposals</h2>
 
             <div className="bg-gray-light rounded-t shadow p-3">
-              <h4 className="font-bold">All Proposals</h4>
+              <h4 className="font-bold text-white">All Proposals</h4>
             </div>
           </div>
         </div>

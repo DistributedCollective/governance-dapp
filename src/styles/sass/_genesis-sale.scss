@@ -19,6 +19,13 @@ body.genesis-sale-page {
   background-color: black;
   padding: 1rem;
   font-family: 'Work Sans', sans-serif;
+  max-width: 90vw;
+  &.custom-dialog {
+    width: auto;
+  }
+}
+.bp3-dialog-container .bp3-dialog  {
+  width: auto !important;
 }
 .bp3-popover {
   &.bp3-select-popover {
