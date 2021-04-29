@@ -100,6 +100,7 @@ function InnerStakePage() {
   const [timestamp, setTimestamp] = useState<number>(0 as any);
   const [loading, setLoading] = useState(false);
   const weiAmount = useWeiAmount(amount);
+  const [stakeAmount, setStakeAmount] = useState(0);
   const weiWithdrawAmount = useWeiAmount(withdrawAmount);
   const [until, setUntil] = useState<number>(0 as any);
   const [prevTimestamp, setPrevTimestamp] = useState<number>(undefined as any);
@@ -115,10 +116,10 @@ function InnerStakePage() {
     Number(lockDate),
     Math.round(now.getTime() / 1e3),
   );
+
   const [stakesArray, setStakesArray] = useState([]);
   const [fee, setFee] = useState('');
   const [stakeLoad, setStakeLoad] = useState(false);
-
   const dates = getStakes.value['dates'];
   const stakes = getStakes.value['stakes'];
 
@@ -284,11 +285,17 @@ function InnerStakePage() {
     async e => {
       e.preventDefault();
       setLoading(true);
-      await staking_withdraw(weiWithdrawAmount, until, account);
+
+      if (bignumber(weiWithdrawAmount).greaterThan(stakeAmount)) {
+        await staking_withdraw(stakeAmount.toString(), until, account);
+      } else {
+        await staking_withdraw(weiWithdrawAmount, until, account);
+      }
+
       setLoading(false);
       setWithdrawForm(!withdrawForm);
     },
-    [weiWithdrawAmount, until, account, withdrawForm],
+    [weiWithdrawAmount, until, account, withdrawForm, stakeAmount],
   );
 
   const handleExtendTimeSubmit = useCallback(
@@ -540,6 +547,7 @@ function InnerStakePage() {
                       onUnstake={(a, b) => {
                         setAmount(numberFromWei(a).toString());
                         setWithdrawAmount(0);
+                        setStakeAmount(a);
                         setTimestamp(b);
                         setUntil(b);
                         setStakeForm(false);
@@ -634,7 +642,6 @@ function InnerStakePage() {
                           onChangeAmount={e => setWithdrawAmount(e)}
                           sovBalanceOf={sovBalanceOf}
                           balanceOf={balanceOf}
-                          votePower={votingPower}
                           isValid={validateWithdrawForm(amount)}
                           onCloseModal={() => setWithdrawForm(!withdrawForm)}
                         />

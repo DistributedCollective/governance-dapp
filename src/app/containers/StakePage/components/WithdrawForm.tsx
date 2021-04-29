@@ -22,6 +22,7 @@ export function WithdrawForm(props: Props) {
   const [forfeitWithdraw, setForfeitWithdraw] = useState<number>(0);
   const [forfeitPercent, setForfeitPercent] = useState<number>(0);
   const [loadingWithdraw, setLoadingWithdraw] = useState(false);
+
   const getEvent = useCallback(
     async amount => {
       setLoadingWithdraw(true);
@@ -33,15 +34,11 @@ export function WithdrawForm(props: Props) {
           account,
         )
         .then(res => {
-          setTimeout(() => {
-            setLoadingWithdraw(false);
-            setForfeitWithdraw(res[1]);
-            setForfeitPercent(
-              Number(
-                ((Number(res[1]) / Number(toWei(amount))) * 100).toFixed(1),
-              ),
-            );
-          }, 10);
+          setForfeitWithdraw(res[1]);
+          setForfeitPercent(
+            Number(((Number(res[1]) / Number(toWei(amount))) * 100).toFixed(1)),
+          );
+          setLoadingWithdraw(false);
         })
         .catch(error => {
           setLoadingWithdraw(false);
@@ -100,8 +97,9 @@ export function WithdrawForm(props: Props) {
           <div className="flex rounded border border-theme-blue mt-4">
             <div
               onClick={() => {
-                props.onChangeAmount(Number(props.amount) / 10);
-                getEvent(Number(props.amount) / 10);
+                let num = (Number(props.amount) / 10).toFixed(2);
+                props.onChangeAmount(Number(num));
+                getEvent(Number(num));
               }}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
@@ -109,8 +107,9 @@ export function WithdrawForm(props: Props) {
             </div>
             <div
               onClick={() => {
-                props.onChangeAmount(Number(props.amount) / 4);
-                getEvent(Number(props.amount) / 4);
+                let num = (Number(props.amount) / 4).toFixed(2);
+                props.onChangeAmount(Number(num));
+                getEvent(Number(num));
               }}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
@@ -118,8 +117,9 @@ export function WithdrawForm(props: Props) {
             </div>
             <div
               onClick={() => {
-                props.onChangeAmount(Number(props.amount) / 2);
-                getEvent(Number(props.amount) / 2);
+                let num = (Number(props.amount) / 2).toFixed(2);
+                props.onChangeAmount(Number(num));
+                getEvent(Number(num));
               }}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
@@ -127,8 +127,9 @@ export function WithdrawForm(props: Props) {
             </div>
             <div
               onClick={() => {
-                props.onChangeAmount((Number(props.amount) / 4) * 3);
-                getEvent((Number(props.amount) / 4) * 3);
+                let num = ((Number(props.amount) / 4) * 3).toFixed(2);
+                props.onChangeAmount(Number(num));
+                getEvent(Number(num));
               }}
               className="cursor-pointer transition duration-300 ease-in-out hover:bg-theme-blue hover:bg-opacity-30 w-1/5 py-1 text-center border-r text-sm text-theme-blue tracking-tighter border-theme-blue"
             >
@@ -143,22 +144,6 @@ export function WithdrawForm(props: Props) {
             >
               100%
             </div>
-          </div>
-          <label
-            className="block text-theme-white text-md font-medium mb-2 mt-8"
-            htmlFor="voting-power"
-          >
-            Voting Power:
-          </label>
-          <div className="flex space-x-4">
-            <input
-              readOnly
-              className="border text-theme-white appearance-none text-md font-semibold text-center h-10 rounded-lg w-full py-2 px-3 bg-transparent tracking-normal focus:outline-none focus:shadow-outline"
-              id="voting-power"
-              type="text"
-              placeholder="0"
-              defaultValue={numberFromWei(props.votePower)}
-            />
           </div>
           {Number(props.until) > Math.round(new Date().getTime() / 1e3) && (
             <>
@@ -180,7 +165,7 @@ export function WithdrawForm(props: Props) {
                   value={
                     forfeitPercent +
                     '% ≈ ' +
-                    numberFromWei(forfeitWithdraw) +
+                    numberFromWei(forfeitWithdraw).toFixed(2) +
                     ' SOV'
                   }
                 />
