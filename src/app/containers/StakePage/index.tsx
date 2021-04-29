@@ -107,9 +107,9 @@ function InnerStakePage() {
     Number(lockDate),
     Math.round(now.getTime() / 1e3),
   );
+
   const [stakesArray, setStakesArray] = useState([]);
   const [stakeLoad, setStakeLoad] = useState(false);
-
   const dates = getStakes.value['dates'];
   const stakes = getStakes.value['stakes'];
 
@@ -570,7 +570,6 @@ function InnerStakePage() {
                           onChangeAmount={e => setWithdrawAmount(e)}
                           sovBalanceOf={sovBalanceOf}
                           balanceOf={balanceOf}
-                          votePower={votingPower}
                           isValid={validateWithdrawForm(amount)}
                           onCloseModal={() => setWithdrawForm(!withdrawForm)}
                         />
