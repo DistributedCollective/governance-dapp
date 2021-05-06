@@ -161,3 +161,6 @@ export function staking_processedCheckpoints(
     tokenAddress,
   ]);
 }
+export function staking_numTokenCheckpoints(tokenAddress: string) {
+  return network.call('feeSharingProxy', 'numTokenCheckpoints', [tokenAddress]);
+}

@@ -41,7 +41,7 @@ import {
   staking_withdraw,
   staking_delegate,
   staking_withdrawFee,
-  staking_processedCheckpoints,
+  staking_numTokenCheckpoints,
 } from '../BlockChainProvider/requests/staking';
 import { Modal } from '../../components/Modal';
 import { StakeForm } from './components/StakeForm';
@@ -797,11 +797,10 @@ function FeeBlock({ contractToken, usdTotal }: FeeProps) {
     async e => {
       e.preventDefault();
       try {
-        const processedCheckpoints = (await staking_processedCheckpoints(
-          account,
+        const numTokenCheckpoints = (await staking_numTokenCheckpoints(
           tokenAddress,
         )) as string;
-        await staking_withdrawFee(tokenAddress, processedCheckpoints, account);
+        await staking_withdrawFee(tokenAddress, numTokenCheckpoints, account);
       } catch (e) {
         console.error(e);
       }
