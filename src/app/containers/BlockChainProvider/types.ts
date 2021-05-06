@@ -44,6 +44,7 @@ export interface INetworkToContract {
   CSOV2_token: IContract;
   priceFeed: IContract;
   swapNetwork: IContract;
+  vestingRegistry3: IContract;
 }
 
 export interface IContract {
