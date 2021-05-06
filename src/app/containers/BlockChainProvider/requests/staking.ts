@@ -47,7 +47,7 @@ export function staking_approve(
 
 export function staking_withdraw(
   weiAmount: string,
-  until: Number,
+  until: number,
   account: string,
 ) {
   return network.send(
@@ -138,5 +138,26 @@ export function staking_getPriorUserStakeByDate(
     address,
     date,
     blockNumber,
+  ]);
+}
+
+export function staking_withdrawFee(
+  tokenAddress: string,
+  processedCheckpoints: string,
+  account: string,
+) {
+  return network.send('feeSharingProxy', 'withdraw', [
+    tokenAddress,
+    processedCheckpoints,
+    account,
+  ]);
+}
+export function staking_processedCheckpoints(
+  account: string,
+  tokenAddress: string,
+) {
+  return network.call('feeSharingProxy', 'processedCheckpoints', [
+    account,
+    tokenAddress,
   ]);
 }

@@ -4,7 +4,7 @@
  *
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Header } from 'app/components/Header';
@@ -14,18 +14,24 @@ import { bignumber } from 'mathjs';
 import { Footer } from '../../components/Footer/Loadable';
 import { network } from '../BlockChainProvider/network';
 import { gas } from '../BlockChainProvider/gas-price';
+import { Asset } from '../../../types/assets';
 import { useAccount } from '../../hooks/useAccount';
 import { useWeiAmount } from '../../hooks/useWeiAmount';
+import { AssetsDictionary } from '../BlockChainProvider/dictionary/assets-dictionary';
 import {
   genesisAddress,
   getContract,
   numberFromWei,
+  weiToFixed,
+  numberToUSD,
 } from '../../../utils/helpers';
 import { useSoV_balanceOf } from '../../hooks/sov/useSoV_balanceOf';
 import { useStaking_getStakes } from '../../hooks/staking/useStaking_getStakes';
 import { useStaking_balanceOf } from '../../hooks/staking/useStaking_balanceOf';
+import { LoadableValue } from '../../components/LoadableValue';
 import { useStaking_WEIGHT_FACTOR } from '../../hooks/staking/useStaking_WEIGHT_FACTOR';
 import { useStaking_getCurrentVotes } from '../../hooks/staking/useStaking_getCurrentVotes';
+import { useStaking_getAccumulatedFees } from '../../hooks/staking/useStaking_getAccumulatedFees';
 import { useStaking_computeWeightByDate } from '../../hooks/staking/useStaking_computeWeightByDate';
 import {
   staking_allowance,
@@ -34,6 +40,8 @@ import {
   staking_stake,
   staking_withdraw,
   staking_delegate,
+  staking_withdrawFee,
+  staking_processedCheckpoints,
 } from '../BlockChainProvider/requests/staking';
 import { Modal } from '../../components/Modal';
 import { StakeForm } from './components/StakeForm';
@@ -44,6 +52,7 @@ import { useIsConnected } from '../../hooks/useIsConnected';
 import { ExtendStakeForm } from './components/ExtendStakeForm';
 import { IncreaseStakeForm } from './components/IncreaseStakeForm';
 import { HistoryEventsTable } from './components/HistoryEventsTable';
+import { useCachedAssetPrice } from '../../hooks/useCachedAssetPrice';
 import { useStaking_kickoffTs } from '../../hooks/staking/useStaking_kickoffTs';
 // import {
 //   governance_proposalCount,
@@ -122,6 +131,8 @@ function InnerStakePage() {
   const [stakeLoad, setStakeLoad] = useState(false);
   const dates = getStakes.value['dates'];
   const stakes = getStakes.value['stakes'];
+  const assets = useMemo(() => AssetsDictionary.list(), []);
+  const [usdTotal, setUsdTotal] = useState(0) as any;
 
   useEffect(() => {
     async function getStakesEvent() {
@@ -181,12 +192,10 @@ function InnerStakePage() {
     increaseForm,
     extendForm,
   ]);
-
   //Form Validations
   const validateStakeForm = useCallback(() => {
     if (loading) return false;
     const num = Number(amount);
-
     if (!num || isNaN(num) || num <= 0) return false;
     if (!timestamp || timestamp < Math.round(now.getTime() / 1e3)) return false;
     return num * 1e18 <= Number(sovBalanceOf.value);
@@ -207,12 +216,12 @@ function InnerStakePage() {
 
   const validateWithdrawForm = useCallback(
     amount => {
-      // if (loading) return false;
+      if (loading) return false;
       const num = Number(withdrawAmount);
       if (!num || isNaN(num) || num <= 0) return false;
       return num <= Number(amount);
     },
-    [withdrawAmount],
+    [withdrawAmount, loading],
   );
 
   const validateExtendTimeForm = useCallback(() => {
@@ -232,7 +241,7 @@ function InnerStakePage() {
           await staking_approve(sovBalanceOf.value, account, nonce);
           nonce += 1;
         }
-        await staking_stake(weiAmount, timestamp, account, nonce);
+        await staking_stake(weiAmount, timestamp + 86400, account, nonce);
         setLoading(false);
         setStakeForm(!stakeForm);
       } catch (e) {
@@ -370,6 +379,12 @@ function InnerStakePage() {
     until,
   ]);
 
+  let usdTotalValue = [] as any;
+  const updateUsdTotal = e => {
+    usdTotalValue.push(e);
+    setUsdTotal(getUSDSum(usdTotalValue));
+  };
+
   return (
     <>
       <Helmet>
@@ -429,50 +444,21 @@ function InnerStakePage() {
                 )}
               </div>
 
-              {/*<div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 text-sm mb-5 xl:mb-0">
+              <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 text-sm mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Total earned fees Available</p>
-                <p className="text-4-5xl mt-2 mb-6">≈ 0.00 USD</p>
-                <div className="flex justify-between items-center mb-1 mt-1 leading-6">
-                  <div className="w-1/5">iDoC</div>
-                  <div className="w-1/2 ml-6">10.000 ≈ 10.00 USD</div>
-                  <Link
-                    to={{}}
-                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                  >
-                    Withdraw
-                  </Link>
-                </div>
-                <div className="flex justify-between items-center mb-1 leading-6">
-                  <div className="w-1/5">i(r)BTC</div>
-                  <div className="w-1/2 ml-6">10.000 ≈ 10.00 USD</div>
-                  <Link
-                    to={{}}
-                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                  >
-                    Withdraw
-                  </Link>
-                </div>
-                <div className="flex justify-between items-center mb-1 leading-6">
-                  <div className="w-1/5">iBPro</div>
-                  <div className="w-1/2 ml-6">10 ≈ 10.0 USD</div>
-                  <Link
-                    to={{}}
-                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                  >
-                    Withdraw
-                  </Link>
-                </div>
-                <div className="flex justify-between items-center leading-6">
-                  <div className="w-1/5">iUSDT</div>
-                  <div className="w-1/2 ml-6">10.0 ≈ 10.00 USD</div>
-                  <Link
-                    to={{}}
-                    className="text-gold hover:text-gold hover:underline font-medium font-montserrat tracking-normal"
-                  >
-                    Withdraw
-                  </Link>
-                </div>
-              </div>*/}
+                <p className="text-4-5xl mt-2 mb-6">
+                  ≈ {numberToUSD(usdTotal, 4)}
+                </p>
+                {assets.map((item, i) => {
+                  return (
+                    <FeeBlock
+                      usdTotal={e => updateUsdTotal(e)}
+                      key={i}
+                      contractToken={item}
+                    />
+                  );
+                })}
+              </div>
 
               <div className="mx-2 bg-gray-800 staking-box p-8 pb-6 rounded-2xl w-full xl:w-1/4 mb-5 xl:mb-0">
                 <p className="text-lg -mt-1">Combined Voting Power</p>
@@ -720,12 +706,11 @@ const StakesOverview: React.FC<Stakes> = ({
                   />
                 </>
               )}
-              {!item[2].length && <p>No delegate</p>}
+              {!item[2].length && <>No delegate</>}
             </td>
             <td className="text-left hidden lg:table-cell font-normal">
               {locked && (
                 <>
-                  <br />
                   {Math.abs(
                     moment().diff(
                       moment(new Date(parseInt(item[1]) * 1e3)),
@@ -737,11 +722,11 @@ const StakesOverview: React.FC<Stakes> = ({
               )}
             </td>
             <td className="text-left hidden lg:table-cell font-normal">
-              <p>
+              <>
                 {moment
                   .tz(new Date(parseInt(item[1]) * 1e3), 'GMT')
                   .format('DD/MM/YYYY - h:mm:ss a z')}
-              </p>
+              </>
             </td>
             <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
               <div className="flex flex-nowrap">
@@ -788,3 +773,73 @@ const StakesOverview: React.FC<Stakes> = ({
     </>
   );
 };
+
+interface FeeProps {
+  contractToken: any;
+  usdTotal: (e: any) => void;
+}
+
+function FeeBlock({ contractToken, usdTotal }: FeeProps) {
+  const account = useAccount();
+  const token = (contractToken.asset + '_token') as any;
+  const dollars = useCachedAssetPrice(contractToken.asset, Asset.USDT);
+  const tokenAddress = getContract(token).address;
+  const currency = useStaking_getAccumulatedFees(account, tokenAddress);
+  const dollarValue = useMemo(() => {
+    if (currency.value === null) return '';
+    return bignumber(currency.value)
+      .mul(dollars.value)
+      .div(10 ** contractToken.decimals)
+      .toFixed(0);
+  }, [dollars.value, currency.value, contractToken.decimals]);
+
+  const handleWithdrawFee = useCallback(
+    async e => {
+      e.preventDefault();
+      try {
+        const processedCheckpoints = (await staking_processedCheckpoints(
+          account,
+          tokenAddress,
+        )) as string;
+        await staking_withdrawFee(tokenAddress, processedCheckpoints, account);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [tokenAddress, account],
+  );
+
+  useEffect(() => {
+    usdTotal(Number(weiToFixed(dollarValue, 4)));
+  }, [currency.value, dollarValue, usdTotal]);
+
+  return (
+    <>
+      {Number(currency.value) > 0 && (
+        <div className="flex justify-between items-center mb-1 mt-1 leading-6">
+          <div className="w-1/5">{contractToken.asset}</div>
+          <div className="w-1/2 ml-6">
+            {numberFromWei(currency.value).toFixed(3)} ≈{' '}
+            <LoadableValue
+              value={numberToUSD(Number(weiToFixed(dollarValue, 4)), 4)}
+              loading={dollars.loading}
+            />
+          </div>
+          <button
+            onClick={handleWithdrawFee}
+            type="button"
+            className="text-gold hover:text-gold p-0 text-normal lowercase hover:underline font-medium font-montserrat tracking-normal"
+          >
+            Withdraw
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+function getUSDSum(array) {
+  return array.reduce(function (sum, value) {
+    return sum + value;
+  }, 0);
+}
