@@ -18,7 +18,7 @@ import {
 
 interface Props {
   vestingAddress: string;
-  type: 'genesis' | 'origin' | 'team';
+  type: 'genesis' | 'origin' | 'team' | 'reward';
 }
 
 export function VestingContract(props: Props) {
@@ -108,12 +108,13 @@ export function VestingContract(props: Props) {
                 {props.type === 'genesis' && 'CSOV Genesis'}
                 {props.type === 'origin' && 'SOV Origin'}
                 {props.type === 'team' && 'SOV Team'}
+                {props.type === 'reward' && 'Reward SOV'}
               </div>
             </div>
           </td>
           <td className="text-left font-normal">
             <p className={`${lockedAmount.loading && 'skeleton'}`}>
-              {numberFromWei(lockedAmount.value)}{' '}
+              {numberFromWei(lockedAmount.value || '0')}{' '}
               {props.type === 'genesis' ? 'CSOV' : 'SOV'}
             </p>
           </td>
@@ -136,29 +137,43 @@ export function VestingContract(props: Props) {
           </td>
           <td className="text-left hidden lg:table-cell font-normal">
             <p>
-              {moment
-                .tz(new Date(parseInt(stakingPeriodStart) * 1e3), 'GMT')
-                .format('DD/MM/YYYY - h:mm:ss a z')}
+              {stakingPeriodStart !== '0' ? (
+                moment
+                  .tz(new Date(parseInt(stakingPeriodStart) * 1e3), 'GMT')
+                  .format('DD/MM/YYYY - h:mm:ss a z')
+              ) : (
+                <>-</>
+              )}
             </p>
           </td>
           <td className="text-left hidden lg:table-cell font-normal">
-            {locked && (
+            {locked ? (
               <p className={`${!unlockDate && 'skeleton'}`}>
-                {Math.abs(
-                  moment().diff(
-                    moment(new Date(parseInt(unlockDate) * 1e3)),
-                    'days',
-                  ),
+                {unlockDate !== '0' ? (
+                  Math.abs(
+                    moment().diff(
+                      moment(new Date(parseInt(unlockDate) * 1e3)),
+                      'days',
+                    ),
+                  )
+                ) : (
+                  <>-</>
                 )}{' '}
                 days
               </p>
+            ) : (
+              <>-</>
             )}
           </td>
           <td className="text-left hidden lg:table-cell font-normal">
             <p className={`${!unlockDate && 'skeleton'}`}>
-              {moment
-                .tz(new Date(parseInt(unlockDate) * 1e3), 'GMT')
-                .format('DD/MM/YYYY - h:mm:ss a z')}
+              {unlockDate !== '0' ? (
+                moment
+                  .tz(new Date(parseInt(unlockDate) * 1e3), 'GMT')
+                  .format('DD/MM/YYYY - h:mm:ss a z')
+              ) : (
+                <>-</>
+              )}
             </p>
           </td>
           <td className="md:text-left lg:text-right hidden md:table-cell max-w-15 min-w-15">
