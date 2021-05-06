@@ -1,4 +1,5 @@
 import { AbiItem } from 'web3-utils';
+import { Asset } from '../../../types/assets';
 
 /* --- STATE --- */
 export interface BlockChainProviderState {
@@ -10,6 +11,7 @@ export interface BlockChainProviderState {
   syncBlockNumber: number;
   transactionStack: string[];
   transactions: Transactions;
+  assetRates: CachedAssetRate[];
   showTransactions: boolean;
   showDelegationDialog: boolean;
   vestingType: string;
@@ -32,6 +34,16 @@ export interface INetworkToContract {
   governorOwner: IContract;
   vestingRegistry: IContract;
   vestingRegistry2: IContract;
+  feeSharingProxy: IContract;
+  DOC_token: IContract;
+  RBTC_token: IContract;
+  USDT_token: IContract;
+  BPRO_token: IContract;
+  SOV_token: IContract;
+  CSOV_token: IContract;
+  CSOV2_token: IContract;
+  priceFeed: IContract;
+  swapNetwork: IContract;
   vestingRegistry3: IContract;
 }
 
@@ -74,3 +86,12 @@ export interface Transaction {
 }
 
 export type ContractName = keyof INetworkToContract;
+
+export interface CachedAssetRate {
+  source: Asset;
+  target: Asset;
+  value: {
+    precision: string;
+    rate: string;
+  };
+}
