@@ -192,6 +192,7 @@ function InnerStakePage() {
     increaseForm,
     extendForm,
   ]);
+
   //Form Validations
   const validateStakeForm = useCallback(() => {
     if (loading) return false;
@@ -625,7 +626,10 @@ function InnerStakePage() {
                           amount={amount}
                           fee={fee}
                           until={timestamp}
-                          onChangeAmount={e => setWithdrawAmount(e)}
+                          onChangeAmount={e => {
+                            setWithdrawAmount(e);
+                            setLoading(false);
+                          }}
                           sovBalanceOf={sovBalanceOf}
                           balanceOf={balanceOf}
                           isValid={validateWithdrawForm(amount)}
