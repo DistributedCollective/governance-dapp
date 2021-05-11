@@ -567,7 +567,10 @@ function InnerStakePage() {
                           withdrawAmount={withdrawAmount}
                           amount={amount}
                           until={timestamp}
-                          onChangeAmount={e => setWithdrawAmount(e)}
+                          onChangeAmount={e => {
+                            setWithdrawAmount(e);
+                            setLoading(false);
+                          }}
                           sovBalanceOf={sovBalanceOf}
                           balanceOf={balanceOf}
                           isValid={validateWithdrawForm(amount)}
