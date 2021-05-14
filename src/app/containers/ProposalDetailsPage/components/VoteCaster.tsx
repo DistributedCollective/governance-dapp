@@ -121,7 +121,7 @@ export function VoteCaster(props: Props) {
         content={
           <>
             You will cast {kFormatter(numberFromWei(votesCurrent.value || 0))}{' '}
-            votes agaist
+            votes against
           </>
         }
       >
