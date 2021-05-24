@@ -159,7 +159,8 @@
     "help": "Help",
     "referral": "Referral",
     "vote": "Vote",
-    "stake": "Stake"
+    "stake": "Stake",
+    "bitocracy": "Bitocracy"
   },
   "trandingPositionSelector": {
     "long": "Long",

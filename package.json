@@ -96,7 +96,8 @@
     "lint:fix": "yarn eslint -- --fix src",
     "lint:css": "stylelint src/**/*.css",
     "generate": "cross-env TS_NODE_PROJECT='./internals/ts-node.tsconfig.json' plop --plopfile internals/generators/plopfile.ts",
-    "prettify": "prettier --write"
+    "prettify": "prettier --write",
+    "start:mainnet": "env-cmd -f .env.mainnet.local yarn start"
   },
   "browserslist": {
     "production": [

@@ -37,12 +37,12 @@ export function CustomDialog(props: Props) {
       <div className="flex justify-end">
         <StyledClose
           onClick={closeModal}
-          className="transiton-transform transform duration-300 ease-in-out hover:transform hover:rotate-180 focus:outline-none p-0"
+          className="transition-transform transform duration-300 ease-in-out hover:transform hover:rotate-180 focus:outline-none p-0"
         >
           <Icon icon="cross" iconSize={35} color="white" />
         </StyledClose>
       </div>
-      {props.children}
+      <div className="pt-14 px-4 pb-4">{props.children}</div>
     </Dialog>
   );
 }
@@ -53,4 +53,5 @@ const StyledClose = styled.button.attrs(_ => ({ type: 'button' }))`
   position: absolute;
   top: 1.8rem;
   right: 2rem;
+  padding: 0;
 `;

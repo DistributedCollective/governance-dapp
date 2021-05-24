@@ -5,9 +5,11 @@ import { network } from '../../BlockChainProvider/network';
 import { useAccount } from 'app/hooks/useAccount';
 import moment from 'moment-timezone';
 import attention from 'assets/images/icon-rejected.svg';
+
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;
+  fee: string;
   withdrawAmount: number;
   until: number;
   onChangeAmount: (value: number) => void;
@@ -224,7 +226,7 @@ export function WithdrawForm(props: Props) {
               )}
 
               <p className="block text-theme-white text-md font-light mb-2 mt-7">
-                Tx Fee: 0.0006 rBTC
+                Tx Fee: {props.fee} rBTC
               </p>
             </div>
 

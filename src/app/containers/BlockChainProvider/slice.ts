@@ -5,6 +5,7 @@ import {
   ContainerState,
   TransactionStatus,
   TransactionType,
+  CachedAssetRate,
 } from './types';
 
 // The initial state of the BlockChainProvider container
@@ -26,6 +27,7 @@ export const initialState: ContainerState = {
   showTransactions: false,
   showDelegationDialog: false,
   vestingType: '',
+  assetRates: [],
 };
 
 const blockChainProviderSlice = createSlice({
@@ -111,6 +113,9 @@ const blockChainProviderSlice = createSlice({
     },
     vestingType(state, { payload }: PayloadAction<string>) {
       state.vestingType = payload;
+    },
+    setPrices(state, { payload }: PayloadAction<CachedAssetRate[]>) {
+      state.assetRates = payload;
     },
   },
 });
