@@ -309,7 +309,7 @@ export function Header() {
                     <MenuItem
                       text={t(translations.mainMenu.reward)}
                       className="bp3-popover-dismiss"
-                      onClick={() => history.push('/reward')}
+                      href="https://live.sovryn.app/reward"
                     ></MenuItem>
                   </BPMenu>
                 }
