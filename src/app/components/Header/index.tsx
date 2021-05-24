@@ -146,10 +146,18 @@ export function Header() {
   const pages = [
     {
       to: 'https://live.sovryn.app/',
+      title: t(translations.mainMenu.buySov),
+    },
+    {
+      to: 'https://live.sovryn.app/swap',
       title: t(translations.mainMenu.swap),
     },
     {
-      to: 'https://live.sovryn.app/',
+      to: 'https://live.sovryn.app/spot',
+      title: t(translations.mainMenu.spotTrade),
+    },
+    {
+      to: 'https://live.sovryn.app/trade',
       title: t(translations.mainMenu.marginTrade),
     },
     {
@@ -260,12 +268,17 @@ export function Header() {
                     <MenuItem
                       text={t(translations.mainMenu.swap)}
                       className="bp3-popover-dismiss"
-                      href="https://live.sovryn.app/"
+                      href="https://live.sovryn.app/swap"
+                    ></MenuItem>
+                    <MenuItem
+                      text={t(translations.mainMenu.spotTrade)}
+                      className="bp3-popover-dismiss"
+                      href="https://live.sovryn.app/spot"
                     ></MenuItem>
                     <MenuItem
                       text={t(translations.mainMenu.marginTrade)}
                       className="bp3-popover-dismiss"
-                      href="https://live.sovryn.app/"
+                      href="https://live.sovryn.app/trade"
                     ></MenuItem>
                   </BPMenu>
                 }
@@ -293,14 +306,15 @@ export function Header() {
                       className="bp3-popover-dismiss"
                       href="https://live.sovryn.app/liquidity"
                     ></MenuItem>
+                    <MenuItem
+                      text={t(translations.mainMenu.reward)}
+                      className="bp3-popover-dismiss"
+                      onClick={() => history.push('/reward')}
+                    ></MenuItem>
                   </BPMenu>
                 }
               >
-                <div
-                  className={`${
-                    isSectionOpen(SECTION_TYPE.FINANCE) && 'font-weight-bold'
-                  }`}
-                >
+                <div className={`${isSectionOpen(SECTION_TYPE.FINANCE)}`}>
                   <span className="mr-1">
                     {t(translations.mainMenu.finance)}
                   </span>
