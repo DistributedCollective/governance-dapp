@@ -34,6 +34,7 @@ export interface INetworkToContract {
   governorOwner: IContract;
   vestingRegistry: IContract;
   vestingRegistry2: IContract;
+  vestingRegistry3: IContract;
   feeSharingProxy: IContract;
   DOC_token: IContract;
   RBTC_token: IContract;
@@ -44,7 +45,6 @@ export interface INetworkToContract {
   CSOV2_token: IContract;
   priceFeed: IContract;
   swapNetwork: IContract;
-  vestingRegistry3: IContract;
 }
 
 export interface IContract {

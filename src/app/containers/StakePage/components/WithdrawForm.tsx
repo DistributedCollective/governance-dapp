@@ -5,6 +5,7 @@ import { network } from '../../BlockChainProvider/network';
 import { useAccount } from 'app/hooks/useAccount';
 import moment from 'moment-timezone';
 import attention from 'assets/images/icon-rejected.svg';
+
 interface Props {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   amount: string;

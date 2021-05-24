@@ -36,6 +36,18 @@ export const contracts: IContractNetworks = {
       address: '0x310006E356b0818C3Eaf86a9B2f13013d4691a1c',
       abi: VestingRegistryABI as any,
     },
+    vestingRegistry3: {
+      address: '0x52E4419b9D33C6e0ceb2e7c01D3aA1a04b21668C',
+      abi: VestingRegistryABI as any,
+    },
+    priceFeed: {
+      address: '0x7f38c422b99075f63C9c919ECD200DF8d2Cf5BD4',
+      abi: priceFeedsAbi as any,
+    },
+    swapNetwork: {
+      address: '0x61172B53423E205a399640e5283e51FE60EC2256',
+      abi: SwapNetworkABI as any,
+    },
     feeSharingProxy: {
       address: '0x740E6f892C0132D659Abcd2B6146D237A4B6b653',
       abi: feeSharingProxyAbi as any,
@@ -68,18 +80,6 @@ export const contracts: IContractNetworks = {
       address: '0x1dA260149ffee6fD4443590ee58F65b8dC2106B9',
       abi: CSOVTokenAbi as any,
     },
-    priceFeed: {
-      address: '0x7f38c422b99075f63C9c919ECD200DF8d2Cf5BD4',
-      abi: priceFeedsAbi as any,
-    },
-    swapNetwork: {
-      address: '0x61172B53423E205a399640e5283e51FE60EC2256',
-      abi: SwapNetworkABI as any,
-    },
-    vestingRegistry3: {
-      address: '0x52E4419b9D33C6e0ceb2e7c01D3aA1a04b21668C',
-      abi: VestingRegistryABI as any,
-    },
   },
   mainnet: {
     sovToken: {
@@ -105,6 +105,18 @@ export const contracts: IContractNetworks = {
     vestingRegistry2: {
       address: '0x0a9bDbf5e104a30fb4c99f6812FB85B60Fd8D372',
       abi: VestingRegistryABI as any,
+    },
+    vestingRegistry3: {
+      address: '0x14F3FE332e21Ef3f5d244C45C8D5fbFcEF2FB5c9',
+      abi: VestingRegistryABI as any,
+    },
+    priceFeed: {
+      address: '0x437AC62769f386b2d238409B7f0a7596d36506e4',
+      abi: priceFeedsAbi as any,
+    },
+    swapNetwork: {
+      address: '0x98aCE08D2b759a265ae326F010496bcD63C15afc',
+      abi: SwapNetworkABI as any,
     },
     feeSharingProxy: {
       address: '0x12B1B0C67d9A771EB5Db7726d23fdc6848fd93ef',
@@ -137,18 +149,6 @@ export const contracts: IContractNetworks = {
     CSOV2_token: {
       address: '0x7f7Dcf9DF951C4A332740e9a125720DA242A34ff',
       abi: CSOVTokenAbi as any,
-    },
-    priceFeed: {
-      address: '0x437AC62769f386b2d238409B7f0a7596d36506e4',
-      abi: priceFeedsAbi as any,
-    },
-    swapNetwork: {
-      address: '0x98aCE08D2b759a265ae326F010496bcD63C15afc',
-      abi: SwapNetworkABI as any,
-    },
-    vestingRegistry3: {
-      address: '0x14F3FE332e21Ef3f5d244C45C8D5fbFcEF2FB5c9',
-      abi: VestingRegistryABI as any,
     },
   },
 };
