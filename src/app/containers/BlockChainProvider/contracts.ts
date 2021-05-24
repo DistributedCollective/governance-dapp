@@ -5,7 +5,6 @@ import SovTokenABI from './abi/SOV.json';
 import VestingRegistryABI from './abi/VestingRegistry.json';
 import feeSharingProxyAbi from './abi/FeeSharingProxy.json';
 import tokenAbi from './abi/abiTestToken.json';
-import CSOVTokenAbi from './abi/CSOVToken.json';
 import abiTestWBRTCToken from './abi/abiTestWBRTCToken.json';
 import priceFeedsAbi from './abi/priceFeedAbi.json';
 import SwapNetworkABI from './abi/SovrynSwapNetwork.json';
@@ -72,14 +71,6 @@ export const contracts: IContractNetworks = {
       address: '0x6a9A07972D07e58F0daf5122d11E069288A375fb',
       abi: tokenAbi as any,
     },
-    CSOV_token: {
-      address: '0x75bbf7f4d77777730eE35b94881B898113a93124',
-      abi: CSOVTokenAbi as any,
-    },
-    CSOV2_token: {
-      address: '0x1dA260149ffee6fD4443590ee58F65b8dC2106B9',
-      abi: CSOVTokenAbi as any,
-    },
   },
   mainnet: {
     sovToken: {
@@ -141,14 +132,6 @@ export const contracts: IContractNetworks = {
     SOV_token: {
       address: '0xEFc78fc7d48b64958315949279Ba181c2114ABBd',
       abi: tokenAbi as any,
-    },
-    CSOV_token: {
-      address: '0x0106F2fFBF6A4f5DEcE323d20E16E2037E732790',
-      abi: CSOVTokenAbi as any,
-    },
-    CSOV2_token: {
-      address: '0x7f7Dcf9DF951C4A332740e9a125720DA242A34ff',
-      abi: CSOVTokenAbi as any,
     },
   },
 };

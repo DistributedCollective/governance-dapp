@@ -41,8 +41,6 @@ export interface INetworkToContract {
   USDT_token: IContract;
   BPRO_token: IContract;
   SOV_token: IContract;
-  CSOV_token: IContract;
-  CSOV2_token: IContract;
   priceFeed: IContract;
   swapNetwork: IContract;
 }
