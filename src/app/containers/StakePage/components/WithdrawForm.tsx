@@ -74,13 +74,22 @@ export function WithdrawForm(props: Props) {
                   .tz(new Date(parseInt(props.until.toString()) * 1e3), 'GMT')
                   .format('DD/MM/YYYY - h:mm:ss a z')}
               </div>
-
-              <p className="text-red text-center">
-                Unstaking now invokes a slashing penalty that will cost you:
-              </p>
-              <div className="text-center text-lg font-semibold">
-                {numberFromWei(forfeitWithdraw).toFixed(2) + ' SOV'}
-              </div>
+              {forfeitWithdraw === 0 ? (
+                <>
+                  <p className="text-red text-center">
+                    You will be slashed some of your SOV for withdrawing early
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-red text-center">
+                    Unstaking now invokes a slashing penalty that will cost you:
+                  </p>
+                  <div className="text-center text-lg font-semibold">
+                    {numberFromWei(forfeitWithdraw).toFixed(2) + ' SOV'}
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="grid grid-rows-1 grid-flow-col gap-4">
