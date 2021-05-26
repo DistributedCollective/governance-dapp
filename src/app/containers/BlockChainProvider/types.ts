@@ -37,9 +37,13 @@ export interface INetworkToContract {
   vestingRegistry3: IContract;
   feeSharingProxy: IContract;
   DOC_token: IContract;
+  DOC_itoken: IContract;
   RBTC_token: IContract;
+  RBTC_itoken: IContract;
   USDT_token: IContract;
+  USDT_itoken: IContract;
   BPRO_token: IContract;
+  BPRO_itoken: IContract;
   SOV_token: IContract;
   priceFeed: IContract;
   swapNetwork: IContract;

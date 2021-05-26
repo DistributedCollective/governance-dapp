@@ -66,6 +66,7 @@ import { StyledTable } from './components/StyledTable';
 import { isAddress, toWei } from 'web3-utils';
 import { ContractName } from '../BlockChainProvider/types';
 import { walletService } from '@sovryn/react-wallet';
+import { Tooltip } from '@blueprintjs/core';
 
 const now = new Date();
 
@@ -784,7 +785,8 @@ interface FeeProps {
 
 function FeeBlock({ contractToken, usdTotal }: FeeProps) {
   const account = useAccount();
-  const token = (contractToken.asset + '_token') as any;
+  const token = (contractToken.asset +
+    (contractToken.asset === Asset.SOV ? '_token' : '_itoken')) as any;
   const dollars = useCachedAssetPrice(contractToken.asset, Asset.USDT);
   const tokenAddress = getContract(token).address;
   const currency = useStaking_getAccumulatedFees(account, tokenAddress);
@@ -819,11 +821,32 @@ function FeeBlock({ contractToken, usdTotal }: FeeProps) {
     <>
       {Number(currency.value) > 0 && (
         <div className="flex justify-between items-center mb-1 mt-1 leading-6">
-          <div className="w-1/5">{contractToken.asset}</div>
+          <div className="w-1/5">
+            {contractToken.asset !== Asset.SOV ? (
+              <Tooltip
+                content={
+                  <>
+                    {contractToken.asset} will be sent to the{' '}
+                    <a
+                      href="https://live.sovryn.app/lend"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      lending pool (live.sovryn.app/lend)
+                    </a>
+                  </>
+                }
+              >
+                <>i{contractToken.asset} (?)</>
+              </Tooltip>
+            ) : (
+              <>{contractToken.asset}</>
+            )}
+          </div>
           <div className="w-1/2 ml-6">
-            {numberFromWei(currency.value).toFixed(3)} ≈{' '}
+            {numberFromWei(currency.value).toFixed(6)} ≈{' '}
             <LoadableValue
-              value={numberToUSD(Number(weiToFixed(dollarValue, 4)), 4)}
+              value={numberToUSD(Number(weiToFixed(dollarValue, 4)), 2)}
               loading={dollars.loading}
             />
           </div>

@@ -55,16 +55,32 @@ export const contracts: IContractNetworks = {
       address: '0xCB46c0ddc60D18eFEB0E586C17Af6ea36452Dae0',
       abi: tokenAbi as any,
     },
+    DOC_itoken: {
+      address: '0x74e00A8CeDdC752074aad367785bFae7034ed89f',
+      abi: tokenAbi as any,
+    },
     RBTC_token: {
       address: '0x69FE5cEC81D5eF92600c1A0dB1F11986AB3758Ab',
+      abi: abiTestWBRTCToken as any,
+    },
+    RBTC_itoken: {
+      address: '0xe67Fe227e0504e8e96A34C3594795756dC26e14B',
       abi: abiTestWBRTCToken as any,
     },
     USDT_token: {
       address: '0x4d5a316d23ebe168d8f887b4447bf8dbfa4901cc',
       abi: tokenAbi as any,
     },
+    USDT_itoken: {
+      address: '0xd1f225BEAE98ccc51c468d1E92d0331c4f93e566',
+      abi: tokenAbi as any,
+    },
     BPRO_token: {
       address: '0x4da7997a819bb46b6758b9102234c289dd2ad3bf',
+      abi: tokenAbi as any,
+    },
+    BPRO_itoken: {
+      address: '0x6226b4B3F29Ecb5f9EEC3eC3391488173418dD5d',
       abi: tokenAbi as any,
     },
     SOV_token: {
@@ -117,16 +133,32 @@ export const contracts: IContractNetworks = {
       address: '0xe700691da7b9851f2f35f8b8182c69c53ccad9db',
       abi: tokenAbi as any,
     },
+    DOC_itoken: {
+      address: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+      abi: tokenAbi as any,
+    },
     RBTC_token: {
       address: '0x542fDA317318eBF1d3DEAf76E0b632741A7e677d',
+      abi: abiTestWBRTCToken as any,
+    },
+    RBTC_itoken: {
+      address: '0xa9DcDC63eaBb8a2b6f39D7fF9429d88340044a7A',
       abi: abiTestWBRTCToken as any,
     },
     USDT_token: {
       address: '0xef213441a85df4d7acbdae0cf78004e1e486bb96',
       abi: tokenAbi as any,
     },
+    USDT_itoken: {
+      address: '0x849C47f9C259E9D62F289BF1b2729039698D8387',
+      abi: tokenAbi as any,
+    },
     BPRO_token: {
       address: '0x440cd83c160de5c96ddb20246815ea44c7abbca8',
+      abi: tokenAbi as any,
+    },
+    BPRO_itoken: {
+      address: '0x6E2fb26a60dA535732F8149b25018C9c0823a715',
       abi: tokenAbi as any,
     },
     SOV_token: {
