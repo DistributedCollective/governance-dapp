@@ -1,10 +1,8 @@
-import { Menu as BPMenu, MenuItem, Popover, Position } from '@blueprintjs/core';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { MenuItem } from '@blueprintjs/core';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import logoSvg from 'assets/images/sovryn-logo-white.svg';
 import { translations } from 'locales/i18n';
@@ -22,7 +20,6 @@ export function Header() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const history = useHistory();
-  const location = useLocation();
   const node = useRef(null as any);
   const StyledMenu = styled.nav.attrs(_ => ({ open: open }))`
     display: flex;
@@ -106,41 +103,6 @@ export function Header() {
         <div />
       </StyledBurger>
     );
-  };
-  const StyledPopover = styled(Popover)`
-    &:hover {
-      color: #fec006;
-    }
-  `;
-  const NavPopover = ({ content, children }) => {
-    return (
-      <StyledPopover
-        className="mr-6 cursor-pointer"
-        minimal={true}
-        popoverClassName="header-nav-popover"
-        content={content}
-        position={Position.BOTTOM_LEFT}
-        interactionKind="hover"
-        hoverOpenDelay={0}
-        hoverCloseDelay={0}
-      >
-        {children}
-      </StyledPopover>
-    );
-  };
-  const SECTION_TYPE = {
-    TRADE: 'trade',
-    FINANCE: 'finance',
-    BITOCRACY: 'bitocracy',
-  };
-
-  const isSectionOpen = (section: string) => {
-    const paths = {
-      [SECTION_TYPE.TRADE]: ['/'],
-      [SECTION_TYPE.FINANCE]: ['/lend', '/liquidity'],
-      [SECTION_TYPE.BITOCRACY]: ['/stake', '/'],
-    };
-    return section && paths[section].includes(location.pathname);
   };
 
   const pages = [
