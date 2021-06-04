@@ -143,6 +143,7 @@
     "notice_4": "If you’re new to DeFi, here is the <0>tutorial</0> on how to use SOVRYN."
   },
   "mainMenu": {
+    "dapp": "Sovryn Dapp",
     "buySov": "Buy SOV",
     "trade": "Trade",
     "swap": "Swap",

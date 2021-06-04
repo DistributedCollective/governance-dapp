@@ -146,47 +146,7 @@ export function Header() {
   const pages = [
     {
       to: 'https://live.sovryn.app/',
-      title: t(translations.mainMenu.buySov),
-    },
-    {
-      to: 'https://live.sovryn.app/swap',
-      title: t(translations.mainMenu.swap),
-    },
-    {
-      to: 'https://live.sovryn.app/spot',
-      title: t(translations.mainMenu.spotTrade),
-    },
-    {
-      to: 'https://live.sovryn.app/trade',
-      title: t(translations.mainMenu.marginTrade),
-    },
-    {
-      to: 'https://live.sovryn.app/lend',
-      title: t(translations.mainMenu.lend),
-    },
-    {
-      to: 'https://live.sovryn.app/lend',
-      title: t(translations.mainMenu.borrow),
-    },
-    {
-      to: 'https://live.sovryn.app/liquidity',
-      title: t(translations.mainMenu.liquidity),
-    },
-    {
-      to: '/stake',
-      title: t(translations.mainMenu.staking),
-    },
-    {
-      to: '/',
-      title: t(translations.mainMenu.governance),
-    },
-    {
-      to: 'https://live.sovryn.app/wallet',
-      title: t(translations.mainMenu.wallet),
-    },
-    {
-      to: 'https://live.sovryn.app/stats',
-      title: t(translations.mainMenu.stats),
+      title: t(translations.mainMenu.dapp),
     },
     {
       to: 'https://wiki.sovryn.app/en/sovryn-dapp/faq-dapp',
@@ -249,120 +209,9 @@ export function Header() {
             </div>
           </div>
           <div className="xl:flex flex-row items-center">
-            <div className="mr-4">
-              <Link to="/home">
-                <StyledLogo src={logoSvg} />
-              </Link>
-            </div>
-            <div className="hidden xl:block font-family-montserrat">
-              <a
-                href="https://live.sovryn.app/"
-                // eslint-disable-next-line react/jsx-no-target-blank
-                className="nav-item mr-6"
-              >
-                {t(translations.mainMenu.buySov)}
-              </a>
-              <NavPopover
-                content={
-                  <BPMenu>
-                    <MenuItem
-                      text={t(translations.mainMenu.swap)}
-                      className="bp3-popover-dismiss"
-                      href="https://live.sovryn.app/swap"
-                    ></MenuItem>
-                    <MenuItem
-                      text={t(translations.mainMenu.spotTrade)}
-                      className="bp3-popover-dismiss"
-                      href="https://live.sovryn.app/spot"
-                    ></MenuItem>
-                    <MenuItem
-                      text={t(translations.mainMenu.marginTrade)}
-                      className="bp3-popover-dismiss"
-                      href="https://live.sovryn.app/trade"
-                    ></MenuItem>
-                  </BPMenu>
-                }
-              >
-                <div className={`${isSectionOpen(SECTION_TYPE.TRADE)}`}>
-                  <span className="mr-1">{t(translations.mainMenu.trade)}</span>
-                  <FontAwesomeIcon icon={faChevronDown} size="xs" />
-                </div>
-              </NavPopover>
-              <NavPopover
-                content={
-                  <BPMenu>
-                    <MenuItem
-                      text={t(translations.mainMenu.lend)}
-                      className="bp3-popover-dismiss"
-                      href="https://live.sovryn.app/lend"
-                    ></MenuItem>
-                    <MenuItem
-                      text={t(translations.mainMenu.borrow)}
-                      className="bp3-popover-dismiss"
-                      href="https://live.sovryn.app/lend"
-                    ></MenuItem>
-                    <MenuItem
-                      text={t(translations.mainMenu.liquidity)}
-                      className="bp3-popover-dismiss"
-                      href="https://live.sovryn.app/liquidity"
-                    ></MenuItem>
-                    <MenuItem
-                      text={t(translations.mainMenu.reward)}
-                      className="bp3-popover-dismiss"
-                      href="https://live.sovryn.app/reward"
-                    ></MenuItem>
-                  </BPMenu>
-                }
-              >
-                <div className={`${isSectionOpen(SECTION_TYPE.FINANCE)}`}>
-                  <span className="mr-1">
-                    {t(translations.mainMenu.finance)}
-                  </span>
-                  <FontAwesomeIcon icon={faChevronDown} size="xs" />
-                </div>
-              </NavPopover>
-              <NavPopover
-                content={
-                  <BPMenu>
-                    <MenuItem
-                      href="/stake"
-                      text={t(translations.mainMenu.staking)}
-                      className="bp3-popover-dismiss"
-                    />
-                    <MenuItem
-                      href="/"
-                      text={t(translations.mainMenu.governance)}
-                      className="bp3-popover-dismiss"
-                    />
-                  </BPMenu>
-                }
-              >
-                <div
-                  className={`${
-                    isSectionOpen(SECTION_TYPE.BITOCRACY) && 'font-weight-bold'
-                  }`}
-                >
-                  <span className="mr-1">
-                    {t(translations.mainMenu.bitocracy)}
-                  </span>
-                  <FontAwesomeIcon icon={faChevronDown} size="xs" />
-                </div>
-              </NavPopover>
-              <a
-                href="https://live.sovryn.app/wallet"
-                rel="noopener noreferrer"
-                className="nav-item mr-6 font-light text-white no-underline hover:no-underline font-montserrat hover:text-gold"
-              >
-                {t(translations.mainMenu.wallet)}
-              </a>
-              <a
-                href="https://live.sovryn.app/stats"
-                rel="noopener noreferrer"
-                className="nav-item mr-6 font-light text-white no-underline hover:no-underline font-montserrat hover:text-gold"
-              >
-                {t(translations.mainMenu.stats)}
-              </a>
-            </div>
+            <a href="https://live.sovryn.app" rel="noopener noreferrer">
+              <StyledLogo src={logoSvg} />
+            </a>
           </div>
           <div className="flex justify-start items-center">
             <a
