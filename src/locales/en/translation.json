@@ -143,6 +143,7 @@
     "notice_4": "If you’re new to DeFi, here is the <0>tutorial</0> on how to use SOVRYN."
   },
   "mainMenu": {
+    "dapp": "Sovryn Dapp",
     "buySov": "Buy SOV",
     "trade": "Trade",
     "swap": "Swap",
@@ -150,7 +151,8 @@
     "finance": "Finance",
     "lend": "Lend",
     "borrow": "Borrow",
-    "liquidity": "Market-making",
+    "liquidity": "Liquidity-mining",
+    "reward": "Reward SOV",
     "staking": "Staking",
     "governance": "Governance",
     "wallet": "Portfolio",
@@ -160,7 +162,8 @@
     "referral": "Referral",
     "vote": "Vote",
     "stake": "Stake",
-    "bitocracy": "Bitocracy"
+    "bitocracy": "Bitocracy",
+    "spotTrade": "Spot Trade"
   },
   "trandingPositionSelector": {
     "long": "Long",
