@@ -512,7 +512,7 @@ function VotingRow({
                 onCopy={() =>
                   toastSuccess(<>{t(translations.onCopy.address)}</>, 'copy')
                 }
-                text={voter?.toLocaleLowerCase()}
+                text={voter?.toLocaleLowerCase() || '-'}
               >
                 <Icon
                   title="Copy"
@@ -548,7 +548,7 @@ function VotingRow({
                 onCopy={() =>
                   toastSuccess(<>{t(translations.onCopy.address)}</>, 'copy')
                 }
-                text={txs?.toLocaleLowerCase()}
+                text={txs?.toLocaleLowerCase() || '-'}
               >
                 <Icon
                   title="Copy"
