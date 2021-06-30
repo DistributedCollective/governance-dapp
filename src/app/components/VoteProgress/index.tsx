@@ -1,9 +1,10 @@
+import { bignumber } from 'mathjs';
 import React from 'react';
 import { kFormatter } from 'utils/helpers';
 
 interface Props {
-  value: number;
-  max: number;
+  value: string;
+  max: string;
   color: 'green' | 'red' | 'gray';
   showVotes?: boolean;
 }
@@ -17,8 +18,9 @@ const colorMap = {
 
 export function VoteProgress(props: Props) {
   const percentage = Math.min(
-    Math.round((props.value / props.max) * 100) || 0,
-    100,
+    Math.round(
+      bignumber(props.value).div(bignumber(props.max)).mul(100).toNumber() || 0,
+    ),
   );
   return (
     <div className="w-full flex flex-row flex-no-wrap items-center justify-between mt-3">
