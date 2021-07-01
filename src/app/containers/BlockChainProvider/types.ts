@@ -47,6 +47,7 @@ export interface INetworkToContract {
   SOV_token: IContract;
   priceFeed: IContract;
   swapNetwork: IContract;
+  multicall: IContract;
 }
 
 export interface IContract {

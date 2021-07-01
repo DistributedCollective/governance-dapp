@@ -2,16 +2,15 @@ import { useEffect, useState } from 'react';
 import { ContractName } from '../containers/BlockChainProvider/types';
 import { Proposal } from '../../types/Proposal';
 import { aggregate } from '@makerdao/multicall';
-import { isMainnet } from 'utils/helpers';
+import { getContract } from 'utils/helpers';
+import {
+  CHAIN_ID,
+  rpcNodes,
+} from 'app/containers/BlockChainProvider/classifiers';
 
-const configTestnet = {
-  rpcUrl: 'https://public-node.testnet.rsk.co',
-  multicallAddress: '0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103',
-};
-
-const configMainnet = {
-  rpcUrl: 'https://public-node.rsk.co',
-  multicallAddress: '0x6c62bf5440de2cb157205b15c424bceb5c3368f5',
+const config = {
+  rpcUrl: rpcNodes[CHAIN_ID],
+  multicallAddress: getContract('multicall').address,
 };
 
 export interface MergedProposal extends Proposal {
@@ -33,28 +32,28 @@ export function useProposalList(page: number, limit: number = 0) {
       await aggregate(
         [
           {
-            target: '0x1528f0341a1Ea546780caD690F54b4FBE1834ED4',
+            target: getContract('governorAdmin').address,
             call: ['proposalCount()(uint256)'],
             returns: [
               ['BALANCE_OF_GOVERNOR_ADMIN', val => (adminItemsCount = val)],
             ],
           },
           {
-            target: '0x058FD3F6a40b92b311B49E5e3E064300600021D7',
+            target: getContract('governorOwner').address,
             call: ['proposalCount()(uint256)'],
             returns: [
               ['BALANCE_OF_GOVERNOR_OWNER', val => (ownerItemsCount = val)],
             ],
           },
         ],
-        isMainnet ? configMainnet : configTestnet,
+        config,
       );
 
       setTotal(adminItemsCount + ownerItemsCount);
 
       const adminItems = await getProposalsOf(
         'governorAdmin',
-        '0x1528f0341a1Ea546780caD690F54b4FBE1834ED4',
+        getContract('governorAdmin').address,
         adminItemsCount,
         page,
         limit,
@@ -62,7 +61,7 @@ export function useProposalList(page: number, limit: number = 0) {
 
       const ownerItems = await getProposalsOf(
         'governorOwner',
-        '0x058FD3F6a40b92b311B49E5e3E064300600021D7',
+        getContract('governorOwner').address,
         ownerItemsCount,
         page,
         limit,
@@ -156,7 +155,7 @@ async function getProposalsOf(
     result.push(item);
   }
 
-  await aggregate(calls, isMainnet ? configMainnet : configTestnet);
+  await aggregate(calls, config);
 
   return result;
 }
