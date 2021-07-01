@@ -1,5 +1,8 @@
 import { bignumber } from 'mathjs';
-import { blockTime } from '../app/containers/BlockChainProvider/classifiers';
+import {
+  blockTime,
+  CHAIN_NAME,
+} from '../app/containers/BlockChainProvider/classifiers';
 import { ContractName } from '../app/containers/BlockChainProvider/types';
 import { contracts } from '../app/containers/BlockChainProvider/contracts';
 import { store } from '../store/store';
@@ -165,3 +168,5 @@ export const toChecksumAddress = (address: string) => {
     return address;
   }
 };
+
+export const isMainnet = CHAIN_NAME === 'mainnet';

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { VoteProgress } from '../VoteProgress';
 import { Proposal } from '../../../types/Proposal';
 import { dateByBlocks } from '../../../utils/helpers';
+import { bignumber } from 'mathjs';
 
 export function ProposalListItem(props: Proposal & { description: string }) {
   return (
@@ -37,13 +38,17 @@ export function ProposalListItem(props: Proposal & { description: string }) {
           </div>
           <div className="hidden md:block md:w-1/3">
             <VoteProgress
-              max={props.forVotes + props.againstVotes}
+              max={bignumber(props.forVotes)
+                .add(bignumber(props.againstVotes))
+                .toString()}
               value={props.forVotes}
               color="green"
               showVotes={true}
             />
             <VoteProgress
-              max={props.forVotes + props.againstVotes}
+              max={bignumber(props.forVotes)
+                .add(bignumber(props.againstVotes))
+                .toString()}
               value={props.againstVotes}
               color="gray"
               showVotes={true}

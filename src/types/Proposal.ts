@@ -5,9 +5,9 @@ export interface Proposal {
   startBlock: number;
   endBlock: number;
   startTime: number;
-  forVotes: number;
-  againstVotes: number;
-  quorum: number;
+  forVotes: string;
+  againstVotes: string;
+  quorum: string;
   canceled: boolean;
   executed: boolean;
 }

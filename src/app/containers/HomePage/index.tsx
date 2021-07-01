@@ -9,6 +9,7 @@ import { useProposalList } from '../../hooks/useProposalList';
 
 export function HomePage() {
   const { items, total, loading } = useProposalList(1, 3);
+
   const location = useLocation();
   return (
     <>
@@ -89,12 +90,13 @@ export function HomePage() {
                         </td>
                       </tr>
                     )}
-                    {items.map(item => (
-                      <ProposalRow
-                        key={item.id + item.contractName}
-                        proposal={item}
-                      />
-                    ))}
+                    {!loading &&
+                      items.map(item => (
+                        <ProposalRow
+                          key={item.id + item.contractName}
+                          proposal={item}
+                        />
+                      ))}
                   </tbody>
                 </StyledTable>
               </div>

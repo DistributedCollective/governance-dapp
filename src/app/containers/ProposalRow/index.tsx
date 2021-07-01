@@ -15,6 +15,7 @@ import { ProposalStatusBadge } from '../../components/ProposalStatusBadge';
 import { ProposalRowStateBadge } from '../../components/ProposalRowStateBadge';
 import { dateByBlocks } from '../../../utils/helpers';
 import { MergedProposal } from '../../hooks/useProposalList';
+import { bignumber } from 'mathjs';
 
 interface Props {
   proposal: MergedProposal;
@@ -75,9 +76,11 @@ export function ProposalRow({ proposal }: Props) {
   if (proposal.forVotes !== proposal.againstVotes) {
     blue = Math.min(
       Math.round(
-        (proposal.forVotes / proposal.forVotes + proposal.againstVotes) * 100,
-      ) || 0,
-      100,
+        bignumber(proposal.forVotes)
+          .div(bignumber(proposal.forVotes).add(proposal.againstVotes))
+          .mul(100)
+          .toNumber() || 0,
+      ),
     );
   }
   const red = 100 - blue;
@@ -89,7 +92,7 @@ export function ProposalRow({ proposal }: Props) {
           <>
             <td className="font-montserrat max-w-sm truncate">
               <Linkify newTab={true}>
-                {String(proposal.id).padStart(3, '0')} • {created.description}
+                {String(proposal.id).padStart(3, '0')} • {created?.description}
               </Linkify>
             </td>
             <td className="text-center hidden xl:table-cell truncate">
@@ -131,7 +134,7 @@ export function ProposalRow({ proposal }: Props) {
           <>
             <td className="font-montserrat max-w-sm truncate">
               <Linkify newTab={true}>
-                {String(proposal.id).padStart(3, '0')} • {created.description}
+                {String(proposal.id).padStart(3, '0')} • {created?.description}
               </Linkify>
             </td>
             <td className="text-center hidden xl:table-cell tracking-normal truncate">
