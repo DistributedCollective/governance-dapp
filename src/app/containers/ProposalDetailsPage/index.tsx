@@ -48,7 +48,8 @@ export function ProposalDetailsPage() {
   const { syncBlockNumber } = useSelector(selectBlockChainProvider);
   const [data, setData] = useState<MergedProposal>(null as any);
   const [createdEvent, setCreatedEvent] = useState<any>(null as any);
-  const [loading, setLoading] = useState(false);
+  const [proposalLoading, setProposalLoading] = useState(false);
+  const [createdEventLoading, setCreatedEventLoading] = useState(false);
   const [votesLoading, setVotesLoading] = useState(true);
   const [votes, setVotes] = useState<
     { support: boolean; voter: string; votes: number; txs: string }[]
@@ -60,21 +61,26 @@ export function ProposalDetailsPage() {
     100;
   const votesAgainstProgressPercents = 100 - votesForProgressPercents;
   useEffect(() => {
-    setLoading(true);
+    setProposalLoading(true);
+    setCreatedEventLoading(true);
+
     const get = async () => {
       const proposal = ((await network.call(contractName, 'proposals', [
         id,
       ])) as unknown) as Proposal;
       setData({ ...proposal, contractName });
+
+      setProposalLoading(false);
+
       const events = await network.getPastEvents(
         contractName,
         'ProposalCreated',
         { id: proposal.id },
         proposal.startBlock - 1,
-        proposal.endBlock,
+        proposal.startBlock + 1,
       );
       setCreatedEvent(events[0]);
-      setLoading(false);
+      setCreatedEventLoading(false);
     };
     get().then().catch();
   }, [id, syncBlockNumber, contractName]);
@@ -92,12 +98,10 @@ export function ProposalDetailsPage() {
           data.endBlock,
         )
         .then(events => {
-          events.map(item => {
-            if (item.returnValues.proposalId === id) {
-              filteredEvent.push(item);
-            }
-            return filteredEvent;
-          });
+          const filtered = events.filter(
+            item => item.returnValues.proposalId === id,
+          );
+          filteredEvent.push(filtered);
 
           setVotes(
             filteredEvent.map(({ returnValues, transactionHash }) => ({
@@ -147,7 +151,7 @@ export function ProposalDetailsPage() {
           <div className="xl:flex justify-between items-start">
             <h3
               className={`proposal__title font-semibold break-all w-2/3 mt-2 overflow-hidden max-h-24 leading-12 truncate ${
-                loading && 'skeleton'
+                createdEventLoading && 'skeleton'
               }`}
             >
               <Linkify properties={{ target: '_blank' }}>
@@ -157,7 +161,7 @@ export function ProposalDetailsPage() {
             <div className="text-right font-semibold">
               <p
                 className={`mt-2 text-lg leading-6 tracking-normal ${
-                  loading && 'skeleton'
+                  createdEventLoading && 'skeleton'
                 }`}
               >
                 Voting ends:{' '}
@@ -171,7 +175,7 @@ export function ProposalDetailsPage() {
           </div>
           <div
             className={`flex justify-center xl:mt-20 mt-10
-            ${loading && 'skeleton'}`}
+            ${proposalLoading && 'skeleton'}`}
           >
             <div className="mr-10 text-right">
               <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
@@ -235,7 +239,7 @@ export function ProposalDetailsPage() {
           {data?.id &&
             isConnected &&
             state !== ProposalState.Active &&
-            !votesLoading && (
+            !proposalLoading && (
               <div className="xl:flex items-center justify-between mt-16">
                 <div className="tracking-normal vote__success rounded-xl bg-opacity-30 bg-turquoise mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
                   {kFormatter(numberFromWei(data?.forVotes || 0))} Votes For
@@ -344,7 +348,7 @@ export function ProposalDetailsPage() {
               </a> */}
               <p
                 className={`text-gold text-sm tracking-normal leading-3 pt-3 ${
-                  loading && 'skeleton'
+                  proposalLoading && 'skeleton'
                 }`}
               >
                 Proposal id: {String(data?.id).padStart(3, '0')}
