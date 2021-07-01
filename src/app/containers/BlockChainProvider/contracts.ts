@@ -8,6 +8,7 @@ import tokenAbi from './abi/abiTestToken.json';
 import abiTestWBRTCToken from './abi/abiTestWBRTCToken.json';
 import priceFeedsAbi from './abi/priceFeedAbi.json';
 import SwapNetworkABI from './abi/SovrynSwapNetwork.json';
+import multicallABI from './abi/multicall.json';
 
 export const contracts: IContractNetworks = {
   testnet: {
@@ -87,6 +88,10 @@ export const contracts: IContractNetworks = {
       address: '0x6a9A07972D07e58F0daf5122d11E069288A375fb',
       abi: tokenAbi as any,
     },
+    multicall: {
+      address: '0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103',
+      abi: multicallABI as any,
+    },
   },
   mainnet: {
     sovToken: {
@@ -164,6 +169,10 @@ export const contracts: IContractNetworks = {
     SOV_token: {
       address: '0xEFc78fc7d48b64958315949279Ba181c2114ABBd',
       abi: tokenAbi as any,
+    },
+    multicall: {
+      address: '0x6c62bf5440de2cb157205b15c424bceb5c3368f5',
+      abi: multicallABI as any,
     },
   },
 };

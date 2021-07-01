@@ -203,7 +203,7 @@ export function ProposalDetailsPage() {
                 !isNaN(votesAgainstProgressPercents) && (
                   <div
                     className="progress__circle"
-                    style={{ right: votesForProgressPercents + '%' }}
+                    style={{ right: votesAgainstProgressPercents + '%' }}
                   />
                 )}
             </StyledBar>
@@ -249,8 +249,8 @@ export function ProposalDetailsPage() {
 
           {data?.id && isConnected && state === ProposalState.Active && (
             <VoteCaster
-              voutesFor={data.forVotes}
-              voutesAgainst={data.againstVotes}
+              votesFor={data.forVotes}
+              votesAgainst={data.againstVotes}
               proposalId={data.id}
               proposal={data}
               contractName={data.contractName}
@@ -512,7 +512,7 @@ function VotingRow({
                 onCopy={() =>
                   toastSuccess(<>{t(translations.onCopy.address)}</>, 'copy')
                 }
-                text={voter?.toLocaleLowerCase()}
+                text={voter?.toLocaleLowerCase() || '-'}
               >
                 <Icon
                   title="Copy"
@@ -548,7 +548,7 @@ function VotingRow({
                 onCopy={() =>
                   toastSuccess(<>{t(translations.onCopy.address)}</>, 'copy')
                 }
-                text={txs?.toLocaleLowerCase()}
+                text={txs?.toLocaleLowerCase() || '-'}
               >
                 <Icon
                   title="Copy"
