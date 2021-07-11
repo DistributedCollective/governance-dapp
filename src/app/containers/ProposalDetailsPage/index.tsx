@@ -87,8 +87,8 @@ export function ProposalDetailsPage() {
 
   useEffect(() => {
     if (data?.id) {
-      let filteredEvent = [] as any;
       setVotesLoading(true);
+
       network
         .getPastEvents(
           data.contractName,
@@ -98,18 +98,15 @@ export function ProposalDetailsPage() {
           data.endBlock,
         )
         .then(events => {
-          const filtered = events.filter(
-            item => item.returnValues.proposalId === id,
-          );
-          filteredEvent.push(filtered);
-
           setVotes(
-            filteredEvent.map(({ returnValues, transactionHash }) => ({
-              support: returnValues.support,
-              voter: returnValues.voter,
-              votes: returnValues.votes,
-              txs: transactionHash,
-            })),
+            events
+              .filter(item => item.returnValues.proposalId === id)
+              ?.map(({ returnValues, transactionHash }) => ({
+                support: returnValues?.support,
+                voter: returnValues?.voter,
+                votes: returnValues?.votes,
+                txs: transactionHash,
+              })),
           );
           setVotesLoading(false);
         })
