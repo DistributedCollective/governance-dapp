@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
-import logoSvg from 'assets/images/sovryn-logo-white.svg';
+import { ReactComponent as SovLogo } from 'assets/images/sovryn-logo-alpha.svg';
 import { translations } from 'locales/i18n';
 
 import { media } from '../../../styles/media';
@@ -172,7 +172,7 @@ export function Header() {
           </div>
           <div className="xl:flex flex-row items-center">
             <a href="https://live.sovryn.app" rel="noopener noreferrer">
-              <StyledLogo src={logoSvg} />
+              <StyledLogo />
             </a>
           </div>
           <div className="flex justify-start items-center">
@@ -193,15 +193,21 @@ export function Header() {
     </>
   );
 }
-const StyledLogo = styled.img.attrs(_ => ({
+const StyledLogo = styled(SovLogo).attrs(_ => ({
   alt: '',
 }))`
   width: 130px;
-  height: 50px;
+  height: 32px;
   margin: 0 0 0 1rem;
+
+  // custom font for "Alpha" logo text
+  #Alpha tspan {
+    font-family: Orbitron-Medium, Orbitron;
+  }
+
   ${media.xl`
-    width: 284px;
-    height: 48px;
+    width: 216px;
+    height: 53px;
     margin: 0;
   `}
 `;
