@@ -204,7 +204,7 @@ export function ProposalDetailsPage() {
                 !isNaN(votesAgainstProgressPercents) && (
                   <div
                     className="progress__circle"
-                    style={{ right: votesAgainstProgressPercents + '%' }}
+                    style={{ left: votesAgainstProgressPercents + '%' }}
                   />
                 )}
             </StyledBar>
