@@ -127,7 +127,7 @@
   },
   "wallet": {
     "btn": "Connect Wallet",
-    "connect_btn": "Engage wallet",
+    "connect_btn": "Connect wallet",
     "disconnect": "Disconnect",
     "my_wallet": "My Wallet",
     "referrals": "Refer a friend"
