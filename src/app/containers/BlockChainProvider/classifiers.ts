@@ -1,18 +1,13 @@
 import { ChainId } from './types';
 
 export const rpcNodes = {
-  30: 'https://mainnet2.sovryn.app/rpc',
+  30: 'https://public-node.rsk.co',
   31: 'https://public-node.testnet.rsk.co',
 };
 
 export const wssNodes = {
   30: 'wss://mainnet2.sovryn.app/ws',
   31: 'wss://testnet.sovryn.app/ws',
-};
-
-export const rpcBackupNodes = {
-  30: 'https://public-node.rsk.co',
-  31: 'https://public-node.testnet.rsk.co',
 };
 
 export const blockExplorers = {
