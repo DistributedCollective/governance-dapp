@@ -214,10 +214,7 @@ export function ProposalDetailsPage() {
                   )} / ${kFormatter(numberFromWei(totalVotingPower || 0))}`}
                 </>
               ) : (
-                <div
-                  className="skeleton mx-auto"
-                  style={{ width: '200px', height: '40px' }}
-                />
+                <VotePowerSkeleton className="skeleton mx-auto" />
               )}
             </div>
 
@@ -814,4 +811,9 @@ const StyledTable = styled.table`
   .mobile-row {
     align-content: center;
   }
+`;
+
+const VotePowerSkeleton = styled.div`
+  width: 200px;
+  height: 40px;
 `;
