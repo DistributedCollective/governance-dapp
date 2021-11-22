@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Scrollbars } from 'react-custom-scrollbars';
@@ -54,12 +54,43 @@ export function ProposalDetailsPage() {
   const [votes, setVotes] = useState<
     { support: boolean; voter: string; votes: number; txs: string }[]
   >([]);
+  const [totalVotingPower, setTotalVotingPower] = useState('0');
+  const [totalVotingPowerLoading, setTotalVotingPowerLoading] = useState(true);
+
   const votesForProgressPercents =
     (numberFromWei(data?.forVotes || 0) /
       (numberFromWei(data?.forVotes || 0) +
         numberFromWei(data?.againstVotes || 0))) *
     100;
   const votesAgainstProgressPercents = 100 - votesForProgressPercents;
+
+  useEffect(() => {
+    const get = async () => {
+      const totalVotePower = (await network.call(
+        'staking',
+        'getPriorTotalVotingPower',
+        [syncBlockNumber - 1, Math.round(Date.now() / 1e3)],
+      )) as string;
+      setTotalVotingPower(totalVotePower);
+      setTotalVotingPowerLoading(false);
+    };
+    if (!proposalLoading && Number(syncBlockNumber) > 0) {
+      get().then().catch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(data), syncBlockNumber, proposalLoading]);
+
+  const totalVotedPower = useMemo(
+    () => Number(data?.forVotes) + Number(data?.againstVotes),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(data)],
+  );
+
+  const voteRatio = useMemo(
+    () => ((totalVotedPower / Number(totalVotingPower)) * 100).toFixed(2),
+    [totalVotingPower, totalVotedPower],
+  );
+
   useEffect(() => {
     setProposalLoading(true);
     setCreatedEventLoading(true);
@@ -171,65 +202,86 @@ export function ProposalDetailsPage() {
             </div>
           </div>
           <div
-            className={`flex justify-center xl:mt-20 mt-10
+            className={`flex flex-col
             ${proposalLoading && 'skeleton'}`}
           >
-            <div className="mr-10 text-right">
-              <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
-                {(votesForProgressPercents || 0).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-                %
-              </span>
-              <Tooltip2
-                className={Classes.TOOLTIP2_INDICATOR}
-                minimal={true}
-                content={
-                  <p className="text-white text-sm tracking-normal">
-                    {numberFromWei(data?.forVotes || 0)} votes
-                  </p>
-                }
-                placement="top"
-              >
-                <p className="xl:text-lg text-sm font-light tracking-normal">
-                  {kFormatter(numberFromWei(data?.forVotes || 0))} votes
-                </p>
-              </Tooltip2>
+            <div className="xl:mt-20 mt-10 mb-6 text-center">
+              <div className="mb-2">Percentage Voted:</div>
+              {!totalVotingPowerLoading ? (
+                <>
+                  {`${voteRatio}% = ${kFormatter(
+                    numberFromWei(totalVotedPower || 0),
+                  )} / ${kFormatter(numberFromWei(totalVotingPower || 0))}`}
+                </>
+              ) : (
+                <div
+                  className="skeleton mx-auto"
+                  style={{ width: '200px', height: '40px' }}
+                />
+              )}
             </div>
-            <StyledBar>
-              <div className="progress__blue" />
-              <div className="progress__red" />
-              {!isNaN(votesForProgressPercents) &&
-                !isNaN(votesAgainstProgressPercents) && (
-                  <div
-                    className="progress__circle"
-                    style={{ left: votesAgainstProgressPercents + '%' }}
-                  />
-                )}
-            </StyledBar>
-            <div className="ml-10">
-              <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
-                {(votesAgainstProgressPercents || 0).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-                %
-              </span>
-              <Tooltip2
-                className={Classes.TOOLTIP2_INDICATOR}
-                minimal={true}
-                content={
-                  <p className="text-white text-sm tracking-normal">
-                    {numberFromWei(data?.againstVotes || 0)} votes
+
+            <div className="flex justify-center">
+              <div className="mr-10 text-right">
+                <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
+                  {(votesForProgressPercents || 0).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                  %
+                </span>
+                <Tooltip2
+                  className={Classes.TOOLTIP2_INDICATOR}
+                  minimal={true}
+                  content={
+                    <p className="text-white text-sm tracking-normal">
+                      {numberFromWei(data?.forVotes || 0)} votes
+                    </p>
+                  }
+                  placement="top"
+                >
+                  <p className="xl:text-lg text-sm font-light tracking-normal">
+                    {kFormatter(numberFromWei(data?.forVotes || 0))} votes
                   </p>
-                }
-                placement="top"
-              >
-                <p className="xl:text-lg text-sm font-light tracking-normal">
-                  {kFormatter(numberFromWei(data?.againstVotes || 0))} votes
-                </p>
-              </Tooltip2>
+                </Tooltip2>
+              </div>
+              <StyledBar>
+                <div className="progress__blue" />
+                <div className="progress__red" />
+                {!isNaN(votesForProgressPercents) &&
+                  !isNaN(votesAgainstProgressPercents) && (
+                    <div
+                      className="progress__circle"
+                      style={{ left: votesAgainstProgressPercents + '%' }}
+                    />
+                  )}
+              </StyledBar>
+              <div className="ml-10">
+                <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
+                  {(votesAgainstProgressPercents || 0).toLocaleString(
+                    undefined,
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    },
+                  )}
+                  %
+                </span>
+                <Tooltip2
+                  className={Classes.TOOLTIP2_INDICATOR}
+                  minimal={true}
+                  content={
+                    <p className="text-white text-sm tracking-normal">
+                      {numberFromWei(data?.againstVotes || 0)} votes
+                    </p>
+                  }
+                  placement="top"
+                >
+                  <p className="xl:text-lg text-sm font-light tracking-normal">
+                    {kFormatter(numberFromWei(data?.againstVotes || 0))} votes
+                  </p>
+                </Tooltip2>
+              </div>
             </div>
           </div>
 
