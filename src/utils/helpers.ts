@@ -1,9 +1,13 @@
 import { bignumber } from 'mathjs';
-import { blockTime } from '../app/containers/BlockChainProvider/classifiers';
+import {
+  blockTime,
+  CHAIN_NAME,
+} from '../app/containers/BlockChainProvider/classifiers';
 import { ContractName } from '../app/containers/BlockChainProvider/types';
 import { contracts } from '../app/containers/BlockChainProvider/contracts';
 import { store } from '../store/store';
 import { Unit } from 'web3-utils';
+import { utils } from '@rsksmart/rsk3';
 
 export const genesisAddress = '0x0000000000000000000000000000000000000000';
 
@@ -22,8 +26,25 @@ export function getSecondsBetweenBlocks(
   return (Number(endBlock) - Number(startBlock)) * blockTime;
 }
 
+export const weiToFixed = (amount: any, decimals: number = 0): string => {
+  return roundToSmaller(bignumber(fromWei(amount, 'ether')), decimals);
+};
+
 export function printDate(timestamp: number) {
   return new Date(timestamp).toLocaleString();
+}
+
+export function numberToUSD(value: number, decimals: number) {
+  if (value === null) {
+    return null;
+  }
+  return value.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    currencyDisplay: 'code',
+    maximumFractionDigits: decimals,
+    minimumFractionDigits: 0,
+  });
 }
 
 export function dateByBlocks(
@@ -139,3 +160,13 @@ export const isMobile = () => {
     navigator.userAgent,
   );
 };
+
+export const toChecksumAddress = (address: string) => {
+  try {
+    return !!address ? utils.toChecksumAddress(address) : '';
+  } catch (e) {
+    return address;
+  }
+};
+
+export const isMainnet = CHAIN_NAME === 'mainnet';

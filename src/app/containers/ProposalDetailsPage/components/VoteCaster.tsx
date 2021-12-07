@@ -13,9 +13,9 @@ import { Popover2 } from '@blueprintjs/popover2';
 interface Props {
   proposalId: number;
   contractName: ContractName;
-  voutesAgainst: number;
+  votesAgainst: string;
   proposal: Proposal;
-  voutesFor: number;
+  votesFor: string;
 }
 
 export function VoteCaster(props: Props) {
@@ -121,7 +121,7 @@ export function VoteCaster(props: Props) {
         content={
           <>
             You will cast {kFormatter(numberFromWei(votesCurrent.value || 0))}{' '}
-            votes agaist
+            votes against
           </>
         }
       >
