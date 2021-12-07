@@ -16,8 +16,8 @@ export const databaseRpcNodes = {
 };
 
 export const rpcBackupNodes = {
-  30: 'https://public-node.rsk.co',
-  31: 'https://public-node.testnet.rsk.co',
+  30: 'wss://mainnet2.sovryn.app/websocket',
+  31: 'wss://testnet.sovryn.app/websocket',
 };
 
 export const blockExplorers = {

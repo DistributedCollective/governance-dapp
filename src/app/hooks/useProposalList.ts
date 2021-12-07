@@ -8,6 +8,10 @@ import {
   rpcNodes,
 } from 'app/containers/BlockChainProvider/classifiers';
 
+const hideExperimentalProposals: Array<[ContractName, number]> = [
+  ['governorAdmin', 8],
+];
+
 const config = {
   rpcUrl: rpcNodes[CHAIN_ID],
   multicallAddress: getContract('multicall').address,
@@ -26,7 +30,6 @@ export function useProposalList(page: number, limit: number = 0) {
     setLoading(true);
 
     const get = async () => {
-      
       let adminItemsCount = 0;
       let ownerItemsCount = 0;
 
@@ -67,12 +70,23 @@ export function useProposalList(page: number, limit: number = 0) {
         page,
         limit,
       );
-      
-      const [adminItems, ownerItems] = await Promise.all([adminPromise, ownerPromise]);
 
-      const merged = [...adminItems, ...ownerItems].sort(
-        (a, b) => b.startBlock - a.startBlock,
-      );
+      const [adminItems, ownerItems] = await Promise.all([
+        adminPromise,
+        ownerPromise,
+      ]);
+
+      const merged = [...adminItems, ...ownerItems]
+        .sort((a, b) => b.startBlock - a.startBlock)
+        .filter(item => {
+          const ids = hideExperimentalProposals
+            .filter(cc => cc[0] === item.contractName)
+            .map(item => item[1]);
+          if (ids.length) {
+            return !ids.includes(item.id);
+          }
+          return true;
+        });
 
       if (limit) {
         return merged.slice(0, limit);

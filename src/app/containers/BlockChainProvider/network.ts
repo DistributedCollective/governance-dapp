@@ -27,6 +27,7 @@ class Network {
   public wsWeb3: Web3 = null as any;
   public writeWeb3: Web3 = null as any;
   public contracts: {} = {};
+  public wsContracts: {} = {};
   public writeContracts: { [key: string]: Contract } = {};
 
   private _databaseWeb3: Web3 = null as any;
@@ -97,6 +98,16 @@ class Network {
 
     if (isWebsocket) {
       const provider = this.wsWeb3.currentProvider as any;
+
+      for (const contractName of Object.keys(
+        contracts[network] as INetworkToContract,
+      )) {
+        const { address, abi } = contracts[network][contractName];
+        this.wsContracts[contractName] = this.makeContract(web3, {
+          address,
+          abi,
+        });
+      }
 
       provider.on('end', () => {
         provider.removeAllListeners('end');
