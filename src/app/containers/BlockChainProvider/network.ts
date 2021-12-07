@@ -26,6 +26,7 @@ class Network {
   public wsWeb3: Web3 = null as any;
   public writeWeb3: Web3 = null as any;
   public contracts: {} = {};
+  public wsContracts: {} = {};
   public writeContracts: { [key: string]: Contract } = {};
 
   private _network: NetworkName = null as any;
@@ -56,6 +57,16 @@ class Network {
 
     if (isWebsocket) {
       const provider = this.wsWeb3.currentProvider as any;
+
+      for (const contractName of Object.keys(
+        contracts[network] as INetworkToContract,
+      )) {
+        const { address, abi } = contracts[network][contractName];
+        this.wsContracts[contractName] = this.makeContract(web3, {
+          address,
+          abi,
+        });
+      }
 
       provider.on('end', () => {
         provider.removeAllListeners('end');
@@ -256,7 +267,11 @@ class Network {
     fromBlock: number = 0,
     toBlock: number | 'latest' = 'latest',
   ): Promise<EventData[]> {
-    return this.contracts[contractName].getPastEvents(eventName, {
+    if (!this.wsContracts.hasOwnProperty(contractName)) {
+      return Promise.resolve([]);
+    }
+
+    return this.wsContracts[contractName].getPastEvents(eventName, {
       fromBlock,
       toBlock,
       filter,

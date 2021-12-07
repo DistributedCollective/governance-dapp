@@ -13,30 +13,27 @@ import Web3 from 'web3';
 import { network } from './network';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { ChainId } from './types';
-import { wssNodes } from './classifiers';
+import { rpcNodes, wssNodes } from './classifiers';
 import { selectBlockChainProvider } from './selectors';
 import { TransactionReceipt } from 'web3-core';
 
 function* setupSaga({ payload }: PayloadAction<ChainId>) {
-  const nodeUrl = wssNodes[payload];
-  // const nodeUrl = rpcBackupNodes[payload];
-  let web3Provider;
-  let isWebsocket = false;
-  if (nodeUrl.startsWith('http')) {
-    web3Provider = new Web3.providers.HttpProvider(nodeUrl, {
-      keepAlive: true,
-    });
-  } else {
-    web3Provider = new Web3.providers.WebsocketProvider(nodeUrl, {
+  const web3Provider = new Web3.providers.HttpProvider(rpcNodes[payload], {
+    keepAlive: true,
+  });
+
+  const web3WsProvider = new Web3.providers.WebsocketProvider(
+    wssNodes[payload],
+    {
       timeout: 5,
       reconnectDelay: 10,
-    });
-    isWebsocket = true;
-  }
+    },
+  );
   const web3 = new Web3(web3Provider);
+  const wsWeb3 = new Web3(web3WsProvider);
 
   network.setWeb3(web3, payload === 30 ? 'mainnet' : 'testnet');
-  network.setWsWeb3(web3, payload === 30 ? 'mainnet' : 'testnet', isWebsocket);
+  network.setWsWeb3(wsWeb3, payload === 30 ? 'mainnet' : 'testnet', true);
 
   // const threshold = yield call(governance_proposalThreshold);
   // const quorumVotes = yield call(governance_quorumVotes);
@@ -194,6 +191,7 @@ function createBlockChannels({ web3 }) {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function* callCreateBlockChannels() {
   const web3 = network.wsWeb3;
   const blockChannel = yield call(createBlockChannels, { web3 });
@@ -208,6 +206,8 @@ function* callCreateBlockChannels() {
   }
 }
 
+// used with ws channel
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function* processBlockHeader(event) {
   const blockNumber = event.payload.number;
   const web3 = network.web3;
@@ -228,8 +228,8 @@ function* processBlockHeader(event) {
 
 export function* blockChainProviderSaga() {
   yield takeLatest(actions.setup.type, setupSaga);
-  yield takeLatest(actions.setupCompleted.type, callCreateBlockChannels);
-  yield takeEvery(actions.blockReceived.type, processBlockHeader);
-  // yield takeLatest(actions.setupCompleted.type, callCreateBlockPollChannel);
-  // yield takeEvery(actions.processBlock.type, processBlock); // when using poll channel
+  // yield takeLatest(actions.setupCompleted.type, callCreateBlockChannels);
+  // yield takeEvery(actions.blockReceived.type, processBlockHeader); // when using ws channel
+  yield takeLatest(actions.setupCompleted.type, callCreateBlockPollChannel);
+  yield takeEvery(actions.processBlock.type, processBlock); // when using poll channel
 }
