@@ -55,7 +55,7 @@ export function useProposalList(page: number, limit: number = 0) {
 
       setTotal(adminItemsCount + ownerItemsCount);
 
-      const adminItems = await getProposalsOf(
+      const adminPromise = await getProposalsOf(
         'governorAdmin',
         getContract('governorAdmin').address,
         adminItemsCount,
@@ -63,13 +63,18 @@ export function useProposalList(page: number, limit: number = 0) {
         limit,
       );
 
-      const ownerItems = await getProposalsOf(
+      const ownerPromise = await getProposalsOf(
         'governorOwner',
         getContract('governorOwner').address,
         ownerItemsCount,
         page,
         limit,
       );
+
+      const [adminItems, ownerItems] = await Promise.all([
+        adminPromise,
+        ownerPromise,
+      ]);
 
       const merged = [...adminItems, ...ownerItems]
         .sort((a, b) => b.startBlock - a.startBlock)
