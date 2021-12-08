@@ -7,7 +7,7 @@ export const rpcNodes = {
 
 export const wssNodes = {
   30: 'wss://mainnet.sovryn.app/websocket',
-  31: 'wss://testnet.sovryn.app/websocket',
+  31: 'wss://testnet.sovryn.app/ws',
 };
 
 export const blockExplorers = {
