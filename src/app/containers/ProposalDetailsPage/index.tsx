@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useSelector } from 'react-redux';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +35,8 @@ import {
 } from '../../containers/BlockChainProvider/requests/governance';
 import { useAccount } from 'app/hooks/useAccount';
 import { useContractCallWithValue } from 'app/hooks/useContractCallWithValue';
+import { Footer } from 'app/components/Footer';
+import { Header } from 'app/components/Header';
 
 export function ProposalDetailsPage() {
   const { id, contractName } = useParams<any>();
@@ -46,11 +49,11 @@ export function ProposalDetailsPage() {
   );
   const isConnected = useIsConnected();
   const { syncBlockNumber } = useSelector(selectBlockChainProvider);
+  const votesLoading = useRef(false);
   const [data, setData] = useState<MergedProposal>(null as any);
   const [createdEvent, setCreatedEvent] = useState<any>(null as any);
   const [proposalLoading, setProposalLoading] = useState(false);
   const [createdEventLoading, setCreatedEventLoading] = useState(false);
-  const [votesLoading, setVotesLoading] = useState(true);
   const [votes, setVotes] = useState<
     { support: boolean; voter: string; votes: number; txs: string }[]
   >([]);
@@ -77,40 +80,45 @@ export function ProposalDetailsPage() {
         'ProposalCreated',
         { id: proposal.id },
         proposal.startBlock - 1,
-        proposal.startBlock + 1,
+        proposal.startBlock,
       );
+
       setCreatedEvent(events[0]);
       setCreatedEventLoading(false);
     };
     get().then().catch();
-  }, [id, syncBlockNumber, contractName]);
+  }, [id, contractName]);
 
   useEffect(() => {
     if (data?.id) {
-      setVotesLoading(true);
-
-      network
-        .getPastEvents(
-          data.contractName,
-          'VoteCast',
-          { proposalId: data.id },
-          data.startBlock,
-          data.endBlock,
-        )
-        .then(events => {
-          setVotes(
-            events
-              .filter(item => item.returnValues.proposalId === id)
-              ?.map(({ returnValues, transactionHash }) => ({
-                support: returnValues?.support,
-                voter: returnValues?.voter,
-                votes: returnValues?.votes,
-                txs: transactionHash,
-              })),
-          );
-          setVotesLoading(false);
-        })
-        .catch(console.error);
+      if (!votesLoading.current) {
+        votesLoading.current = true;
+        network
+          .getPastEvents(
+            data.contractName,
+            'VoteCast',
+            { proposalId: data.id },
+            data.startBlock,
+            data.endBlock,
+          )
+          .then(events => {
+            setVotes(
+              events
+                .filter(item => item.returnValues.proposalId === id)
+                ?.map(({ returnValues, transactionHash }) => ({
+                  support: returnValues?.support,
+                  voter: returnValues?.voter,
+                  votes: returnValues?.votes,
+                  txs: transactionHash,
+                })),
+            );
+            votesLoading.current = false;
+          })
+          .catch(error => {
+            console.error(error);
+            votesLoading.current = false;
+          });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(data), syncBlockNumber]);
@@ -143,160 +151,189 @@ export function ProposalDetailsPage() {
 
   return (
     <>
-      <div className="pt-14 px-4 pb-4">
-        <div className="proposap-detail">
-          <div className="xl:flex justify-between items-start">
-            <h3
-              className={`proposal__title font-semibold break-all w-2/3 mt-2 overflow-hidden max-h-24 leading-12 truncate ${
-                createdEventLoading && 'skeleton'
-              }`}
+      <Helmet>
+        <title>SOVRYN Bitocracy</title>
+        <meta name="description" content="SOVRYN Bitocracy" />
+      </Helmet>
+      <Header />
+      <main>
+        <div className="container">
+          <div className="block text-white pt-8 pb-6">
+            <Link
+              to="/home"
+              className="text-white hover:no-underline hover:text-gold"
             >
-              <Linkify properties={{ target: '_blank' }}>
-                {createdEvent?.returnValues?.description || 'No description'}
-              </Linkify>
-            </h3>
-            <div className="text-right font-semibold">
-              <p
-                className={`mt-2 text-lg leading-6 tracking-normal ${
-                  createdEventLoading && 'skeleton'
-                }`}
-              >
-                Voting ends:{' '}
-                {dateByBlocks(
-                  data?.startTime,
-                  createdEvent?.blockNumber,
-                  data?.endBlock,
-                )}
-              </p>
-            </div>
+              &lt; Proposals
+            </Link>
           </div>
-          <div
-            className={`flex justify-center xl:mt-20 mt-10
-            ${proposalLoading && 'skeleton'}`}
-          >
-            <div className="mr-10 text-right">
-              <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
-                {(votesForProgressPercents || 0).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-                %
-              </span>
-              <Tooltip2
-                className={Classes.TOOLTIP2_INDICATOR}
-                minimal={true}
-                content={
-                  <p className="text-white text-sm tracking-normal">
-                    {numberFromWei(data?.forVotes || 0)} votes
-                  </p>
-                }
-                placement="top"
-              >
-                <p className="xl:text-lg text-sm font-light tracking-normal">
-                  {kFormatter(numberFromWei(data?.forVotes || 0))} votes
-                </p>
-              </Tooltip2>
-            </div>
-            <StyledBar>
-              <div className="progress__blue" />
-              <div className="progress__red" />
-              {!isNaN(votesForProgressPercents) &&
-                !isNaN(votesAgainstProgressPercents) && (
-                  <div
-                    className="progress__circle"
-                    style={{ left: votesAgainstProgressPercents + '%' }}
-                  />
-                )}
-            </StyledBar>
-            <div className="ml-10">
-              <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
-                {(votesAgainstProgressPercents || 0).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-                %
-              </span>
-              <Tooltip2
-                className={Classes.TOOLTIP2_INDICATOR}
-                minimal={true}
-                content={
-                  <p className="text-white text-sm tracking-normal">
-                    {numberFromWei(data?.againstVotes || 0)} votes
-                  </p>
-                }
-                placement="top"
-              >
-                <p className="xl:text-lg text-sm font-light tracking-normal">
-                  {kFormatter(numberFromWei(data?.againstVotes || 0))} votes
-                </p>
-              </Tooltip2>
-            </div>
-          </div>
-
-          {data?.id &&
-            isConnected &&
-            state !== ProposalState.Active &&
-            !proposalLoading && (
-              <div className="xl:flex items-center justify-between mt-16">
-                <div className="tracking-normal vote__success rounded-xl bg-opacity-30 bg-turquoise mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
-                  {kFormatter(numberFromWei(data?.forVotes || 0))} Votes For
-                </div>
-                <div className="tracking-normal vote__danger rounded-xl bg-opacity-30 bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-white border-red">
-                  {kFormatter(numberFromWei(data?.againstVotes || 0))} Votes
-                  Against
-                </div>
-              </div>
-            )}
-
-          {data?.id && isConnected && state === ProposalState.Active && (
-            <VoteCaster
-              votesFor={data.forVotes}
-              votesAgainst={data.againstVotes}
-              proposalId={data.id}
-              proposal={data}
-              contractName={data.contractName}
-            />
-          )}
-
-          <div className="xl:flex -mx-2 mt-8">
-            <Scrollbars
-              className="rounded-2xl border mb-4 xl:mb-0 xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48"
-              style={{ height: 195 }}
-            >
-              <div className="mx-4">
-                <VotingTable
-                  items={votes}
-                  showSupporters={true}
-                  loading={votesLoading}
-                />
-              </div>
-            </Scrollbars>
-            <Scrollbars
-              className="rounded-2xl border xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48"
-              style={{ height: 195 }}
-            >
-              <div className="mx-4">
-                <VotingTable
-                  items={votes}
-                  showSupporters={false}
-                  loading={votesLoading}
-                />
-              </div>
-            </Scrollbars>
-          </div>
-          <div className="xl:flex mt-10">
-            <div className="xl:w-3/4 w-full mb-5 xl:mb-0">
-              <div className="bg-gray-100 xl:py-8 py-4 xl:px-20 px-4 rounded-2xl">
-                {/*<h4 className="mb-8 font-semibold xl:text-2xl text-xl tracking-widest">*/}
-                {/*  {createdEvent.description}*/}
-                {/*</h4>*/}
-                <p className="break-all mt-8">
+          <div className="px-4 pb-4">
+            <div className="proposap-detail p-6 bg-black rounded-lg">
+              <div className="xl:flex justify-between items-start">
+                <h3
+                  className={`proposal__title font-semibold break-all w-2/3 mt-2 overflow-hidden max-h-24 leading-12 truncate ${
+                    createdEventLoading && 'skeleton'
+                  }`}
+                >
                   <Linkify properties={{ target: '_blank' }}>
                     {createdEvent?.returnValues?.description ||
                       'No description'}
                   </Linkify>
-                </p>
-                {/* <p className="text-sm">Resolved:</p>
+                </h3>
+                <div className="text-right font-semibold">
+                  <p
+                    className={`mt-2 text-lg leading-6 tracking-normal ${
+                      createdEventLoading && 'skeleton'
+                    }`}
+                  >
+                    Voting ends:{' '}
+                    {dateByBlocks(
+                      data?.startTime,
+                      createdEvent?.blockNumber,
+                      data?.endBlock,
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div
+                className={`flex justify-center xl:mt-20 mt-10
+            ${proposalLoading && 'skeleton'}`}
+              >
+                <div className="mr-10 text-right">
+                  <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
+                    {(votesForProgressPercents || 0).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                    %
+                  </span>
+                  <Tooltip2
+                    className={Classes.TOOLTIP2_INDICATOR}
+                    minimal={true}
+                    content={
+                      <p className="text-white text-sm tracking-normal">
+                        {numberFromWei(data?.forVotes || 0)} votes
+                      </p>
+                    }
+                    placement="top"
+                  >
+                    <p className="xl:text-lg text-sm font-light tracking-normal">
+                      {kFormatter(numberFromWei(data?.forVotes || 0))} votes
+                    </p>
+                  </Tooltip2>
+                </div>
+                <StyledBar>
+                  <div
+                    className="progress__blue"
+                    style={{ width: `${votesForProgressPercents}%` }}
+                  />
+                  <div
+                    className="progress__red"
+                    style={{ width: `${votesAgainstProgressPercents}%` }}
+                  />
+                  {!isNaN(votesForProgressPercents) &&
+                    !isNaN(votesAgainstProgressPercents) && (
+                      <div
+                        className="progress__circle"
+                        style={{ left: votesAgainstProgressPercents + '%' }}
+                      />
+                    )}
+                </StyledBar>
+                <div className="ml-10">
+                  <span className="xl:text-3xl text-xl font-semibold leading-5 tracking-normal">
+                    {(votesAgainstProgressPercents || 0).toLocaleString(
+                      undefined,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      },
+                    )}
+                    %
+                  </span>
+                  <Tooltip2
+                    className={Classes.TOOLTIP2_INDICATOR}
+                    minimal={true}
+                    content={
+                      <p className="text-white text-sm tracking-normal">
+                        {numberFromWei(data?.againstVotes || 0)} votes
+                      </p>
+                    }
+                    placement="top"
+                  >
+                    <p className="xl:text-lg text-sm font-light tracking-normal">
+                      {kFormatter(numberFromWei(data?.againstVotes || 0))} votes
+                    </p>
+                  </Tooltip2>
+                </div>
+              </div>
+
+              {data?.id &&
+                isConnected &&
+                state !== ProposalState.Active &&
+                !proposalLoading && (
+                  <div className="xl:flex items-center justify-between mt-16">
+                    <div className="tracking-normal vote__success rounded-xl bg-opacity-30 bg-turquoise mb-4 xl:mb-0 border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-turquoise border-turquoise">
+                      {kFormatter(numberFromWei(data?.forVotes || 0))} Votes For
+                    </div>
+                    <div className="tracking-normal vote__danger rounded-xl bg-opacity-30 bg-red border xl:px-12 px-3 py-3 text-center xl:text-lg text-sm text-white border-red">
+                      {kFormatter(numberFromWei(data?.againstVotes || 0))} Votes
+                      Against
+                    </div>
+                  </div>
+                )}
+
+              {data?.id && isConnected && state === ProposalState.Active && (
+                <VoteCaster
+                  votesFor={data.forVotes}
+                  votesAgainst={data.againstVotes}
+                  proposalId={data.id}
+                  proposal={data}
+                  contractName={data.contractName}
+                />
+              )}
+
+              <div className="xl:flex -mx-2 mt-8">
+                <Scrollbars
+                  className="rounded-2xl border mb-4 xl:mb-0 xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48"
+                  style={{ height: 195 }}
+                >
+                  <div className="mx-4">
+                    <VotingTable
+                      items={votes}
+                      showSupporters={true}
+                      loading={votesLoading.current}
+                    />
+                  </div>
+                </Scrollbars>
+                <Scrollbars
+                  className="rounded-2xl border xl:w-2/4 sovryn-table pt-1 pb-3 pr-3 pl-3 mx-2 overflow-y-auto h-48"
+                  style={{ height: 195 }}
+                >
+                  <div className="mx-4">
+                    <VotingTable
+                      items={votes}
+                      showSupporters={false}
+                      loading={votesLoading.current}
+                    />
+                  </div>
+                </Scrollbars>
+              </div>
+              <div className="xl:flex mt-10">
+                <div className="xl:w-3/4 w-full mb-5 xl:mb-0">
+                  <div className="bg-gray-100 xl:py-8 py-4 xl:px-20 px-4 rounded-2xl">
+                    {/*<h4 className="mb-8 font-semibold xl:text-2xl text-xl tracking-widest">*/}
+                    {/*  {createdEvent.description}*/}
+                    {/*</h4>*/}
+                    <p
+                      className={`break-all mt-8 ${
+                        createdEventLoading && 'skeleton'
+                      }`}
+                    >
+                      <Linkify properties={{ target: '_blank' }}>
+                        {createdEvent?.returnValues?.description ||
+                          'No description'}
+                      </Linkify>
+                    </p>
+                    {/* <p className="text-sm">Resolved:</p>
                 <ol className="list-decimal text-sm pl-5 leading-6">
                   <li>
                     The Sovryn protocol will issue up to 2,000,000 cSOV tokens.
@@ -329,67 +366,75 @@ export function ProposalDetailsPage() {
                   sha256:{' '}
                   63817f1519ef0bf4699899acd747ef7a856ddbda1bba7a20ec75eb9da89650b7
                 </p> */}
-                <ProposalActions
-                  proposalId={data?.id}
-                  contractName={data?.contractName}
-                />
-              </div>
-            </div>
-            <div className="xl:w-1/4 w-full px-6 pr-0">
-              <ProposalHistory proposal={data} createdEvent={createdEvent} />
-              {/* <a
+                    <ProposalActions
+                      proposalId={data?.id}
+                      contractName={data?.contractName}
+                    />
+                  </div>
+                </div>
+                <div className="xl:w-1/4 w-full px-6 pr-0">
+                  <ProposalHistory
+                    proposal={data}
+                    createdEvent={createdEvent}
+                  />
+                  {/* <a
                 href="#!"
                 className="border rounded-xl bg-gold bg-opacity-10 text-center hover:bg-opacity-40 transition duration-500 ease-in-out text-gold hover:text-gold hover:no-underline text-lg px-6 xl:inline-block block py-3 border-gold"
               >
                 Verify on Github
               </a> */}
-              <p
-                className={`text-gold text-sm tracking-normal leading-3 pt-3 ${
-                  proposalLoading && 'skeleton'
-                }`}
-              >
-                Proposal id: {String(data?.id).padStart(3, '0')}
-              </p>
-
-              <div className="flex mt-5 items-center justify-around">
-                {data?.id &&
-                  isConnected &&
-                  state !== ProposalState.Executed &&
-                  isGaurdian && (
-                    <button
-                      onClick={governanceCancel}
-                      type="button"
-                      className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                    >
-                      Cancel
-                    </button>
-                  )}
-                {data?.id && isConnected && state === ProposalState.Succeeded && (
-                  <button
-                    onClick={governanceQueue}
-                    type="button"
-                    className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                  <p
+                    className={`text-gold text-sm tracking-normal leading-3 pt-3 ${
+                      proposalLoading && 'skeleton'
+                    }`}
                   >
-                    Queue
-                  </button>
-                )}
-                {data?.id &&
-                  isConnected &&
-                  state === ProposalState.Queued &&
-                  data.eta <= new Date().getTime() / 1000 && (
-                    <button
-                      onClick={governanceExecute}
-                      type="button"
-                      className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
-                    >
-                      Execute
-                    </button>
-                  )}
+                    Proposal id: {String(data?.id).padStart(3, '0')}
+                  </p>
+
+                  <div className="flex mt-5 items-center justify-around">
+                    {data?.id &&
+                      isConnected &&
+                      state !== ProposalState.Executed &&
+                      isGaurdian && (
+                        <button
+                          onClick={governanceCancel}
+                          type="button"
+                          className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    {data?.id &&
+                      isConnected &&
+                      state === ProposalState.Succeeded && (
+                        <button
+                          onClick={governanceQueue}
+                          type="button"
+                          className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                        >
+                          Queue
+                        </button>
+                      )}
+                    {data?.id &&
+                      isConnected &&
+                      state === ProposalState.Queued &&
+                      data.eta <= new Date().getTime() / 1000 && (
+                        <button
+                          onClick={governanceExecute}
+                          type="button"
+                          className="text-gold tracking-normal hover:text-gold hover:no-underline hover:bg-gold hover:bg-opacity-30 mx-1 px-5 py-2 bordered transition duration-500 ease-in-out rounded-full border border-gold text-sm font-light font-montserrat"
+                        >
+                          Execute
+                        </button>
+                      )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
+      <Footer />
     </>
   );
 }
