@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ProposalState } from 'types/Proposal';
+import { ProposalCreatedEvent, ProposalState } from 'types/Proposal';
 import { Link, useLocation } from 'react-router-dom';
 import Linkify from 'react-linkify';
 import styled from 'styled-components/macro';
@@ -12,11 +12,11 @@ import { MergedProposal } from '../../hooks/useProposalList';
 import { bignumber } from 'mathjs';
 import { LoadableValue } from 'app/components/LoadableValue';
 
-interface Props {
+interface IProposalRowProps {
   proposal: MergedProposal;
 }
 
-export function ProposalRow({ proposal }: Props) {
+export function ProposalRow({ proposal }: IProposalRowProps) {
   const {
     loading: loadingCreated,
     value: created,
@@ -80,14 +80,11 @@ export function ProposalRow({ proposal }: Props) {
         {state === ProposalState.Active ? (
           <>
             <td className="font-montserrat max-w-sm truncate">
-              <Linkify newTab={true}>
-                {String(proposal.id).padStart(3, '0')} •{' '}
-                {loadingCreated ? (
-                  <em>Loading, please wait..</em>
-                ) : (
-                  created?.description
-                )}
-              </Linkify>
+              <ProposalDescription
+                proposal={proposal}
+                loadingCreated={loadingCreated}
+                created={created}
+              />
             </td>
             <td className="text-center hidden xl:table-cell truncate">
               #{proposal.startBlock}
@@ -127,14 +124,11 @@ export function ProposalRow({ proposal }: Props) {
         ) : (
           <>
             <td className="font-montserrat max-w-sm truncate">
-              <Linkify newTab={true}>
-                {String(proposal.id).padStart(3, '0')} •{' '}
-                {loadingCreated ? (
-                  <em>Loading, please wait..</em>
-                ) : (
-                  created?.description
-                )}
-              </Linkify>
+              <ProposalDescription
+                proposal={proposal}
+                loadingCreated={loadingCreated}
+                created={created}
+              />
             </td>
             <td className="text-center hidden xl:table-cell tracking-normal truncate">
               #{proposal.startBlock}
@@ -166,6 +160,25 @@ export function ProposalRow({ proposal }: Props) {
     </>
   );
 }
+
+interface IProposalDescriptionProps {
+  proposal: MergedProposal;
+  loadingCreated: boolean;
+  created?: ProposalCreatedEvent;
+}
+
+const ProposalDescription: React.FC<IProposalDescriptionProps> = ({
+  proposal,
+  loadingCreated,
+  created,
+}) => {
+  return (
+    <Linkify newTab={true}>
+      {String(proposal.id).padStart(3, '0')} •{' '}
+      {loadingCreated ? <em>Loading, please wait...</em> : created?.description}
+    </Linkify>
+  );
+};
 
 const StyledBar = styled.div`
   width: 100%;

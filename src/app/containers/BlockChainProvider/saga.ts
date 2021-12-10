@@ -16,6 +16,7 @@ import { ChainId } from './types';
 import { rpcNodes, wssNodes } from './classifiers';
 import { selectBlockChainProvider } from './selectors';
 import { TransactionReceipt } from 'web3-core';
+import { noop } from 'utils/helpers';
 
 function* setupSaga({ payload }: PayloadAction<ChainId>) {
   const web3Provider = new Web3.providers.HttpProvider(rpcNodes[payload], {
@@ -65,7 +66,7 @@ function createBlockPollChannel({ interval, web3 }) {
       }
     });
 
-    return () => {};
+    return noop;
   });
 }
 

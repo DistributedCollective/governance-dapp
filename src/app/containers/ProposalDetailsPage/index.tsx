@@ -37,6 +37,7 @@ import { useAccount } from 'app/hooks/useAccount';
 import { useContractCallWithValue } from 'app/hooks/useContractCallWithValue';
 import { Footer } from 'app/components/Footer';
 import { Header } from 'app/components/Header';
+import { Quarums } from './components/Quarums';
 
 export function ProposalDetailsPage() {
   const { id, contractName } = useParams<any>();
@@ -71,6 +72,7 @@ export function ProposalDetailsPage() {
       const proposal = ((await network.call(contractName, 'proposals', [
         id,
       ])) as unknown) as Proposal;
+
       setData({ ...proposal, contractName });
 
       setProposalLoading(false);
@@ -333,39 +335,6 @@ export function ProposalDetailsPage() {
                           'No description'}
                       </Linkify>
                     </p>
-                    {/* <p className="text-sm">Resolved:</p>
-                <ol className="list-decimal text-sm pl-5 leading-6">
-                  <li>
-                    The Sovryn protocol will issue up to 2,000,000 cSOV tokens.
-                    This represent a 200,000 increase from 1,800,000 of SIP 0002.
-                  </li>
-                  <li>
-                    cSOV tokens will provide a pre-reservation mechanism for
-                    community members to stake funds in order to receive the right
-                    to SOV tokens, on a 1:1 basis with cSOV tokens subject to a
-                    vote by SOV holders.
-                  </li>
-                  <li>
-                    These cSOV tokens will be distributed to stakers who have the
-                    early community NFTS.
-                  </li>
-                  <li>The required stake per cSOV token will be 2500 Satoshis</li>
-                  <li>
-                    Any cSOV tokens converted to SOV will be subject to 10 months
-                    linear vesting (with 1/10 of the total amount released on a
-                    monthly basis) from the date of the end of the SOV public
-                    sale.
-                  </li>
-                  <li>
-                    Any cSOV holder that does not actively convert their cSOV to
-                    SOV within a two month period after TGE will be able to
-                    receive their staked funds.
-                  </li>
-                </ol>
-                <p className="font-semibold text-md mt-5 break-words">
-                  sha256:{' '}
-                  63817f1519ef0bf4699899acd747ef7a856ddbda1bba7a20ec75eb9da89650b7
-                </p> */}
                     <ProposalActions
                       proposalId={data?.id}
                       contractName={data?.contractName}
@@ -390,6 +359,8 @@ export function ProposalDetailsPage() {
                   >
                     Proposal id: {String(data?.id).padStart(3, '0')}
                   </p>
+
+                  <Quarums proposal={data} />
 
                   <div className="flex mt-5 items-center justify-around">
                     {data?.id &&

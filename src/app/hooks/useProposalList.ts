@@ -151,6 +151,7 @@ async function getProposalsOf(
       quorum: '0',
       canceled: false,
       executed: false,
+      majorityPercentage: '0',
     };
 
     calls.push({
