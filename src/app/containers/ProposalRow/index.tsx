@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ProposalCreatedEvent, ProposalState } from 'types/Proposal';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Linkify from 'react-linkify';
 import styled from 'styled-components/macro';
 import { useGetProposalCreateEvent } from '../../hooks/useGetProposalCreateEvent';
@@ -23,7 +23,6 @@ export function ProposalRow({ proposal }: IProposalRowProps) {
     event,
   } = useGetProposalCreateEvent(proposal);
   const { loading: loadingState, state } = useGetProposalState(proposal);
-  const location = useLocation();
 
   const loaded = useMemo(() => !loadingState && !!state, [loadingState, state]);
 
@@ -111,10 +110,7 @@ export function ProposalRow({ proposal }: IProposalRowProps) {
             </td>
             <td className="text-center">
               <Link
-                to={{
-                  pathname: `/proposals/${proposal.id}/${proposal.contractName}`,
-                  state: { background: location },
-                }}
+                to={`/${proposal.contractName}/${proposal.id}`}
                 className="text-gold hover:text-gold hover:underline font-thin font-montserrat tracking-normal"
               >
                 View Proposal
