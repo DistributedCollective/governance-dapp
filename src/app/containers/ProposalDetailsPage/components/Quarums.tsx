@@ -91,8 +91,7 @@ export const Quarums: React.FC<IQuarumsProps> = ({ proposal }) => {
         (&gt;{Number(vpNeeded).toFixed(2)}%)
       </p>
       <p className="text-gold text-sm tracking-normal leading-3 pt-3">
-        VP turnout: &gt;{kFormatter(Number(votesCast) / 1e18)} (&gt;
-        {votedPercent}%)
+        VP turnout: {kFormatter(Number(votesCast) / 1e18)} ({votedPercent}%)
       </p>
       <p className="text-gold text-sm tracking-normal leading-3 pt-3">
         Current outcome: {outcome}
