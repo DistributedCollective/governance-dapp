@@ -353,11 +353,14 @@ export function ProposalDetailsPage() {
                 Verify on Github
               </a> */}
                   <p
-                    className={`text-gold text-sm tracking-normal leading-3 pt-3 ${
+                    className={`text-white text-sm tracking-normal leading-3 pt-3 ${
                       proposalLoading && 'skeleton'
                     }`}
                   >
-                    Proposal id: {String(data?.id).padStart(3, '0')}
+                    Proposal id:{' '}
+                    <span className="text-gold">
+                      {String(data?.id).padStart(3, '0')}
+                    </span>
                   </p>
 
                   <Quarums proposal={data} />

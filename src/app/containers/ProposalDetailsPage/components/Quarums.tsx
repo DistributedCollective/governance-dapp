@@ -83,18 +83,28 @@ export const Quarums: React.FC<IQuarumsProps> = ({ proposal }) => {
 
   return (
     <>
-      <p className="text-gold text-sm tracking-normal leading-3 pt-3">
-        Support Required: &gt;{Number(supportNeeded).toFixed(2)}%
+      <p className="text-sm tracking-normal leading-3 pt-3">
+        <span className="text-white">Support Required: </span>
+        <span className="text-gold">
+          &gt;{Number(supportNeeded).toFixed(2)}%
+        </span>
       </p>
-      <p className="text-gold text-sm tracking-normal leading-3 pt-3">
-        VP needed for quorum: &gt;{kFormatter(Number(proposal.quorum) / 1e18)}{' '}
-        (&gt;{Number(vpNeeded).toFixed(2)}%)
+      <p className="text-sm tracking-normal leading-3 pt-3">
+        <span className="text-white">VP needed for quorum: </span>
+        <span className="text-gold">
+          &gt;{kFormatter(Number(proposal.quorum) / 1e18)} (&gt;
+          {Number(vpNeeded).toFixed(2)}%)
+        </span>
       </p>
-      <p className="text-gold text-sm tracking-normal leading-3 pt-3">
-        VP turnout: {kFormatter(Number(votesCast) / 1e18)} ({votedPercent}%)
+      <p className="text-sm tracking-normal leading-3 pt-3">
+        <span className="text-white">VP turnout: </span>
+        <span className="text-gold">
+          {kFormatter(Number(votesCast) / 1e18)} ({votedPercent}%)
+        </span>
       </p>
-      <p className="text-gold text-sm tracking-normal leading-3 pt-3">
-        Current outcome: {outcome}
+      <p className="text-sm tracking-normal leading-3 pt-3">
+        <span className="text-white">Current outcome: </span>
+        <span className="text-gold">{outcome}</span>
       </p>
     </>
   );
