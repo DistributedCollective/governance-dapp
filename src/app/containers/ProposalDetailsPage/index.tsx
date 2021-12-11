@@ -37,7 +37,7 @@ import { useAccount } from 'app/hooks/useAccount';
 import { useContractCallWithValue } from 'app/hooks/useContractCallWithValue';
 import { Footer } from 'app/components/Footer';
 import { Header } from 'app/components/Header';
-import { Quarums } from './components/Quarums';
+import { QuorumDetails } from './components/QuorumDetails';
 
 export function ProposalDetailsPage() {
   const { id, contractName } = useParams<any>();
@@ -125,7 +125,7 @@ export function ProposalDetailsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(data), syncBlockNumber]);
 
-  const isGaurdian = account.toLowerCase() === guardian.toLowerCase();
+  const isGuardian = account.toLowerCase() === guardian.toLowerCase();
 
   const governanceQueue = async () => {
     try {
@@ -363,13 +363,13 @@ export function ProposalDetailsPage() {
                     </span>
                   </p>
 
-                  <Quarums proposal={data} />
+                  <QuorumDetails proposal={data} />
 
                   <div className="flex mt-5 items-center justify-around">
                     {data?.id &&
                       isConnected &&
                       state !== ProposalState.Executed &&
-                      isGaurdian && (
+                      isGuardian && (
                         <button
                           onClick={governanceCancel}
                           type="button"

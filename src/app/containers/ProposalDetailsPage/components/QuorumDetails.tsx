@@ -4,11 +4,11 @@ import { bignumber } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { kFormatter } from 'utils/helpers';
 
-interface IQuarumsProps {
+interface IQuorumDetailsProps {
   proposal?: MergedProposal;
 }
 
-export const Quarums: React.FC<IQuarumsProps> = ({ proposal }) => {
+export const QuorumDetails: React.FC<IQuorumDetailsProps> = ({ proposal }) => {
   const [loading, setLoading] = useState(true);
   const [totalVotingPower, setTotalVotingPower] = useState('0');
 
