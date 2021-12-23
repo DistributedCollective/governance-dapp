@@ -17,7 +17,7 @@ export const contracts: IContractNetworks = {
       abi: SovTokenABI as any,
     },
     staking: {
-      address: '0xc37A85e35d7eECC82c4544dcba84CF7E61e1F1a3',
+      address: '0xa7623Cd1c51902F7185ae45556521F54dC5d0a1E',
       abi: StakingABI as any,
     },
     governorAdmin: {
