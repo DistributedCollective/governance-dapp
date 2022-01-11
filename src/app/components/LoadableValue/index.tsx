@@ -17,7 +17,7 @@ export function LoadableValue(props: Props) {
   if (props.loading) {
     return (
       <span className="skeleton-wrapper inline-block whitespace-nowrap overflow-hidden m-0 p-0">
-        <span className="bp3-skeleton tw-inline-block tw-m-0 tw-p-0">
+        <span className="bp3-skeleton inline-block m-0 p-0">
           {props.loaderContent}
         </span>
       </span>

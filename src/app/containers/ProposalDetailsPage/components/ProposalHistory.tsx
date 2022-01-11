@@ -89,7 +89,7 @@ export function ProposalHistory(props: Props) {
               </div>
             </div>
           )}
-          {props.proposal && (
+          {props.proposal && props.createdEvent?.blockNumber && (
             <>
               <div className="flex mb-4">
                 <p className="text-lg max-w-130 tracking-normal leading-4 w-1/2 font-semibold">

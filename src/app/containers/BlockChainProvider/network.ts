@@ -268,6 +268,7 @@ class Network {
     toBlock: number | 'latest' = 'latest',
   ): Promise<EventData[]> {
     if (!this.wsContracts.hasOwnProperty(contractName)) {
+      console.log('no ws contract for', contractName, eventName);
       return Promise.resolve([]);
     }
 

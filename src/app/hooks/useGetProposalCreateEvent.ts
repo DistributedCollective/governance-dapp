@@ -18,7 +18,7 @@ export function useGetProposalCreateEvent(proposal: MergedProposal) {
       'ProposalCreated',
       { id: proposal.id },
       proposal.startBlock - 1,
-      proposal.endBlock,
+      proposal.startBlock,
     );
     if (events.length) {
       const event = events[0];

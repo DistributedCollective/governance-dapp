@@ -1,13 +1,13 @@
 import { ChainId } from './types';
 
 export const rpcNodes = {
-  30: 'https://public-node.rsk.co',
-  31: 'https://public-node.testnet.rsk.co',
+  30: 'https://mainnet.sovryn.app/rpc',
+  31: 'https://testnet.sovryn.app/rpc',
 };
 
 export const wssNodes = {
-  30: 'wss://mainnet2.sovryn.app/websocket',
-  31: 'wss://testnet.sovryn.app/websocket',
+  30: 'wss://mainnet.sovryn.app/websocket',
+  31: 'wss://testnet.sovryn.app/ws',
 };
 
 export const blockExplorers = {

@@ -39,14 +39,20 @@ export function useProposalList(page: number, limit: number = 0) {
             target: getContract('governorAdmin').address,
             call: ['proposalCount()(uint256)'],
             returns: [
-              ['BALANCE_OF_GOVERNOR_ADMIN', val => (adminItemsCount = val)],
+              [
+                'BALANCE_OF_GOVERNOR_ADMIN',
+                val => (adminItemsCount = val.toNumber()),
+              ],
             ],
           },
           {
             target: getContract('governorOwner').address,
             call: ['proposalCount()(uint256)'],
             returns: [
-              ['BALANCE_OF_GOVERNOR_OWNER', val => (ownerItemsCount = val)],
+              [
+                'BALANCE_OF_GOVERNOR_OWNER',
+                val => (ownerItemsCount = val.toNumber()),
+              ],
             ],
           },
         ],
@@ -55,7 +61,7 @@ export function useProposalList(page: number, limit: number = 0) {
 
       setTotal(adminItemsCount + ownerItemsCount);
 
-      const adminItems = await getProposalsOf(
+      const adminPromise = getProposalsOf(
         'governorAdmin',
         getContract('governorAdmin').address,
         adminItemsCount,
@@ -63,13 +69,18 @@ export function useProposalList(page: number, limit: number = 0) {
         limit,
       );
 
-      const ownerItems = await getProposalsOf(
+      const ownerPromise = getProposalsOf(
         'governorOwner',
         getContract('governorOwner').address,
         ownerItemsCount,
         page,
         limit,
       );
+
+      const [adminItems, ownerItems] = await Promise.all([
+        adminPromise,
+        ownerPromise,
+      ]);
 
       const merged = [...adminItems, ...ownerItems]
         .sort((a, b) => b.startBlock - a.startBlock)
@@ -140,6 +151,7 @@ async function getProposalsOf(
       quorum: '0',
       canceled: false,
       executed: false,
+      majorityPercentage: '0',
     };
 
     calls.push({

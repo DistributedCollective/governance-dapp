@@ -32,6 +32,16 @@ export function App() {
           <Route exact path="/home" component={HomePage} />
           <Route exact path="/proposals" component={ProposalsPage} />
           <Route exact path="/stake" component={StakePage} />
+          <Route
+            exact
+            path="/proposals/:id/:contractName?"
+            component={ProposalDetailsPage}
+          />
+          <Route
+            exact
+            path="/:contractName/:id"
+            component={ProposalDetailsPage}
+          />
           <Route component={NotFoundPage} />
         </Switch>
 
@@ -42,15 +52,6 @@ export function App() {
             children={() => (
               <CustomDialog show={true}>
                 <ProposePage />
-              </CustomDialog>
-            )}
-          />
-
-          <Route
-            path="/proposals/:id/:contractName?"
-            children={() => (
-              <CustomDialog show={true}>
-                <ProposalDetailsPage />
               </CustomDialog>
             )}
           />
