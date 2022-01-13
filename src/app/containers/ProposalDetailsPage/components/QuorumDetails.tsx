@@ -2,13 +2,18 @@ import { network } from 'app/containers/BlockChainProvider/network';
 import { MergedProposal } from 'app/hooks/useProposalList';
 import { bignumber } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
+import { ProposalState } from 'types/Proposal';
 import { kFormatter } from 'utils/helpers';
 
 interface IQuorumDetailsProps {
   proposal?: MergedProposal;
+  state: ProposalState;
 }
 
-export const QuorumDetails: React.FC<IQuorumDetailsProps> = ({ proposal }) => {
+export const QuorumDetails: React.FC<IQuorumDetailsProps> = ({
+  proposal,
+  state,
+}) => {
   const [loading, setLoading] = useState(true);
   const [totalVotingPower, setTotalVotingPower] = useState('0');
 
@@ -67,15 +72,22 @@ export const QuorumDetails: React.FC<IQuorumDetailsProps> = ({ proposal }) => {
     [votesCast, totalVotingPower],
   );
 
+  const isActive = [ProposalState.Active, ProposalState.Pending].includes(
+    state,
+  );
+
   const outcome = useMemo(() => {
+    if (state === ProposalState.Canceled) {
+      return 'Vetoed';
+    }
     if (
       bignumber(forPercent).greaterThan(supportNeeded) &&
       bignumber(votesCast).greaterThan(proposal?.quorum || 0)
     ) {
-      return 'Will succeed';
+      return isActive ? 'Will succeed' : 'Succeeded';
     }
-    return 'Will be defeated.';
-  }, [proposal, forPercent, supportNeeded, votesCast]);
+    return isActive ? 'Will be defeated' : 'Defeated';
+  }, [proposal, forPercent, supportNeeded, votesCast, state, isActive]);
 
   if (loading || !proposal) {
     return <div className="skeleton">Loading, please wait...</div>;
@@ -103,7 +115,9 @@ export const QuorumDetails: React.FC<IQuorumDetailsProps> = ({ proposal }) => {
         </span>
       </p>
       <p className="text-sm tracking-normal leading-3 pt-3">
-        <span className="text-white">Current outcome: </span>
+        <span className="text-white">
+          {isActive ? 'Current outcome' : 'Outcome'}:
+        </span>
         <span className="text-gold">{outcome}</span>
       </p>
     </>

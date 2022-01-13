@@ -363,7 +363,7 @@ export function ProposalDetailsPage() {
                     </span>
                   </p>
 
-                  <QuorumDetails proposal={data} />
+                  <QuorumDetails proposal={data} state={state} />
 
                   <div className="flex mt-5 items-center justify-around">
                     {data?.id &&
