@@ -3,11 +3,13 @@ import { useWalletContext } from '@sovryn/react-wallet';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/macro';
+import Davatar from '@davatar/react';
 
 import { translations } from 'locales/i18n';
 import { prettyTx } from 'utils/helpers';
 
 import { media } from '../../../../../styles/media';
+import { useENS } from 'app/hooks/useENS';
 
 export function WalletConnectorButton() {
   const {
@@ -18,6 +20,7 @@ export function WalletConnectorButton() {
     disconnect,
   } = useWalletContext();
   const { t } = useTranslation();
+  const { ensName } = useENS(address);
   return (
     <>
       <div className="justify-center items-center hidden md:flex">
@@ -39,7 +42,10 @@ export function WalletConnectorButton() {
           <div>
             <StyledButtonAuth className="engage-wallet w-auto justify-end items-center hidden xl:flex cursor-pointer">
               <span className="flex flex-nowrap flex-row items-center w-100 justify-between">
-                <span>{prettyTx(address, 4, 4)}</span>
+                <span className="mr-3">
+                  <Davatar size={20} address={address.toLowerCase()} />
+                </span>
+                <span>{ensName || prettyTx(address, 4, 4)}</span>
                 <Icon
                   icon="log-out"
                   className="logout"
