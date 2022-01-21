@@ -66,11 +66,8 @@ const blockChainProviderSlice = createSlice({
 
     readerReady() {},
 
-    blockFailed(state, action: PayloadAction<string>) {
-      console.error('block failed');
-    },
     blockReceived(state, { payload }: PayloadAction<any>) {
-      state.blockNumber = Number(payload.number);
+      state.blockNumber = Number(payload);
     },
 
     processBlock(state, action: PayloadAction<any>) {},

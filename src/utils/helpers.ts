@@ -170,3 +170,5 @@ export const toChecksumAddress = (address: string) => {
 };
 
 export const isMainnet = CHAIN_NAME === 'mainnet';
+
+export const noop = () => {};

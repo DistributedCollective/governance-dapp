@@ -10,6 +10,7 @@ export interface Proposal {
   quorum: string;
   canceled: boolean;
   executed: boolean;
+  majorityPercentage: string;
 }
 
 export enum ProposalState {

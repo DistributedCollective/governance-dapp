@@ -6,8 +6,8 @@ import {
   take,
   select,
 } from 'redux-saga/effects';
-import { eventChannel, END } from 'redux-saga';
-import BlockTracker from 'eth-block-tracker-es5';
+import { eventChannel } from 'redux-saga';
+import { PollingBlockTracker } from 'eth-block-tracker';
 import { actions } from './slice';
 import Web3 from 'web3';
 import { network } from './network';
@@ -16,6 +16,7 @@ import { ChainId } from './types';
 import { rpcNodes, wssNodes } from './classifiers';
 import { selectBlockChainProvider } from './selectors';
 import { TransactionReceipt } from 'web3-core';
+import { noop } from 'utils/helpers';
 
 function* setupSaga({ payload }: PayloadAction<ChainId>) {
   const web3Provider = new Web3.providers.HttpProvider(rpcNodes[payload], {
@@ -53,33 +54,22 @@ function* setupSaga({ payload }: PayloadAction<ChainId>) {
 function createBlockPollChannel({ interval, web3 }) {
   return eventChannel(emit => {
     web3.currentProvider.sendAsync = web3.currentProvider.send;
-    const blockTracker = new BlockTracker({
+    const blockTracker = new PollingBlockTracker({
       provider: web3.currentProvider,
       pollingInterval: interval,
     });
 
-    blockTracker.on('block', block => {
-      console.log('got block', Number(block.number));
-      emit(actions.blockReceived(block.number));
-      emit(actions.processBlock(block));
+    blockTracker.on('sync', ({ newBlock, oldBlock }) => {
+      emit(actions.blockReceived(Number(newBlock)));
+      if (oldBlock) {
+        emit(actions.blockReceived(Number(oldBlock)));
+      }
     });
 
-    blockTracker.start().catch(error => {
-      emit(actions.blockFailed(error.message));
-      emit(END);
-    });
-
-    return () => {
-      blockTracker.stop().catch(_ => {
-        // BlockTracker assumes there is an outstanding event subscription.
-        // However for our tests we start and stop a BlockTracker in succession
-        // that triggers an error.
-      });
-    };
+    return noop;
   });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function* callCreateBlockPollChannel() {
   const web3 = network.wsWeb3;
   const blockChannel = yield call(createBlockPollChannel, {
@@ -157,59 +147,8 @@ function* processBlock({ payload }: PayloadAction<any>) {
   }
 }
 
-function createBlockChannels({ web3 }) {
-  return eventChannel(emit => {
-    const blockEvents = web3.eth
-      .subscribe('newBlockHeaders', (error, result) => {
-        if (error) {
-          emit(actions.blockFailed(error.message));
-
-          console.error('Error in block header subscription:');
-          console.error(error);
-
-          emit(END);
-        }
-      })
-      .on('data', blockHeader => {
-        emit(actions.blockReceived(blockHeader));
-        // emit({
-        //   type: 'BLOCK_RECEIVED',
-        //   blockHeader,
-        //   web3,
-        //   syncAlways,
-        // });
-      })
-      .on('error', error => {
-        emit(actions.blockFailed(error.message));
-        // emit({ type: 'BLOCKS_FAILED', error });
-        emit(END);
-      });
-
-    return () => {
-      blockEvents.off();
-    };
-  });
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function* callCreateBlockChannels() {
-  const web3 = network.wsWeb3;
-  const blockChannel = yield call(createBlockChannels, { web3 });
-
-  try {
-    while (true) {
-      const event = yield take(blockChannel);
-      yield put(event);
-    }
-  } finally {
-    blockChannel.close();
-  }
-}
-
-// used with ws channel
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function* processBlockHeader(event) {
-  const blockNumber = event.payload.number;
+  const blockNumber = event.payload;
   const web3 = network.web3;
 
   try {
@@ -223,13 +162,10 @@ function* processBlockHeader(event) {
     console.error(error);
   }
 }
-
 // end block watcher
 
 export function* blockChainProviderSaga() {
   yield takeLatest(actions.setup.type, setupSaga);
-  // yield takeLatest(actions.setupCompleted.type, callCreateBlockChannels);
-  // yield takeEvery(actions.blockReceived.type, processBlockHeader); // when using ws channel
   yield takeLatest(actions.setupCompleted.type, callCreateBlockPollChannel);
-  yield takeEvery(actions.processBlock.type, processBlock); // when using poll channel
+  yield takeEvery(actions.blockReceived.type, processBlockHeader);
 }

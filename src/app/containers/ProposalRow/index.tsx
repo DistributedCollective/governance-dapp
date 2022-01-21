@@ -1,12 +1,6 @@
-/**
- *
- * ProposalRow
- *
- */
-
-import React, { useEffect, useState } from 'react';
-import { ProposalState } from 'types/Proposal';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { ProposalCreatedEvent, ProposalState } from 'types/Proposal';
+import { Link } from 'react-router-dom';
 import Linkify from 'react-linkify';
 import styled from 'styled-components/macro';
 import { useGetProposalCreateEvent } from '../../hooks/useGetProposalCreateEvent';
@@ -16,29 +10,23 @@ import { ProposalRowStateBadge } from '../../components/ProposalRowStateBadge';
 import { dateByBlocks } from '../../../utils/helpers';
 import { MergedProposal } from '../../hooks/useProposalList';
 import { bignumber } from 'mathjs';
+import { LoadableValue } from 'app/components/LoadableValue';
 
-interface Props {
+interface IProposalRowProps {
   proposal: MergedProposal;
 }
 
-export function ProposalRow({ proposal }: Props) {
+export function ProposalRow({ proposal }: IProposalRowProps) {
   const {
     loading: loadingCreated,
     value: created,
     event,
   } = useGetProposalCreateEvent(proposal);
   const { loading: loadingState, state } = useGetProposalState(proposal);
-  const location = useLocation();
-  const [wasLoaded, setWasLoaded] = useState(false);
 
-  useEffect(() => {
-    if (!wasLoaded && !(loadingState || loadingCreated || !created || !state)) {
-      setWasLoaded(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadingState, loadingState, created, state, wasLoaded]);
+  const loaded = useMemo(() => !loadingState && !!state, [loadingState, state]);
 
-  if (loadingState || loadingCreated || !created || !state) {
+  if (!loaded) {
     return (
       <>
         <tr>
@@ -91,9 +79,11 @@ export function ProposalRow({ proposal }: Props) {
         {state === ProposalState.Active ? (
           <>
             <td className="font-montserrat max-w-sm truncate">
-              <Linkify newTab={true}>
-                {String(proposal.id).padStart(3, '0')} • {created?.description}
-              </Linkify>
+              <ProposalDescription
+                proposal={proposal}
+                loadingCreated={loadingCreated}
+                created={created}
+              />
             </td>
             <td className="text-center hidden xl:table-cell truncate">
               #{proposal.startBlock}
@@ -120,10 +110,7 @@ export function ProposalRow({ proposal }: Props) {
             </td>
             <td className="text-center">
               <Link
-                to={{
-                  pathname: `/proposals/${proposal.id}/${proposal.contractName}`,
-                  state: { background: location },
-                }}
+                to={`/${proposal.contractName}/${proposal.id}`}
                 className="text-gold hover:text-gold hover:underline font-thin font-montserrat tracking-normal"
               >
                 View Proposal
@@ -133,9 +120,11 @@ export function ProposalRow({ proposal }: Props) {
         ) : (
           <>
             <td className="font-montserrat max-w-sm truncate">
-              <Linkify newTab={true}>
-                {String(proposal.id).padStart(3, '0')} • {created?.description}
-              </Linkify>
+              <ProposalDescription
+                proposal={proposal}
+                loadingCreated={loadingCreated}
+                created={created}
+              />
             </td>
             <td className="text-center hidden xl:table-cell tracking-normal truncate">
               #{proposal.startBlock}
@@ -144,18 +133,18 @@ export function ProposalRow({ proposal }: Props) {
               <ProposalRowStateBadge state={state} />
             </td>
             <td className="text-center hidden xl:table-cell tracking-normal truncate">
-              {dateByBlocks(
-                proposal.startTime,
-                event?.blockNumber,
-                proposal.endBlock,
-              )}
+              <LoadableValue
+                value={dateByBlocks(
+                  proposal.startTime,
+                  event?.blockNumber,
+                  proposal.endBlock,
+                )}
+                loading={loadingCreated}
+              />
             </td>
             <td className="text-center">
               <Link
-                to={{
-                  pathname: `/proposals/${proposal.id}/${proposal.contractName}`,
-                  state: { background: location },
-                }}
+                to={`/${proposal.contractName}/${proposal.id}`}
                 className="text-gold hover:text-gold hover:underline font-thin font-montserrat tracking-normal"
               >
                 View Proposal
@@ -167,6 +156,25 @@ export function ProposalRow({ proposal }: Props) {
     </>
   );
 }
+
+interface IProposalDescriptionProps {
+  proposal: MergedProposal;
+  loadingCreated: boolean;
+  created?: ProposalCreatedEvent;
+}
+
+const ProposalDescription: React.FC<IProposalDescriptionProps> = ({
+  proposal,
+  loadingCreated,
+  created,
+}) => {
+  return (
+    <Linkify newTab={true}>
+      {String(proposal.id).padStart(3, '0')} •{' '}
+      {loadingCreated ? <em>Loading, please wait...</em> : created?.description}
+    </Linkify>
+  );
+};
 
 const StyledBar = styled.div`
   width: 100%;
