@@ -1,5 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from 'utils/@reduxjs/toolkit';
+import { intercomUpdate } from 'utils/intercom';
 import {
   ChainId,
   ContainerState,
@@ -56,6 +57,10 @@ const blockChainProviderSlice = createSlice({
     ) {
       state.chainId = payload.chainId;
       state.network = payload.chainId === 30 ? 'mainnet' : 'testnet';
+      intercomUpdate({
+        'Wallet network': payload.chainId.toString(),
+        Environment: state.network,
+      });
     },
 
     // block watcher
