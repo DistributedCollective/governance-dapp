@@ -47,7 +47,7 @@ export function ProposalsPage() {
                         Start Block
                       </th>
                       <th className="text-center hidden xl:table-cell xl:w-1/5">
-                        Vote Weight
+                        Vote Status
                       </th>
                       <th className="text-center hidden xl:table-cell xl:w-1/5">
                         Voting Ends
