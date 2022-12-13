@@ -8,10 +8,7 @@ import {
   rpcNodes,
 } from 'app/containers/BlockChainProvider/classifiers';
 
-const hideExperimentalProposals: Array<[ContractName, number]> = [
-  ['governorAdmin', 8],
-  ['governorOwner', 18], //proposal 18 was incorrectly created by community member so we hardcode it to be hidden
-];
+const hideExperimentalProposals: Array<[ContractName, number]> = [];
 
 const config = {
   rpcUrl: rpcNodes[CHAIN_ID],
