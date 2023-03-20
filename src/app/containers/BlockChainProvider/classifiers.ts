@@ -6,7 +6,7 @@ export const rpcNodes = {
 };
 
 export const wssNodes = {
-  30: 'wss://mainnet.sovryn.app/websocket',
+  30: 'wss://rsk-live.sovryn.app/websocket',
   31: 'wss://testnet.sovryn.app/websocket',
 };
 
