@@ -14,8 +14,8 @@ import { useENS } from 'app/hooks/useENS';
 export function WalletConnectorButton() {
   const {
     connected,
-    loading: connecting,
     address,
+    connecting,
     connect,
     disconnect,
   } = useWalletContext();
@@ -43,9 +43,9 @@ export function WalletConnectorButton() {
             <StyledButtonAuth className="engage-wallet w-auto justify-end items-center hidden xl:flex cursor-pointer">
               <span className="flex flex-nowrap flex-row items-center w-100 justify-between">
                 <span className="mr-3">
-                  <Davatar size={20} address={address.toLowerCase()} />
+                  <Davatar size={20} address={address!.toLowerCase()} />
                 </span>
-                <span>{ensName || prettyTx(address, 4, 4)}</span>
+                <span>{ensName || prettyTx(address!, 4, 4)}</span>
                 <Icon
                   icon="log-out"
                   className="logout"

@@ -229,7 +229,7 @@ class Network {
         });
 
         // Browser wallets (extensions) signs and broadcasts transactions themselves
-        if (web3Wallets.includes(walletService.providerType)) {
+        if (web3Wallets.includes(walletService.providerType!)) {
           store.dispatch(
             actions.addTransaction({
               transactionHash: signedTxOrTransactionHash,
